@@ -205,3 +205,24 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# Data files (too large for GitHub)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Model files (can be large)
+models/*.pkl
+models/*.h5
+!models/.gitkeep
+
+# Credentials
+.env
+config/secrets.json
+
+# Large outputs
+*.csv
+*.xlsx
+*.zip
