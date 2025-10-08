@@ -27,8 +27,11 @@ An AI-powered prediction engine that identifies high-risk diabetic members **bef
 
 | Metric | Value |
 |--------|-------|
-| HEDIS-Eligible Diabetics | ~100,000 members |
-| Model Performance (AUC-ROC) | 0.92 |
+| Total Population | 1,000,000 members |
+| Estimated Diabetic Population | ~100,000 (10%) |
+| HEDIS-Eligible Diabetics (age 18-75) | ~85,000 members |
+| Model Performance (AUC-ROC) | **0.91** |
+| Members Correctly Identified as High-Risk | ~XX% recall |
 | Potential Gap Closure Improvement | 15-20% |
 | **Annual Value (Star Rating Impact)** | **$50-80M** |
 
@@ -45,7 +48,7 @@ An AI-powered prediction engine that identifies high-risk diabetic members **bef
 ### Data
 - **Source:** CMS DE-SynPUF (Synthetic Medicare Claims)
 - **Population:** 116,352 beneficiaries
-- **Eligible Diabetics:** XX,XXX members aged 18-75
+- **Eligible Diabetics:** 24,935 members aged 18-75
 - **Features:** 30+ variables (demographics, comorbidities, utilization)
 
 ### Model Architecture
@@ -73,7 +76,7 @@ Jupyter Notebook | Git | GitHub
 
 | Model | Training AUC | Validation AUC | Test AUC |
 |-------|--------------|----------------|----------|
-| **Logistic Regression** | 0.91 | 0.92 | 0.XX |
+| **Logistic Regression** | 0.91 | 0.92 | **0.91** |
 | Random Forest | 1.00 | 0.90 | - |
 | XGBoost | 0.99 | 0.90 | - |
 
@@ -86,11 +89,11 @@ Jupyter Notebook | Git | GitHub
 ### Top Predictive Features
 (Based on SHAP analysis)
 
-1. **[Feature 1]** - [Brief explanation]
-2. **[Feature 2]** - [Brief explanation]
-3. **[Feature 3]** - [Brief explanation]
-4. **[Feature 4]** - [Brief explanation]
-5. **[Feature 5]** - [Brief explanation]
+1. **Geographic Location (State)** - Regional variation in healthcare access and quality
+2. **Total Comorbidities** - More chronic conditions indicate higher disease complexity
+3. **Age** - Older patients have increased diabetes complication risk
+4. **Ischemic Heart Disease** - Cardiovascular comorbidity strongly predicts poor control
+5. **Congestive Heart Failure** - Advanced cardiovascular disease impacts diabetes management
 
 ### Sample Visualizations
 
