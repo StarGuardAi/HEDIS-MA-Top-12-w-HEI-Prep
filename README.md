@@ -1,12 +1,11 @@
 # HEDIS GSD Prediction Engine 🏥📊
 
 **Predictive Risk Stratification for Glycemic Control in Diabetic Patients**
+## Predicting & Optimizing Diabetes Screening Compliance Using Machine Learning
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# HEDIS Quality Measure Prediction Engine
-## Predicting & Optimizing Diabetes Screening Compliance Using Machine Learning
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange.svg)](https://scikit-learn.org/)
