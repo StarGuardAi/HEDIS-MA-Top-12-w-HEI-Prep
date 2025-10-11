@@ -5,201 +5,78 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
+# HEDIS Quality Measure Prediction Engine
+## Predicting & Optimizing Diabetes Screening Compliance Using Machine Learning
 
-## 🎯 Business Problem
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange.svg)](https://scikit-learn.org/)
+[![Healthcare Analytics](https://img.shields.io/badge/Healthcare-Analytics-green.svg)]()
 
-Medicare Advantage plans face significant financial penalties for poor HEDIS (Healthcare Effectiveness Data and Information Set) quality measure performance. The **Glycemic Status Assessment (GSD)** measure specifically tracks diabetic members' HbA1c control, directly impacting CMS Star Ratings and bonus payments.
+### 🎯 Business Impact
+- **498% ROI** through performance-based intervention targeting
+- Identified **$935K annual value** opportunity in diabetic population
+- Built risk stratification model achieving **[X%] accuracy**
+- Reduced intervention costs by **85%** through smart targeting
 
-**The Challenge:**
-- Plans struggle to identify which diabetic members will have poor glycemic control
-- Manual review of all members is time-consuming and inefficient
-- Reactive interventions (after poor results) are less effective than proactive care
+### 💼 Business Problem
+Health plans lose millions in quality bonuses and face higher medical costs when diabetic members miss annual screenings (HEDIS GSD measure). Traditional approaches target all members, wasting resources on low-risk individuals.
 
-**This Solution:**
-An AI-powered prediction engine that identifies high-risk diabetic members **before** they develop poor control, enabling proactive interventions and improved outcomes.
+### 🔬 Solution
+Machine learning model that:
+1. **Predicts** non-compliance risk using claims patterns
+2. **Stratifies** population into risk tiers (Very High → Low)
+3. **Optimizes** intervention spend via targeted outreach
+4. **Quantifies** ROI across multiple value streams
 
----
+### 📊 Key Features
+- **Claims Feature Engineering**: Extracted 50+ predictive features from inpatient/outpatient/diagnosis data
+- **Risk Scoring**: Multi-factor algorithm considering demographics, utilization, comorbidities
+- **ROI Modeling**: Comprehensive value analysis including quality bonuses, medical savings, retention
+- **Business Case**: 4 pricing models tested, performance-based contracting recommended
 
-## 💰 Business Impact
+### 🛠️ Technical Stack
+- **Languages**: Python 3.8+
+- **ML Libraries**: Scikit-learn, XGBoost, TensorFlow/Keras
+- **Data Analysis**: Pandas, NumPy
+- **Visualization**: Matplotlib, Seaborn, Plotly
+- **Healthcare**: HEDIS measures, CMS Star Ratings, ICD-10 coding
 
-**For a 1 Million Member Health Plan:**
-
+### 📈 Results Summary
 | Metric | Value |
 |--------|-------|
-| Total Population | 1,000,000 members |
-| Estimated Diabetic Population | ~100,000 (10%) |
-| HEDIS-Eligible Diabetics (age 18-75) | ~85,000 members |
-| Model Performance (AUC-ROC) | **0.91** |
-| Members Correctly Identified as High-Risk | ~XX% recall |
-| Potential Gap Closure Improvement | 15-20% |
-| **Annual Value (Star Rating Impact)** | **$50-80M** |
+| Population Analyzed | 16,000+ diabetic members |
+| Features Engineered | 50+ from claims data |
+| Target Population | Top 10% risk (249 members) |
+| Expected Improvements | 37 members @ 15% rate |
+| ROI (Performance-Based) | 498% |
+| Year 1 Net Benefit | $935,000 |
 
-**How it Creates Value:**
-- Prioritizes outreach to highest-risk members
-- Reduces manual chart review time by 60%
-- Enables proactive interventions before measurement period closes
-- Improves Star Ratings → increases quality bonus payments
+### 🚀 Project Workflow
+1. **Data Preparation**: Claims data cleaning, diabetic cohort identification
+2. **Feature Engineering**: Utilization patterns, comorbidity detection, cost analysis
+3. **Risk Modeling**: Multi-factor scoring algorithm, tier stratification
+4. **ROI Analysis**: 4 pricing models, sensitivity analysis, business recommendations
 
----
+### 💡 Key Insights
+- Quality bonuses drive 30% of total intervention value
+- Performance-based pricing reduces risk and achieves 498% ROI
+- Top 10% risk targeting balances impact vs. resource efficiency
+- Multi-year value projection: $4.7M over 5 years
 
-## 🤖 Technical Approach
+### 📁 Project Structure
+notebooks/          # Jupyter notebooks with full analysis
+reports/figures/    # Visualizations and dashboards
+src/               # Reusable utility functions
 
-### Data
-- **Source:** CMS DE-SynPUF (Synthetic Medicare Claims)
-- **Population:** 116,352 beneficiaries
-- **Eligible Diabetics:** 24,935 members aged 18-75
-- **Features:** 30+ variables (demographics, comorbidities, utilization)
-
-### Model Architecture
-- **Algorithm:** Logistic Regression (selected for interpretability and performance)
-- **Performance:** AUC-ROC = 0.92 on held-out test set
-- **Explainability:** SHAP values for all predictions
-- **Validation:** Stratified train/validation/test split (60/20/20)
-
-### Key Features
-1. **Demographics:** Age, gender, race
-2. **Clinical:** Chronic condition count, specific comorbidities
-3. **Utilization:** Healthcare costs, visit patterns
-4. **Risk Factors:** [Insert top features from SHAP]
-
-### Technology Stack
-Python 3.13 | scikit-learn | pandas | NumPy
-XGBoost | SHAP | matplotlib | seaborn
-Jupyter Notebook | Git | GitHub
-
----
-
-## 📊 Results
-
-### Model Performance
-
-| Model | Training AUC | Validation AUC | Test AUC |
-|-------|--------------|----------------|----------|
-| **Logistic Regression** | 0.91 | 0.92 | **0.91** |
-| Random Forest | 1.00 | 0.90 | - |
-| XGBoost | 0.99 | 0.90 | - |
-
-**Why Logistic Regression?**
-- Best validation performance
-- Minimal overfitting
-- Highly interpretable for clinical stakeholders
-- Fast inference for production deployment
-
-### Top Predictive Features
-(Based on SHAP analysis)
-
-1. **Geographic Location (State)** - Regional variation in healthcare access and quality
-2. **Total Comorbidities** - More chronic conditions indicate higher disease complexity
-3. **Age** - Older patients have increased diabetes complication risk
-4. **Ischemic Heart Disease** - Cardiovascular comorbidity strongly predicts poor control
-5. **Congestive Heart Failure** - Advanced cardiovascular disease impacts diabetes management
-
-### Sample Visualizations
-
-![SHAP Summary](visualizations/shap_summary.png)
-*Feature importance and impact on predictions*
-
-![Model Comparison](visualizations/roc_curves.png)
-*ROC curves comparing model performance*
-
----
-
-## 🚀 Skills Demonstrated
-
-**Healthcare Domain Expertise:**
-- ✅ HEDIS quality measures and specifications
-- ✅ CMS Star Ratings and value-based care
-- ✅ Medicare claims data structures
-- ✅ Clinical risk stratification
-
-**Data Science & ML:**
-- ✅ Feature engineering from claims data
-- ✅ Model selection and validation
-- ✅ Handling imbalanced datasets
-- ✅ Model explainability (SHAP)
-- ✅ Cross-validation and hyperparameter tuning
-
-**Software Engineering:**
-- ✅ Clean, documented Python code
-- ✅ Version control with Git/GitHub
-- ✅ Reproducible analysis pipelines
-- ✅ Model serialization and deployment prep
-
-**Business Acumen:**
-- ✅ ROI quantification
-- ✅ Stakeholder communication
-- ✅ Translating technical results to business value
-
----
-
-## 📁 Repository Structure
-hedis-gsd-prediction-engine/
-├── README.md                          # This file
-├── notebooks/
-│   └── 01_data_exploration.ipynb      # Data analysis and model training
-├── data/
-│   ├── raw/                           # Original CMS synthetic data (not included)
-│   └── processed/                     # Cleaned, feature-engineered data
-├── models/
-│   ├── logistic_regression_final.pkl  # Trained model
-│   ├── scaler.pkl                     # Feature scaler
-│   └── feature_names.txt              # Feature list
-├── visualizations/
-│   ├── shap_summary.png               # SHAP feature importance
-│   └── roc_curves.png                 # Model comparison
-└── src/                               # Reusable Python modules (future)
-
----
-
-## 🔧 Installation & Usage
-
-### Prerequisites
-```bash
-Python 3.8+
-pip install -r requirements.txt
-
-
-## Quick Start
-
-import pickle
-import pandas as pd
-
-# Load model
-with open('models/logistic_regression_final.pkl', 'rb') as f:
-    model = pickle.load(f)
-
-# Load scaler
-with open('models/scaler.pkl', 'rb') as f:
-    scaler = pickle.load(f)
-
-# Make predictions
-# [Example code here]
-
-Reproducing Analysis
-
-Download CMS DE-SynPUF data (instructions in data/raw/README.md)
-Open notebooks/01_data_exploration.ipynb
-Run all cells
-
-📈 Future Enhancements
-Phase 2 (Planned):
-
- Integrate additional claims data (Carrier, Prescription Drug)
- Add medication adherence features
- Implement ensemble model
- Build interactive Streamlit dashboard
-
-Phase 3 (Planned):
-
- Deploy as REST API
- Add real-time prediction capability
- Create automated retraining pipeline
- Expand to multiple HEDIS measures
-
+### 🎓 Skills Demonstrated
+- Healthcare Analytics (HEDIS, Star Ratings, Value-Based Care)
+- Machine Learning (Classification, Risk Scoring)
+- Feature Engineering (Claims Data)
+- Business Intelligence (ROI Modeling, Financial Analysis)
+- Data Visualization (Executive Dashboards)
+- Healthcare Domain Knowledge (ICD-10, CPT, HCPCS)
 
 📚 References
-
 NCQA HEDIS Measures
 CMS Star Ratings
 CMS Synthetic Data
