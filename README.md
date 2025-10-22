@@ -11,6 +11,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 
+
 A production-ready AI system for predicting diabetic patients at risk of poor glycemic control to improve HEDIS Glycemic Status Diabetes (GSD) measure performance.
 
 ## 🎯 Project Overview
@@ -67,7 +68,6 @@ This system is designed with healthcare compliance in mind:
 
 ⏳ **Milestone 6:** Production Operations & Scaling - Pending
    - Optimize for production scale and business integration
-
 
 
 ## Installation
