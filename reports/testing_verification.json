@@ -1,0 +1,85 @@
+{
+  "overall_status": "FAIL",
+  "test_checks": {
+    "test_structure": {
+      "status": "PASS",
+      "score": "3/4",
+      "issues": [
+        "Test configuration files missing"
+      ],
+      "details": "Test structure and organization"
+    },
+    "test_coverage": {
+      "status": "FAIL",
+      "score": "0/3",
+      "issues": [
+        "Coverage analysis failed to run"
+      ],
+      "details": "Test coverage metrics"
+    },
+    "test_quality": {
+      "status": "PASS",
+      "score": "3/4",
+      "issues": [
+        "Test isolation: 0.0% (target: 50%)"
+      ],
+      "details": "Test quality and best practices"
+    },
+    "test_execution": {
+      "status": "FAIL",
+      "score": "0/3",
+      "issues": [
+        "Test execution failed",
+        "Error: C:\\Users\\reich\\AppData\\Local\\Programs\\Python\\Python313\\python.exe: No module named pytest\n",
+        "Performance test analysis failed"
+      ],
+      "details": "Test execution and results"
+    },
+    "test_data_management": {
+      "status": "FAIL",
+      "score": "1/3",
+      "issues": [
+        "Synthetic test data usage: 50.0% (target: 60%)",
+        "PHI-free test data: 0.0% (target: 80%)"
+      ],
+      "details": "Test data management practices"
+    },
+    "healthcare_specific_tests": {
+      "status": "PASS",
+      "score": "3/3",
+      "issues": [],
+      "details": "Healthcare-specific test requirements"
+    },
+    "integration_tests": {
+      "status": "PASS",
+      "score": "1/2",
+      "issues": [
+        "Integration test files missing"
+      ],
+      "details": "Integration test coverage"
+    },
+    "performance_tests": {
+      "status": "PASS",
+      "score": "1/2",
+      "issues": [
+        "Performance test files missing"
+      ],
+      "details": "Performance test coverage"
+    }
+  },
+  "coverage_analysis": {},
+  "test_quality_metrics": {},
+  "recommendations": [
+    "Structure: Test configuration files missing",
+    "Coverage: Coverage analysis failed to run",
+    "Quality: Test isolation: 0.0% (target: 50%)",
+    "Execution: Test execution failed",
+    "Execution: Error: C:\\Users\\reich\\AppData\\Local\\Programs\\Python\\Python313\\python.exe: No module named pytest\n",
+    "Execution: Performance test analysis failed",
+    "Data Management: Synthetic test data usage: 50.0% (target: 60%)",
+    "Data Management: PHI-free test data: 0.0% (target: 80%)",
+    "Integration: Integration test files missing",
+    "Performance: Performance test files missing"
+  ],
+  "timestamp": null
+}

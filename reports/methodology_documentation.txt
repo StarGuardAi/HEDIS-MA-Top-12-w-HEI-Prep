@@ -1,0 +1,52 @@
+
+HEDIS GSD PREDICTION ENGINE - METHODOLOGY DOCUMENTATION
+Generated: 2025-10-10 16:37:21
+
+DATA QUALITY & ASSUMPTIONS
+
+1. SYNTHETIC DATA LIMITATIONS
+   - Dataset: CMS DE-SynPUF (synthetic Medicare data)
+   - Known issues: Small compliant sample (137 members, 0.5%)
+   - Impact: Observed costs contradicted clinical literature
+   
+2. EVIDENCE-BASED APPROACH
+   - Used published cost differentials from peer-reviewed sources
+   - Conservative assumptions (lower end of published ranges)
+   - Sources:
+     * American Diabetes Association (2023)
+     * JAMA (2020)
+     * Health Affairs (2019)
+     * CMS Medicare Cost Reports
+     
+3. COST ASSUMPTIONS
+   - Compliant: $13,500.00 per year
+   - Non-compliant: $16,000.00 per year
+   - Differential: $2,500.00 per year
+   - Basis: 18-20% cost increase for poor glycemic control
+   
+4. INTERVENTION ASSUMPTIONS
+   - Cost: $500 per member per year
+   - Improvement rate: 15% (conservative)
+   - Basis: Published care management program outcomes
+   
+5. MODEL PERFORMANCE
+   - ROC-AUC: 0.873 (excellent discrimination)
+   - Validated on holdout test set (20%)
+   - Geographic and clinical factors highly predictive
+   
+6. RECOMMENDATIONS FOR PRODUCTION
+   - Validate cost assumptions with organizational data
+   - Track actual intervention costs and outcomes
+   - Build longitudinal compliance dataset
+   - Update model quarterly with real results
+   - Compare projected vs. actual ROI
+   
+7. LIMITATIONS & CAVEATS
+   - Projections based on literature, not local data
+   - Synthetic dataset may not reflect real population
+   - Improvement rates may vary by intervention type
+   - ROI depends on sustained engagement
+   - Geographic patterns need local validation
+
+This methodology is appropriate for proof-of-concept and strategic
+planning. Recommend prospective validation study for production deployment.
