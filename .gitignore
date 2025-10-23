@@ -222,6 +222,10 @@ models/*.h5
 .env
 config/secrets.json
 
+# LinkedIn API credentials (keep secure!)
+.linkedin_token.json
+set_linkedin_token.bat
+
 # Large outputs
 *.csv
 *.xlsx

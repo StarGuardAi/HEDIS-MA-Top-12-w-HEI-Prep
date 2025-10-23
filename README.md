@@ -1,26 +1,30 @@
-# HEDIS GSD Prediction Engine
+# HEDIS Star Rating Portfolio Optimizer
 
-![Project Status](https://img.shields.io/badge/Status-Milestones%202%20Complete-success)
-![Version](https://img.shields.io/badge/Version-1.0.0-green)
+![Project Status](https://img.shields.io/badge/Status-Phase%200%20In%20Progress-blue)
+![Version](https://img.shields.io/badge/Version-2.0.0-green)
 ![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
+![Measures](https://img.shields.io/badge/Measures-12%20Portfolio-success)
+![Portfolio Value](https://img.shields.io/badge/Portfolio%20Value-%2422--42M-brightgreen)
 ![AUC-ROC](https://img.shields.io/badge/AUC--ROC-0.91-success)
 ![HIPAA](https://img.shields.io/badge/HIPAA-Compliant-green)
-![HEDIS](https://img.shields.io/badge/HEDIS-MY2023%20Aligned-blue)
+![HEDIS](https://img.shields.io/badge/HEDIS-MY2025%20Aligned-blue)
+![HEI 2027](https://img.shields.io/badge/HEI%202027-Ready-purple)
 ![Test Coverage](https://img.shields.io/badge/Test%20Coverage-100%25-brightgreen)
 ![Cursor AI](https://img.shields.io/badge/Built%20with-Cursor%20AI-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+> **Enterprise-grade AI system for optimizing HEDIS Star Rating performance across 12 quality measures with portfolio-level ROI analysis and Health Equity Index (HEI) compliance.**
 
-
-A production-ready AI system for predicting diabetic patients at risk of poor glycemic control to improve HEDIS Glycemic Status Diabetes (GSD) measure performance.
+A production-ready machine learning platform that predicts member-level risk across 12 HEDIS measures to maximize Star Rating revenue ($22-42M portfolio value) through strategic intervention prioritization and health equity optimization.
 
 ## 🎯 Project Overview
 
-**Goal:** Build a healthcare-compliant machine learning system that predicts which diabetic patients are at risk of poor glycemic control (HbA1c >9.0%) to enable proactive care management and improve HEDIS GSD measure performance.
+**Goal:** Build a comprehensive healthcare AI platform that optimizes HEDIS Star Rating performance across a 12-measure portfolio spanning diabetes care, cardiovascular health, cancer screening, and health equity—enabling data-driven intervention prioritization and ROI maximization.
 
-**HEDIS Specification:** MY2023 Volume 2  
-**Measure:** HBD - Hemoglobin A1c Control for Patients with Diabetes  
-**Target Population:** Diabetic members aged 18-75 years
+**Portfolio Scope:** 12 HEDIS measures across 4 strategic tiers  
+**Portfolio Value:** $1.67M-$2.68M direct Star revenue + $20-40M HEI protection  
+**HEDIS Specification:** MY2025 Volume 2 (including NEW 2025 measures)  
+**Target Populations:** Diabetes, hypertension, hyperlipidemia, cancer screening eligible, underserved populations
 
 ## 🏥 Healthcare Compliance
 
@@ -32,13 +36,31 @@ This system is designed with healthcare compliance in mind:
 - ✅ **Audit Logging** - Comprehensive audit trails for compliance
 - ✅ **Data Minimization** - Only processes necessary fields
 
-## 📊 Current Performance
+## 📊 Portfolio Performance
 
-- **Model:** Logistic Regression with Random Forest ensemble
-- **AUC-ROC:** 0.91
-- **Features:** 25+ HEDIS-compliant features
-- **Population:** 24,935 diabetic members
-- **Validation:** Temporal validation with no data leakage
+### Tier 1: Diabetes Core (5 measures) - $720K-$1.23M
+- ✅ **GSD** - Glycemic Status Assessment [3x weighted] - **AUC-ROC: 0.91** ✅ PRODUCTION
+- 🔄 **KED** - Kidney Health Evaluation [3x weighted] - NEW 2025 - In Development
+- 🔄 **EED** - Eye Exam for Diabetes - In Development
+- 🔄 **PDC-DR** - Medication Adherence (Diabetes) - In Development
+- 🔄 **BPD** - Blood Pressure Control (Diabetes) - NEW 2025 - In Development
+
+### Tier 2: Cardiovascular (4 measures) - $650K-$1M
+- 🔄 **CBP** - Controlling High Blood Pressure [3x weighted] - Planned
+- 🔄 **SUPD** - Statin Therapy for Diabetes - Planned
+- 🔄 **PDC-RASA** - Medication Adherence (Hypertension) - Planned
+- 🔄 **PDC-STA** - Medication Adherence (Cholesterol) - Planned
+
+### Tier 3: Cancer Screening (2 measures) - $300-450K
+- 🔄 **BCS** - Breast Cancer Screening - Planned
+- 🔄 **COL** - Colorectal Cancer Screening - Planned
+
+### Tier 4: Health Equity Index (1 measure) - $20-40M at risk
+- 🔄 **HEI** - Health Equity Index Reward Factor [5% bonus/penalty] - CRITICAL 2027 - Planned
+
+**Current Status:** Phase 0 - Foundation Refactoring  
+**Operational Measures:** 1 of 12 (GSD)  
+**Target:** Full 12-measure portfolio by Week 8
 
 ## 🚀 Quick Start
 
