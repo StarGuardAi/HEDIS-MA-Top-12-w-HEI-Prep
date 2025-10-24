@@ -1,12 +1,8 @@
 """
-Feature Engineering for HEDIS Star Rating Portfolio Optimizer
+Feature Engineering Modules for HEDIS Measures
 
-This package contains measure-specific feature engineering modules for:
-- Diabetes features (GSD, KED, EED, PDC-DR, BPD)
-- Cardiovascular features (CBP, SUPD, PDC-RASA, PDC-STA)
-- Cancer screening features (BCS, COL)
-- Health equity features (HEI)
+Provides feature engineering for different measure categories:
+- diabetes_features.py: Shared features for all diabetes measures
+- cardiovascular_features.py: Features for CVD measures
+- cancer_screening_features.py: Features for cancer screening measures
 """
-
-__version__ = "2.0.0"
-
