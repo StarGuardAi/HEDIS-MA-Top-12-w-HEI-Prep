@@ -13,6 +13,12 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configure Seaborn style
+sns.set_theme(style="whitegrid")
+sns.set_palette("husl")
 
 # Page configuration
 st.set_page_config(
@@ -1772,34 +1778,31 @@ def show_aiml_models():
         'Target': [0.85, 0.80, 0.80, 0.80]
     })
     
-    fig = go.Figure()
+    # Seaborn grouped bar chart
+    fig, ax = plt.subplots(figsize=(10, 5))
     
-    fig.add_trace(go.Bar(
-        x=metrics_df['Metric'],
-        y=metrics_df['Score'],
-        name='Actual',
-        marker_color='green',
-        text=[f"{val:.1%}" for val in metrics_df['Score']],
-        textposition='outside'
-    ))
+    x = np.arange(len(metrics_df['Metric']))
+    width = 0.35
     
-    fig.add_trace(go.Bar(
-        x=metrics_df['Metric'],
-        y=metrics_df['Target'],
-        name='Target',
-        marker_color='lightgray',
-        opacity=0.5
-    ))
+    bars1 = ax.bar(x - width/2, metrics_df['Score'], width, label='Actual', color='green', alpha=0.8)
+    bars2 = ax.bar(x + width/2, metrics_df['Target'], width, label='Target', color='lightgray', alpha=0.5)
     
-    fig.update_layout(
-        title=f"{measure_code} Model Performance",
-        yaxis_title="Score",
-        yaxis_range=[0, 1.0],
-        barmode='group',
-        height=400
-    )
+    # Add value labels on bars
+    for bars in [bars1, bars2]:
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2., height,
+                    f'{height:.1%}', ha='center', va='bottom', fontsize=9)
     
-    st.plotly_chart(fig, use_container_width=True)
+    ax.set_ylabel('Score', fontsize=11)
+    ax.set_title(f'{measure_code} Model Performance', fontsize=13, fontweight='bold')
+    ax.set_xticks(x)
+    ax.set_xticklabels(metrics_df['Metric'])
+    ax.set_ylim(0, 1.0)
+    ax.legend()
+    ax.grid(axis='y', alpha=0.3)
+    
+    st.pyplot(fig)
     
     st.markdown("---")
     
@@ -1823,18 +1826,15 @@ def show_aiml_models():
         'SHAP Value': shap_values
     }).sort_values('SHAP Value', ascending=True)
     
-    fig = px.barh(
-        feature_df,
-        x='SHAP Value',
-        y='Feature',
-        title=f'Feature Importance: {measure_code}',
-        orientation='h'
-    )
+    # Seaborn horizontal bar chart
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(data=feature_df, x='SHAP Value', y='Feature', color='steelblue', ax=ax)
+    ax.set_title(f'Feature Importance: {measure_code}', fontsize=13, fontweight='bold')
+    ax.set_xlabel('SHAP Value', fontsize=11)
+    ax.set_ylabel('Feature', fontsize=11)
+    ax.grid(axis='x', alpha=0.3)
     
-    fig.update_traces(marker_color='steelblue')
-    fig.update_layout(height=450)
-    
-    st.plotly_chart(fig, use_container_width=True)
+    st.pyplot(fig)
     
     st.markdown("---")
     
@@ -2078,23 +2078,30 @@ def show_health_equity():
     # Apply styling
     st.dataframe(disparity_data, use_container_width=True, hide_index=True)
     
-    # Visualization
-    fig = px.bar(
-        disparity_data,
-        x='Demographic Group',
-        y='Gap',
-        title='Performance Gaps by Demographic Group (%)',
-        color='Gap',
-        color_continuous_scale=['green', 'yellow', 'red'],
-        color_continuous_midpoint=0
-    )
+    # Visualization with Seaborn
+    fig, ax = plt.subplots(figsize=(12, 5))
     
-    fig.add_hline(y=5, line_dash="dash", line_color="orange", annotation_text="5% Warning Threshold")
-    fig.add_hline(y=10, line_dash="dash", line_color="red", annotation_text="10% Critical Threshold")
-    fig.add_hline(y=-5, line_dash="dash", line_color="green")
+    # Create color map based on gap values
+    colors = ['green' if x < 0 else 'yellow' if x < 5 else 'orange' if x < 10 else 'red' 
+              for x in disparity_data['Gap']]
     
-    fig.update_layout(height=400)
-    st.plotly_chart(fig, use_container_width=True)
+    bars = ax.bar(disparity_data['Demographic Group'], disparity_data['Gap'], color=colors, alpha=0.7)
+    
+    # Add threshold lines
+    ax.axhline(y=5, linestyle='--', color='orange', linewidth=2, label='5% Warning', alpha=0.7)
+    ax.axhline(y=10, linestyle='--', color='red', linewidth=2, label='10% Critical', alpha=0.7)
+    ax.axhline(y=-5, linestyle='--', color='green', linewidth=2, alpha=0.5)
+    ax.axhline(y=0, linestyle='-', color='black', linewidth=0.5)
+    
+    ax.set_title('Performance Gaps by Demographic Group (%)', fontsize=13, fontweight='bold')
+    ax.set_xlabel('Demographic Group', fontsize=11)
+    ax.set_ylabel('Gap (%)', fontsize=11)
+    ax.legend()
+    plt.xticks(rotation=45, ha='right')
+    ax.grid(axis='y', alpha=0.3)
+    plt.tight_layout()
+    
+    st.pyplot(fig)
     
     st.markdown("---")
     
@@ -2156,19 +2163,20 @@ def show_health_equity():
     
     st.dataframe(sdoh_data, use_container_width=True, hide_index=True)
     
-    # SDOH heatmap
-    fig = px.bar(
-        sdoh_data.sort_values('Affected Members %', ascending=True),
-        y='SDOH Barrier',
-        x='Affected Members %',
-        title='SDOH Barriers by Prevalence',
-        orientation='h',
-        color='Affected Members %',
-        color_continuous_scale='Reds'
-    )
+    # SDOH bar chart with Seaborn
+    fig, ax = plt.subplots(figsize=(10, 5))
     
-    fig.update_layout(height=400)
-    st.plotly_chart(fig, use_container_width=True)
+    sdoh_sorted = sdoh_data.sort_values('Affected Members %', ascending=True)
+    bars = ax.barh(sdoh_sorted['SDOH Barrier'], sdoh_sorted['Affected Members %'], 
+                   color=sns.color_palette('Reds_r', n_colors=len(sdoh_sorted)))
+    
+    ax.set_title('SDOH Barriers by Prevalence', fontsize=13, fontweight='bold')
+    ax.set_xlabel('Affected Members (%)', fontsize=11)
+    ax.set_ylabel('SDOH Barrier', fontsize=11)
+    ax.grid(axis='x', alpha=0.3)
+    plt.tight_layout()
+    
+    st.pyplot(fig)
     
     st.markdown("---")
     
@@ -2397,11 +2405,22 @@ def show_visualizations():
             'ROI %': [1150, 900, 525, 733]
         })
         
-        fig = px.bar(tier_data, x='Tier', y='ROI %', title='ROI % by Measure Tier',
-                     text='ROI %', color='ROI %', color_continuous_scale='Greens')
-        fig.update_traces(texttemplate='%{text}%', textposition='outside')
-        fig.update_layout(height=400)
-        st.plotly_chart(fig, use_container_width=True)
+        # Seaborn bar chart
+        fig, ax = plt.subplots(figsize=(10, 5))
+        bars = sns.barplot(data=tier_data, x='Tier', y='ROI %', palette='Greens_d', ax=ax)
+        
+        # Add value labels
+        for container in ax.containers:
+            ax.bar_label(container, fmt='%.0f%%', padding=3)
+        
+        ax.set_title('ROI % by Measure Tier', fontsize=13, fontweight='bold')
+        ax.set_xlabel('Tier', fontsize=11)
+        ax.set_ylabel('ROI %', fontsize=11)
+        plt.xticks(rotation=15, ha='right')
+        ax.grid(axis='y', alpha=0.3)
+        plt.tight_layout()
+        
+        st.pyplot(fig)
         
         # Chart 3: Breakeven Analysis
         st.markdown("### 3. Breakeven Analysis")
@@ -2492,12 +2511,29 @@ def show_visualizations():
                          'Medium', 'Medium', 'Medium', 'Low', 'Low']
         })
         
-        fig = px.bar(gap_data.sort_values('Gap Rate %', ascending=False), 
-                     x='Measure', y='Gap Rate %', color='Priority',
-                     title='Gap Rates by Measure (%)',
-                     color_discrete_map={'High': 'red', 'Medium': 'orange', 'Low': 'yellow'})
-        fig.update_layout(height=400)
-        st.plotly_chart(fig, use_container_width=True)
+        # Seaborn bar chart
+        fig, ax = plt.subplots(figsize=(10, 5))
+        gap_sorted = gap_data.sort_values('Gap Rate %', ascending=False)
+        
+        colors = {'High': 'red', 'Medium': 'orange', 'Low': 'yellow'}
+        bar_colors = [colors[p] for p in gap_sorted['Priority']]
+        
+        bars = ax.bar(gap_sorted['Measure'], gap_sorted['Gap Rate %'], color=bar_colors, alpha=0.7)
+        
+        ax.set_title('Gap Rates by Measure (%)', fontsize=13, fontweight='bold')
+        ax.set_xlabel('Measure', fontsize=11)
+        ax.set_ylabel('Gap Rate %', fontsize=11)
+        ax.grid(axis='y', alpha=0.3)
+        
+        # Add legend
+        from matplotlib.patches import Patch
+        legend_elements = [Patch(facecolor=colors['High'], label='High', alpha=0.7),
+                          Patch(facecolor=colors['Medium'], label='Medium', alpha=0.7),
+                          Patch(facecolor=colors['Low'], label='Low', alpha=0.7)]
+        ax.legend(handles=legend_elements)
+        plt.tight_layout()
+        
+        st.pyplot(fig)
         
         # Chart 8: Member Prioritization Matrix
         st.markdown("### 8. Member Prioritization Matrix (Gap Count vs. Star Impact)")
@@ -2574,20 +2610,32 @@ def show_visualizations():
             'Member Count': [5000, 8000, 12000, 10000, 6000, 3000]
         })
         
-        fig = go.Figure()
-        fig.add_trace(go.Bar(x=comorbidity_data['Comorbidity Count'], 
-                             y=comorbidity_data['Gap Rate %'], 
-                             name='Gap Rate', marker_color='orange'))
-        fig.add_trace(go.Scatter(x=comorbidity_data['Comorbidity Count'], 
-                                 y=[m/200 for m in comorbidity_data['Member Count']], 
-                                 name='Member Count (scaled)', yaxis='y2', 
-                                 line=dict(color='blue', width=3), mode='lines+markers'))
+        # Seaborn with dual axis
+        fig, ax1 = plt.subplots(figsize=(10, 5))
         
-        fig.update_layout(title='Gap Rates by Comorbidity Count', 
-                          yaxis_title='Gap Rate (%)', 
-                          yaxis2=dict(title='Members (hundreds)', overlaying='y', side='right'),
-                          height=400)
-        st.plotly_chart(fig, use_container_width=True)
+        ax1.bar(comorbidity_data['Comorbidity Count'], comorbidity_data['Gap Rate %'], 
+                color='orange', alpha=0.7, label='Gap Rate')
+        ax1.set_xlabel('Comorbidity Count', fontsize=11)
+        ax1.set_ylabel('Gap Rate (%)', fontsize=11, color='orange')
+        ax1.tick_params(axis='y', labelcolor='orange')
+        ax1.grid(axis='y', alpha=0.3)
+        
+        ax2 = ax1.twinx()
+        ax2.plot(comorbidity_data['Comorbidity Count'], 
+                 [m/200 for m in comorbidity_data['Member Count']], 
+                 color='blue', marker='o', linewidth=3, markersize=8, label='Member Count (scaled)')
+        ax2.set_ylabel('Members (hundreds)', fontsize=11, color='blue')
+        ax2.tick_params(axis='y', labelcolor='blue')
+        
+        ax1.set_title('Gap Rates by Comorbidity Count', fontsize=13, fontweight='bold')
+        
+        # Combine legends
+        lines1, labels1 = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+        
+        plt.tight_layout()
+        st.pyplot(fig)
         
         # Chart 12: Intervention Success Rates
         st.markdown("### 12. Intervention Success Rates by Type")
@@ -2618,23 +2666,25 @@ def show_visualizations():
         demographics = ['White', 'Black/AA', 'Hispanic', 'Asian', 'Native Am', 'LEP', 'Dual Elig']
         measures = ['GSD', 'KED', 'CBP', 'EED', 'PDC-DR', 'BPD']
         
-        import numpy as np
         np.random.seed(42)
         heatmap_data = np.random.uniform(-8, 8, (len(demographics), len(measures)))
         
-        fig = go.Figure(data=go.Heatmap(
-            z=heatmap_data,
-            x=measures,
-            y=demographics,
-            colorscale='RdYlGn_r',
-            zmid=0,
-            text=[[f"{val:.1f}%" for val in row] for row in heatmap_data],
-            texttemplate='%{text}',
-            colorbar=dict(title="Gap %")
-        ))
+        # Seaborn heatmap (better for heatmaps than Plotly)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.heatmap(heatmap_data, 
+                    xticklabels=measures, 
+                    yticklabels=demographics,
+                    cmap='RdYlGn_r', 
+                    center=0, 
+                    annot=True, 
+                    fmt='.1f',
+                    cbar_kws={'label': 'Gap %'},
+                    ax=ax)
+        ax.set_title('Disparity Gaps by Demographic Group (% below overall average)', 
+                     fontsize=13, fontweight='bold', pad=15)
+        plt.tight_layout()
         
-        fig.update_layout(title='Disparity Gaps by Demographic Group (% below overall average)', height=450)
-        st.plotly_chart(fig, use_container_width=True)
+        st.pyplot(fig)
         
         # Chart 14: HEI Score Improvement
         st.markdown("### 14. HEI Score Trajectory (2025-2027)")
