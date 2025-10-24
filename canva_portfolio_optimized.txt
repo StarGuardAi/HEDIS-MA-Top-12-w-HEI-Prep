@@ -1,0 +1,85 @@
+
+🎯 ROBERT REICHERT
+Senior Healthcare Data Scientist & AI Engineer | HEDIS Expert | $200M+ Cost Savings
+📍 Pittsburgh, PA | 📞 480-767-1337 | ✉️ reichert@post.com
+
+🚀 HEDIS GSD PREDICTION ENGINE - AI/ML INNOVATION
+Leading development of production-ready AI system for predicting diabetic patients at risk of poor glycemic control, improving HEDIS GSD measure performance.
+
+Key Achievements:
+• Model Performance: Achieved 91% AUC-ROC with Logistic Regression and Random Forest ensemble models
+• Healthcare Compliance: Built HIPAA-compliant system with 25+ HEDIS-aligned features  
+• Production Ready: Developed FastAPI with <100ms response times and 99.9% uptime
+• Cost Impact: Targeting $200M+ annual savings through proactive diabetes care management
+
+Technologies: Python, Scikit-learn, FastAPI, Docker, CI/CD, Healthcare ML, HEDIS Compliance, SHAP Interpretability
+
+Development Milestones:
+✅ Foundation & Data Pipeline - CMS DE-SynPUF integration
+✅ Model Development & Validation - 91% AUC-ROC achieved
+🔄 API Development & Testing - FastAPI implementation  
+⏳ Deployment & Infrastructure - Production deployment
+⏳ Advanced Features & Optimization - Real-time capabilities
+⏳ Production Operations & Scaling - Business integration
+
+EXCEL & ADVANCED ANALYTICS (XLSX)
+Expertise spans complex financial modeling to large-scale data transformation, delivering actionable insights for strategic decisions.
+
+Excel Project Highlights:
+• Large-Scale Data Management: Cleaned 50,000+ rows of data, implementing automated validation that improved accuracy by 15% and reduced processing time by 85%
+• Financial Analysis: Evaluated $85M in provider incentive programs using advanced Excel modeling, achieving 75-90% gap closure rates
+• Data Unification: Integrated 18 data sources into unified Excel references for 1,000+ stakeholders
+• Process Optimization: Created workflows reducing report generation time by 85%
+
+Advanced Excel Capabilities: Complex formulas, pivot tables, data validation, macro development, financial modeling, variance analysis, trend forecasting, SQL integration.
+
+STRUCTURED QUERY LANGUAGE (SQL) EXPERTISE  
+10+ years of SQL development across healthcare, financial services, and benefits administration. SQL proficiency contributed to $200M+ in documented savings.
+
+Key SQL Achievements:
+• Enterprise Data Integration: Implemented SQL Server data marts enhancing healthcare program performance by 34% and contributing to $200M+ in documented savings
+• Automated Data Processing: Developed SQL automation decreasing hospital readmissions by 40%
+• Regulatory Compliance: Created SQL databases preventing $60M in FDIC sanctions
+• Data Quality Management: Led SQL audits improving accuracy by 8%
+
+Technical Proficiencies: SQL Server, data marts, ETL processes, query optimization, healthcare coding standards (ICD, LOINC, CPT, DRG, HCPC).
+
+BUSINESS INTELLIGENCE: TABLEAU & POWER BI (TWBX/PBIX)
+Transforms complex datasets into actionable insights for executive leadership and operational teams.
+
+BI Platform Achievements:
+• Healthcare Analytics: Built dashboards increasing CMS member satisfaction by 22%
+• Operational Intelligence: Created KPI dashboards supporting $32M performance bonuses
+• Executive Reporting: Developed visualizations saving 14 hours weekly
+• Multi-Site Coordination: Maintained 4,500 monthly reports across 800+ sites
+• Real-Time Dashboards: Built live monitoring systems processing 10,000+ predictions per hour
+
+Platform Expertise: Tableau (TWBX), Power BI (PBIX), Data Studio, QlikView, Looker, SAP BusinessObjects, Cognos.
+
+AI-ENHANCED DATABASE MANAGEMENT & INTELLIGENCE
+Incorporates AI tools like Chat2DB and Claude to amplify database capabilities while Supporting the Agentic Future of Work.
+
+AI Integration Applications:
+• Database Optimization: Uses AI-powered tools enhancing SQL performance
+• Automated Insights: Leverages NLP for rapid analysis frameworks  
+• Enhanced Documentation: Creates comprehensive data dictionaries with AI
+• Predictive Analytics: Integrates AI pattern recognition for care gap identification
+• Pioneering AI Content Prompt Quality: Develops prompt engineering techniques maximizing AI effectiveness
+
+AI Tool Proficiencies: Chat2DB for database optimization, Claude for analytical reasoning, GBTX technologies for enhanced BI workflows.
+Compliance & Security: All AI usage adheres to HIPAA and PHI protection standards.
+
+CORE SKILLS & TECHNOLOGIES
+Data Mining | Statistical Analysis | Predictive Modeling | Data Warehousing | Claims Analysis | Cost-Benefit Analysis | Project Management | Root Cause Analysis | Machine Learning | Python Programming | FastAPI Development | Docker Containerization | CI/CD Pipelines | Healthcare AI | HEDIS Compliance | Model Interpretability
+
+EDUCATION
+MBA Administration | BA Economics
+
+CERTIFICATIONS & ACHIEVEMENTS
+Healthcare Data Science Specialist | HEDIS Compliance Expert | AI/ML Model Development | Production System Deployment
+
+CONNECT
+📧 reichert@post.com
+🔗 LinkedIn: www.linkedin.com/in/rreichert-hedis-data-science-ai
+💻 GitHub: https://github.com/bobareichert/hedis-gsd-prediction-engine
+🎨 Portfolio: https://www.canva.com/design/DAGpa3zpXTw/Y7ycEdZ2_vnKjlFWGdcQwg/edit

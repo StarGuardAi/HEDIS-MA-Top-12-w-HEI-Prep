@@ -1,0 +1,409 @@
+# HEDIS GSD Prediction Engine - Cursor AI Rules
+# This file is AUTOMATICALLY loaded by Cursor AI in every conversation
+
+---
+
+## 🎯 WORKFLOW: Always Follow These Steps
+
+### 1. PLAN PHASE
+Before writing any code:
+1. Read Plan.md to understand the current phase
+2. Check tasks/todo.md for the current task
+3. Create a detailed task breakdown
+4. Save the plan to tasks/todo.md
+5. **STOP and wait for human verification**
+
+### 2. IMPLEMENTATION PHASE
+After plan approval:
+1. Make simple, minimal changes (impact as little code as possible)
+2. Provide high-level explanations of changes
+3. Mark todo items as complete: `- [x] Task description`
+4. **After every file/module completion, run code reviews**
+
+### 3. REVIEW PHASE (CRITICAL - Healthcare Compliance)
+After writing code, ALWAYS run these reviews in order:
+
+**For ALL Python code:**
+```
+/review-security [filename]
+/review-hipaa [filename]
+/review-performance [filename]
+```
+
+**For data processing code:**
+```
+/review-data-quality [filename]
+```
+
+**For SQL queries:**
+```
+/review-sql [filename]
+```
+
+**For ML model code:**
+```
+/review-model-code [filename]
+/review-clinical-logic [filename]
+```
+
+**For API code:**
+```
+/review-security [filename]
+/review-gen-ai [filename]  # If using LLMs
+```
+
+### 4. COMPLETION PHASE
+1. Run pre-commit checks: `bash scripts/pre-commit-checks.sh`
+2. Update tasks/todo.md with review section
+3. Summarize changes in simple terms
+4. Archive completed task to tasks/completed/
+
+---
+
+## 🏥 HEALTHCARE-SPECIFIC REQUIREMENTS
+
+### Always Consider (HIPAA Compliance)
+- **PHI Handling:** Never log, print, or expose patient identifiers
+- **De-identification:** Use Safe Harbor or Expert Determination methods
+- **Audit Logging:** Log all access to patient data with timestamps
+- **Data Minimization:** Only process necessary fields
+- **Encryption:** Ensure data at rest and in transit is encrypted
+
+### Clinical Validation Requirements
+- **ICD-10 Codes:** Validate against current year code set
+- **HEDIS Measures:** Follow NCQA specifications exactly
+- **Age Calculations:** Use index date from HEDIS specs
+- **Date Logic:** Handle multiple encounters and service dates correctly
+- **Exclusions:** Apply HEDIS exclusion criteria (hospice, SNP, etc.)
+
+### Model Development Standards
+- **Temporal Validation:** Train on past years, test on future year
+- **No Data Leakage:** Ensure outcome variable not in features
+- **Fairness Metrics:** Report performance across age, gender, race
+- **Interpretability:** Provide SHAP values for all predictions
+- **Clinical Thresholds:** Document source for all cutoff values
+
+---
+
+## 💻 CODE REVIEW COMMANDS (Reference: .cursor/prompts/code-review.md)
+
+### Quick Reference
+| Command | Use Case | Files |
+|---------|----------|-------|
+| `/review-security` | PHI exposure, SQL injection, API keys | All Python/SQL |
+| `/review-hipaa` | HIPAA compliance check | Data processing, APIs |
+| `/review-performance` | Optimization for large datasets | ETL, queries |
+| `/review-data-quality` | Null handling, outliers, types | Feature engineering |
+| `/review-clinical-logic` | HEDIS specs, ICD-10, calculations | Model features, business rules |
+| `/review-model-code` | Bias, leakage, validation | ML training, evaluation |
+| `/review-sql` | Query optimization for EHR data | All SQL files |
+
+### How to Use Commands
+1. Select code in editor (or specify filename)
+2. Open Cursor chat (Cmd/Ctrl + L)
+3. Type the command: `/review-security src/data/data_loader.py`
+4. Review findings and fix issues
+5. Re-run command to verify fixes
+
+---
+
+## 📋 SIMPLIFIED WORKFLOW EXAMPLE
+
+### Example: Implementing Feature Engineering (Phase 1.1)
+
+**Step 1: Plan** (You do this first)
+```
+Task: Create feature_engineering.py with HEDIS GSD-specific features
+
+Subtasks:
+1. [ ] Load processed claims data
+2. [ ] Calculate age at measurement year end
+3. [ ] Create diabetes comorbidity flags (CKD, CVD, retinopathy)
+4. [ ] Calculate HbA1c test frequency features
+5. [ ] Create utilization features (ED visits, hospitalizations)
+6. [ ] Validate features match HEDIS specifications
+```
+
+**Step 2: Implementation** (Cursor AI does this)
+```python
+# src/data/feature_engineering.py
+# Cursor creates the code with inline comments
+def create_hedis_gsd_features(claims_df, lab_df, member_df):
+    """
+    Create features for HEDIS GSD (Glycemic Status Diabetes) prediction.
+    
+    HEDIS Specification: MY2023 Volume 2
+    Measure: HBD - Hemoglobin A1c Control for Patients with Diabetes
+    """
+    # Implementation here...
+```
+
+**Step 3: Review** (Cursor AI does this automatically)
+```
+User → Cursor Chat:
+"I've just completed feature_engineering.py. 
+Run these reviews:
+/review-security src/data/feature_engineering.py
+/review-hipaa src/data/feature_engineering.py
+/review-clinical-logic src/data/feature_engineering.py
+/review-performance src/data/feature_engineering.py"
+```
+
+**Cursor's Review Output:**
+```
+✅ /review-security: PASSED
+  - No PHI in logs or print statements
+  - No hardcoded credentials
+
+⚠️  /review-hipaa: 1 MEDIUM issue
+  - Line 45: Consider hashing member_id before logging
+  - Recommendation: Use SHA-256 hash for audit logs
+
+✅ /review-clinical-logic: PASSED
+  - Age calculation uses HEDIS measurement year end (Dec 31)
+  - ICD-10 codes match HEDIS diabetes value set
+  - Comorbidity definitions align with CMS-HCC model
+
+⚠️  /review-performance: 1 HIGH issue
+  - Line 78: DataFrame iterrows() detected
+  - Recommendation: Use vectorized operations or apply()
+```
+
+**Step 4: Fix Issues**
+```python
+# BEFORE (from review)
+for idx, row in claims_df.iterrows():
+    member_id = row['member_id']
+    logger.info(f"Processing member {member_id}")  # PHI exposure!
+
+# AFTER (fixed)
+claims_df['member_hash'] = claims_df['member_id'].apply(
+    lambda x: hashlib.sha256(str(x).encode()).hexdigest()[:8]
+)
+logger.info(f"Processing {len(claims_df)} member records")
+```
+
+**Step 5: Complete**
+```
+- [x] Create feature_engineering.py
+  - Review Results: 
+    - Security: PASSED
+    - HIPAA: PASSED (after fixes)
+    - Clinical Logic: PASSED
+    - Performance: PASSED (after vectorization)
+  - Changes: 
+    - Implemented 25 HEDIS-aligned features
+    - Added member_id hashing for audit logs
+    - Vectorized DataFrame operations for 10x speedup
+```
+
+---
+
+## 🔄 INTEGRATION WITH YOUR EXISTING WORKFLOW
+
+Your current workflow (from claude-rules.md):
+```
+1. Think through problem → Read codebase → Write plan to tasks/todo.md
+2. Create checklist of todo items
+3. CHECK IN with human for verification ⚠️
+4. Work on items, mark complete
+5. Give high-level explanations
+6. Keep changes simple and minimal
+7. Create review section in todo.md
+```
+
+**Enhanced workflow with code reviews:**
+```
+1. Think through problem → Read codebase → Write plan to tasks/todo.md
+2. Create checklist of todo items
+3. CHECK IN with human for verification ⚠️
+4. Work on items
+   └─→ After each file/module: RUN CODE REVIEWS
+5. Fix issues found in reviews
+6. Mark item complete only after reviews pass
+7. Give high-level explanations
+8. Keep changes simple and minimal
+9. Create review section in todo.md with security/HIPAA summary
+```
+
+---
+
+## 🚀 QUICK START COMMANDS
+
+### Most Common Commands
+```bash
+# Start new task
+"Read Plan.md Phase X.X and create task breakdown in tasks/todo.md"
+
+# During coding (after completing a file)
+"/review-security [filename]"
+"/review-hipaa [filename]"
+"/review-performance [filename]"
+
+# For data processing code
+"/review-data-quality [filename]"
+
+# For model code  
+"/review-model-code [filename]"
+"/review-clinical-logic [filename]"
+
+# Before committing
+"Run pre-commit checks: bash scripts/pre-commit-checks.sh"
+
+# Complete task
+"Update tasks/todo.md with review summary"
+```
+
+### File Locations
+```
+.cursorrules                          ← Main rules (auto-loaded)
+.cursor/prompts/code-review.md        ← Detailed review commands
+docs/healthcare-glossary.md           ← Domain terminology
+scripts/hipaa-scanner.py              ← PHI detector
+scripts/pre-commit-checks.sh          ← Final validation
+tasks/todo.md                         ← Current sprint tasks
+Plan.md                               ← Master development plan
+```
+
+---
+
+## 🏷️ LINKEDIN HASHTAG STRATEGY
+
+### Hashtag Philosophy
+- **Always include CORE hashtags** (4 tags, healthcare-specific)
+- **Add context-specific hashtags** (6 tags based on post type)
+- **Total: 10 hashtags per post** (optimal for LinkedIn algorithm)
+- **Avoid generic tags** (#AI, #BigData, #Technology, #Healthcare)
+- **Review quarterly** - hashtag trends change rapidly in AI/healthcare
+
+### Core Hashtags (Always Include - Pick 4)
+```
+#HealthcareAnalytics #HEDIS #MachineLearning #ValueBasedCare
+#MedicareAdvantage #StarRatings #PredictiveAnalytics
+```
+
+### Context-Specific Hashtags (Choose One Set - 6 tags)
+
+**Technical Posts** (ML implementation, code, architecture):
+```
+#Python #MLOps #DataScience #HealthTech #ExplainableAI #HIPAA
+#CursorAI #AIinHealthcare #PredictiveModeling
+```
+
+**Business Posts** (ROI, value, impact, savings):
+```
+#ACO #MedicareAdvantage #StarRatings #PopulationHealth #QualityMeasures #HealthTech
+#CMSStarRatings #QualityBonusPayments #GapClosure
+```
+
+**Compliance Posts** (HIPAA, security, privacy):
+```
+#HIPAA #DataPrivacy #HealthcareCompliance #EthicalAI #DataGovernance #HealthTech
+```
+
+**Clinical/Diabetes Focus** (diabetes portfolio, HEDIS measures):
+```
+#DiabetesCareManagement #HEDISMeasures #ChronicDiseaseManagement 
+#MedicationAdherence #ClinicalAnalytics #PopulationHealth
+```
+
+**Job Search** (add 2 to any post type):
+```
+#OpenToWork #HealthcareJobs #DataScienceJobs
+```
+
+### 2025 Trending Hashtags (High engagement)
+```
+#HealthEquityIndex #HEI2027 #HEDIS2025 #MedicareStars 
+#RiskStratification #PayerAnalytics #ManagedCare
+```
+
+### Intelligent Hashtag Selection
+
+The `update_profile.py` script **automatically determines** post type:
+
+| Milestone Keywords | Auto-Selected Post Type | Hashtags Used |
+|-------------------|------------------------|---------------|
+| "API", "deploy", "production", "pipeline" | Technical | Python, MLOps, DataScience... |
+| "ROI", "value", "savings", "business" | Business | ACO, StarRatings, QualityMeasures... |
+| "HIPAA", "security", "compliance" | Compliance | DataPrivacy, HealthcareCompliance... |
+| "SHAP", "interpretability", "trust" | AI Trust | ExplainableAI, EthicalAI... |
+
+### Usage
+
+**Test hashtag selection:**
+```bash
+python scripts/update_profile.py --test-hashtags
+```
+
+**Generate post with auto-detected hashtags:**
+```bash
+python scripts/update_profile.py --milestone 1 --post-type technical
+```
+
+**Override auto-detection:**
+```bash
+python scripts/update_profile.py --milestone 1 --post-type business
+```
+
+### Engagement Tracking
+
+**After posting to LinkedIn:**
+1. Wait 48 hours for engagement to stabilize
+2. Update `reports/linkedin_engagement_tracker.json` with actual metrics:
+   ```json
+   {
+     "likes": 150,
+     "comments": 12,
+     "shares": 8,
+     "views": 2500
+   }
+   ```
+3. Generate engagement report:
+   ```bash
+   python scripts/update_profile.py --engagement-report
+   ```
+
+### Quarterly Hashtag Review
+
+**Review Schedule:** Every 3 months (Jan, Apr, Jul, Oct)
+
+**Review Process:**
+1. Run engagement report:
+   ```bash
+   python scripts/update_profile.py --engagement-report
+   ```
+2. Analyze which post types performed best
+3. Check trending hashtags in healthcare AI:
+   - LinkedIn hashtag analytics
+   - Industry publications (HIMSS, NCQA)
+   - Competitor posts in healthcare data science
+4. Update `HASHTAG_SETS` in `scripts/update_profile.py`
+5. Document changes in `reports/hashtag_review_YYYYMMDD.md`
+
+**Next Review Due:** See `reports/hashtag_review_reminder.md`
+
+---
+
+## ✅ SUCCESS CRITERIA
+
+### For Every Code File
+- [ ] Security review passed (no PHI exposure)
+- [ ] HIPAA compliance verified
+- [ ] Performance optimized for healthcare data volumes
+- [ ] Clinical logic validated against HEDIS specs
+- [ ] Comprehensive documentation with healthcare context
+
+### For Every Task
+- [ ] Plan created and approved
+- [ ] All subtasks completed with reviews
+- [ ] Pre-commit checks passed
+- [ ] Review summary documented
+- [ ] Task archived to completed folder
+
+### For Every LinkedIn Post
+- [ ] Hashtag strategy applied (10 total: 4 core + 6 context)
+- [ ] Contact information included (email, GitHub, portfolio)
+- [ ] Post type auto-detected or manually specified
+- [ ] Engagement tracked in linkedin_engagement_tracker.json
+- [ ] Quarterly review scheduled
