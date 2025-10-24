@@ -28,61 +28,345 @@ st.set_page_config(
     initial_sidebar_state="expanded",
     menu_items={
         'Get Help': 'https://github.com/bobareichert',
-        'Report a bug': 'mailto:reichert@post.com',
+        'Report a bug': 'mailto:reichert99@gmail.com',
         'About': 'HEDIS Star Rating Portfolio Optimizer - Built by Robert Reichert'
     }
 )
 
-# Custom CSS for professional styling
+# Enhanced custom CSS for professional styling
 st.markdown("""
 <style>
+    /* ==================== LAYOUT & BACKGROUND ==================== */
+    
+    /* Main page background with subtle gradient */
+    .stApp {
+        background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+    }
+    
+    /* Better padding for main content */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* ==================== SIDEBAR STYLING ==================== */
+    
+    /* Professional sidebar with gradient */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1e3a5f 0%, #2c5282 100%);
+        padding-top: 2rem;
+    }
+    
+    /* Sidebar text color */
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+        color: #ffffff !important;
+        font-weight: 500;
+    }
+    
+    /* ==================== HEADERS ==================== */
+    
+    /* Main page header with gradient text */
     .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        color: #1f77b4;
+        font-size: 2.75rem;
+        font-weight: 800;
+        color: #1e3a5f;
         text-align: center;
+        padding: 1.5rem 0;
+        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #8b5cf6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 1rem;
     }
+    
+    /* Sub-header with elegant border */
     .sub-header {
-        font-size: 1.5rem;
-        color: #666;
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: #4b5563;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid transparent;
+        border-image: linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%) 1;
     }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
-        margin: 1rem 0;
+    
+    /* H2 headers */
+    h2 {
+        color: #1e3a5f;
+        font-weight: 700;
+        margin-top: 2rem;
+        padding-left: 1rem;
+        border-left: 4px solid #3b82f6;
     }
-    .crisis-alert {
-        background-color: #fff3cd;
-        border-left: 4px solid #ff6b6b;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 1rem 0;
+    
+    /* H3 headers */
+    h3 {
+        color: #2563eb;
+        font-weight: 600;
+        margin-top: 1.5rem;
     }
+    
+    /* ==================== METRICS & CARDS ==================== */
+    
+    /* Enhanced metric cards */
+    [data-testid="stMetricValue"] {
+        font-size: 2.25rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #4b5563;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Metric container with card styling */
+    [data-testid="metric-container"] {
+        background: white;
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+    
+    [data-testid="metric-container"]:hover {
+        box-shadow: 0 8px 12px rgba(37, 99, 235, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    /* ==================== ALERT BOXES ==================== */
+    
+    /* Enhanced info boxes */
+    .stAlert {
+        border-radius: 0.75rem;
+        border-left: 5px solid;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 1.25rem;
+    }
+    
+    /* Success boxes */
     .success-box {
-        background-color: #d4edda;
-        border-left: 4px solid #28a745;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 1rem 0;
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        padding: 1.75rem;
+        border-radius: 0.875rem;
+        border-left: 6px solid #10b981;
+        margin: 1.5rem 0;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
     }
-    .info-box {
-        background-color: #d1ecf1;
-        border-left: 4px solid #17a2b8;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin: 1rem 0;
+    
+    .success-box h4 {
+        color: #047857;
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 1rem;
     }
-    .stButton>button {
-        background-color: #1f77b4;
+    
+    /* Crisis alert boxes */
+    .crisis-alert {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        padding: 1.75rem;
+        border-radius: 0.875rem;
+        border-left: 6px solid #ef4444;
+        margin: 1.5rem 0;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
+    
+    .crisis-alert h4 {
+        color: #991b1b;
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    
+    /* ==================== BUTTONS ==================== */
+    
+    /* Primary buttons with gradient */
+    .stButton > button {
+        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
         color: white;
-        font-weight: bold;
-        border-radius: 0.5rem;
-        padding: 0.5rem 2rem;
+        border: none;
+        border-radius: 0.625rem;
+        padding: 0.875rem 2.25rem;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+    }
+    
+    .stButton > button:hover {
+        background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+        box-shadow: 0 8px 12px rgba(37, 99, 235, 0.35);
+        transform: translateY(-3px);
+    }
+    
+    /* Download buttons - green theme */
+    .stDownloadButton > button {
+        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 0.625rem;
+        padding: 0.875rem 2.25rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
+    }
+    
+    .stDownloadButton > button:hover {
+        background: linear-gradient(90deg, #059669 0%, #047857 100%);
+        box-shadow: 0 8px 12px rgba(16, 185, 129, 0.35);
+        transform: translateY(-3px);
+    }
+    
+    /* ==================== INPUTS & CONTROLS ==================== */
+    
+    /* Slider styling */
+    .stSlider > div > div > div > div {
+        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+    }
+    
+    /* Radio buttons */
+    .stRadio > div > label {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        padding: 0.875rem 1.5rem;
+        border-radius: 0.625rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    .stRadio > div > label:hover {
+        background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* ==================== DATA DISPLAY ==================== */
+    
+    /* DataFrames with enhanced styling */
+    .stDataFrame {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+    }
+    
+    /* Expanders with better styling */
+    .streamlit-expanderHeader {
+        background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
+        border-radius: 0.625rem;
+        font-weight: 700;
+        color: #1f2937;
+        padding: 1rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    /* ==================== CHARTS & VISUALIZATIONS ==================== */
+    
+    /* Plotly charts */
+    .js-plotly-plot {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+        background: white;
+        padding: 1rem;
+    }
+    
+    /* Matplotlib figures */
+    .stImage {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+    
+    /* ==================== DIVIDERS & SPACING ==================== */
+    
+    /* Horizontal rules with gradient */
+    hr {
+        margin: 3rem 0;
+        border: none;
+        height: 3px;
+        background: linear-gradient(90deg, transparent 0%, #3b82f6 20%, #8b5cf6 50%, #3b82f6 80%, transparent 100%);
+        opacity: 0.3;
+    }
+    
+    /* ==================== BADGES & LABELS ==================== */
+    
+    /* Professional badge styling */
+    .badge {
+        display: inline-block;
+        padding: 0.375rem 1rem;
+        border-radius: 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+        color: white;
+        margin: 0.375rem;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .badge-success {
+        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    }
+    
+    .badge-warning {
+        background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+    }
+    
+    .badge-danger {
+        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    /* ==================== UTILITY CLASSES ==================== */
+    
+    /* Card containers */
+    .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 0.875rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin: 1.5rem 0;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+        transform: translateY(-2px);
+    }
+    
+    /* ==================== RESPONSIVE DESIGN ==================== */
+    
+    @media (max-width: 768px) {
+        .main-header {
+            font-size: 2rem;
+        }
+        .sub-header {
+            font-size: 1.1rem;
+        }
+        .stButton > button {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -112,7 +396,9 @@ page = st.sidebar.selectbox(
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 📞 Contact")
 st.sidebar.markdown("**Robert Reichert**")
-st.sidebar.markdown("📧 reichert@post.com")
+st.sidebar.markdown("📧 reichert99@gmail.com")
+st.sidebar.markdown("🎨 [Portfolio](https://hedis-gap-in-care-prediction-engine.my.canva.site/)")
+st.sidebar.markdown("📊 [Live Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)")
 st.sidebar.markdown("[🔗 LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)")
 st.sidebar.markdown("[💻 GitHub](https://github.com/bobareichert)")
 st.sidebar.markdown("---")
@@ -127,8 +413,24 @@ st.sidebar.markdown("*AI Support & HEDIS Data Specialist*")
 def show_executive_summary():
     """Executive summary with Humana/Centene case studies"""
     
-    st.markdown('<p class="main-header">🏥 HEDIS Star Rating Portfolio Optimizer</p>', unsafe_allow_html=True)
-    st.markdown('<p class="sub-header">Preventing Healthcare\'s Biggest Revenue Losses</p>', unsafe_allow_html=True)
+    # Enhanced header with icon and badges
+    st.markdown("""
+        <div style="text-align: center; padding: 2rem 0;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🏥</div>
+            <h1 class="main-header">HEDIS Star Rating Portfolio Optimizer</h1>
+            <p class="sub-header">AI-Powered Solution for Medicare Advantage Quality Improvement</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Add professional badges
+    st.markdown("""
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <span class="badge">12 HEDIS Measures</span>
+            <span class="badge badge-success">89% Avg Accuracy</span>
+            <span class="badge badge-warning">HEI 2027 Ready</span>
+            <span class="badge">$13M-$27M Value</span>
+        </div>
+    """, unsafe_allow_html=True)
     
     # Hero metrics
     col1, col2, col3, col4 = st.columns(4)
@@ -291,15 +593,17 @@ def show_executive_summary():
     - ✅ Prepare for HEI 2027 compliance
     - ✅ Deploy production-ready predictive systems
     
-    **Contact:** reichert@post.com  
-    **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-    **GitHub:** [bobareichert](https://github.com/bobareichert)
+    **Contact:** reichert99@gmail.com  
+    **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
+    **GitHub:** [bobareichert](https://github.com/bobareichert)  
+    **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
+    **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
     """)
     
     # Download resume button
     st.download_button(
         label="📄 Download Resume",
-        data="Resume available upon request - Contact: reichert@post.com",
+        data="Resume available upon request - Contact: reichert99@gmail.com",
         file_name="Robert_Reichert_Resume.txt",
         mime="text/plain"
     )
@@ -1175,8 +1479,10 @@ Based on this analysis, the HEDIS portfolio implementation shows
 a strong business case with {roi_percentage:.0f}% ROI over {years_projection} years.
 
 Contact: Robert Reichert
-Email: reichert@post.com
-LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+Email: reichert99@gmail.com
+LinkedIn: www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
+Live Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
     """
     
     st.download_button(
@@ -1558,8 +1864,10 @@ RECOMMENDATION
 {"Target achieved with current strategy." if target_met else f"Increase gap closure rates to reach target. Current gap: {gap_to_target:.2f} stars"}
 
 Contact: Robert Reichert
-Email: reichert@post.com
-LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+Email: reichert99@gmail.com
+LinkedIn: www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
+Live Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
     """
     
     st.download_button(
@@ -3074,9 +3382,11 @@ GET  /api/v1/health
     - Production deployment strategies
     - Integration with existing systems
     
-    📧 **Contact:** reichert@post.com  
+    📧 **Contact:** reichert99@gmail.com  
     💻 **GitHub:** @bobareichert  
-    🔗 **LinkedIn:** linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+    🔗 **LinkedIn:** www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI  
+    🎨 **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
+    📊 **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
     """)
 
 
@@ -3109,7 +3419,7 @@ elif page == "👤 About Me":
     # Contact header
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("📧 **reichert@post.com**")
+        st.markdown("📧 **reichert99@gmail.com**")
     with col2:
         st.markdown("💻 **[GitHub: @bobareichert](https://github.com/bobareichert)**")
     with col3:
@@ -3294,9 +3604,11 @@ elif page == "👤 About Me":
     - Technical presentations and demos
     - Strategic planning sessions
     
-    📧 **Email:** reichert@post.com  
-    🔗 **LinkedIn:** linkedin.com/in/rreichert-HEDIS-Data-Science-AI  
+    📧 **Email:** reichert99@gmail.com  
+    🔗 **LinkedIn:** www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI  
     💻 **GitHub:** github.com/bobareichert  
+    🎨 **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
+    📊 **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)  
     📱 **Response time:** < 24 hours
     """)
     
@@ -3338,7 +3650,7 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666;'>
     <p>Built by Robert Reichert | AI Support & HEDIS Data Specialist</p>
-    <p>📧 reichert@post.com | 🔗 <a href="https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI">LinkedIn</a> | 💻 <a href="https://github.com/bobareichert">GitHub</a></p>
+    <p>📧 reichert99@gmail.com | 🔗 <a href="https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI">LinkedIn</a> | 💻 <a href="https://github.com/bobareichert">GitHub</a> | 🎨 <a href="https://hedis-gap-in-care-prediction-engine.my.canva.site/">Portfolio</a> | 📊 <a href="https://hedis-ma-top-12-w-hei-prep.streamlit.app/">Live Demo</a></p>
     <p>🎯 <strong>Open to Work</strong> - Available for immediate employment</p>
 </div>
 """, unsafe_allow_html=True)
