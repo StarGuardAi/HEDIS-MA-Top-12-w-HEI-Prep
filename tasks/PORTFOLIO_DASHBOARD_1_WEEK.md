@@ -288,7 +288,7 @@
   - HEI 2027 compliance preparation
   
   Contact:
-  - Email: reichert@post.com
+  - Email: reichert99@gmail.com
   - LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
   - GitHub: github.com/bobareichert
   
@@ -420,7 +420,7 @@ facing similar challenges.
 
 Best,
 Robert Reichert
-reichert@post.com
+reichert99@gmail.com
 ```
 
 **To Michael Ford (HEDIS Analytics):**
@@ -486,7 +486,7 @@ Open to opportunities where clinical expertise + AI/ML creates impact.
 
 Best regards,
 Robert Reichert
-reichert@post.com
+reichert99@gmail.com
 ```
 
 ---
@@ -524,7 +524,7 @@ Available for interview to discuss implementation strategy.
 
 Best regards,
 Robert Reichert
-reichert@post.com
+reichert99@gmail.com
 LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 ```
 
@@ -559,7 +559,7 @@ Available immediately for interview.
 
 Best regards,
 Robert Reichert
-reichert@post.com
+reichert99@gmail.com
 ```
 
 **To UnitedHealthcare/Optum (Analytics Team):**
@@ -594,7 +594,7 @@ Available for technical interview.
 
 Best regards,
 Robert Reichert
-reichert@post.com
+reichert99@gmail.com
 GitHub: github.com/bobareichert
 ```
 

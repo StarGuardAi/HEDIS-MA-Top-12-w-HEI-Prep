@@ -30,7 +30,7 @@ python scripts/milestone_portfolio_updater.py
 ```
 🎯 ROBERT REICHERT
 Senior Healthcare Data Scientist & AI Engineer | HEDIS Expert | $200M+ Cost Savings
-📍 Pittsburgh, PA | 📞 480-767-1337 | ✉️ reichert@post.com
+📍 Pittsburgh, PA | 📞 480-767-1337 | ✉️ reichert99@gmail.com
 ```
 
 ### Primary Showcase: HEDIS GSD Prediction Engine

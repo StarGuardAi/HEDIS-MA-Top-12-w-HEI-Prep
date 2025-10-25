@@ -1360,13 +1360,834 @@ See `reports/TIER_1_COMPLETE.md` for full summary.
 
 ---
 
-## 📞 AWAITING APPROVAL
+## ✅ APPROVED: Option 1 - Full Production Deployment
 
-**Please review:** `tasks/PRODUCTION_DEPLOYMENT_PLAN.md`
+**Date Approved:** October 24, 2025  
+**Deployment Approach:** Complete 6-phase production deployment  
+**Timeline:** 6 weeks (API → Database → Cloud → CI/CD → Security → Monitoring)  
+**Target:** Production-ready HIPAA-compliant platform with 99.9% uptime
+
+---
+
+## 🚀 PHASE D.1: API Development (Weeks 1-2) - IN PROGRESS
+
+**Goal:** Build production-ready REST API with FastAPI for all 12 HEDIS measures
+
+**Status:** Ready to Start  
+**Estimated Time:** 2 weeks  
+**Estimated Code:** ~2,500 lines  
+**Target Performance:** < 100ms response time
+
+---
+
+### D.1.1: FastAPI Project Setup & Structure
+
+**Goal:** Create clean FastAPI project structure with middleware and configuration
+
+#### Tasks
+- [ ] Create `src/api/` package structure
+  - [ ] `src/api/__init__.py` - Package initialization
+  - [ ] `src/api/main.py` - FastAPI application entry point
+  - [ ] `src/api/config.py` - API-specific configuration
+  - [ ] `src/api/dependencies.py` - Dependency injection
+- [ ] Install API dependencies
+  - [ ] Add to requirements.txt: fastapi, uvicorn[standard], pydantic, python-multipart
+  - [ ] Add middleware: starlette, python-jose[cryptography]
+  - [ ] Add monitoring: prometheus-client, python-json-logger
+- [ ] Create FastAPI app with metadata
+  - [ ] Set title: "HEDIS Star Rating Portfolio Optimizer API"
+  - [ ] Set version: "2.0.0"
+  - [ ] Set description with 12-measure portfolio details
+  - [ ] Configure OpenAPI tags
+- [ ] Configure middleware stack
+  - [ ] CORS middleware (configurable origins)
+  - [ ] Request ID middleware (UUID per request)
+  - [ ] Logging middleware (structured JSON logs)
+  - [ ] Error handling middleware (PHI-safe errors)
+  - [ ] Request timing middleware (response time tracking)
+- [ ] Set up logging configuration
+  - [ ] Structured JSON logging
+  - [ ] PHI-safe log formatter (no member IDs)
+  - [ ] Log levels by environment (DEBUG for dev, INFO for prod)
+  - [ ] Request/response logging
+- [ ] Create API configuration
+  - [ ] Environment-based settings (dev, staging, prod)
+  - [ ] API keys configuration
+  - [ ] Rate limiting settings
+  - [ ] Model paths configuration
+
+**Success Criteria:**
+- [ ] FastAPI app starts without errors
+- [ ] Middleware stack operational
+- [ ] Logging produces structured JSON
+- [ ] Configuration loads from environment
+
+---
+
+### D.1.2: Pydantic Schema Definitions
+
+**Goal:** Create comprehensive request/response models with validation
+
+#### Tasks
+- [ ] Create `src/api/schemas/` package
+  - [ ] `src/api/schemas/__init__.py`
+  - [ ] `src/api/schemas/prediction.py` - Prediction schemas
+  - [ ] `src/api/schemas/portfolio.py` - Portfolio schemas
+  - [ ] `src/api/schemas/analytics.py` - Analytics schemas
+  - [ ] `src/api/schemas/common.py` - Common/shared schemas
+
+#### Prediction Schemas
+- [ ] **PredictionRequest**
+  - [ ] member_id: str (will be hashed)
+  - [ ] measurement_year: int (default 2025)
+  - [ ] features: Optional[Dict] (if providing custom features)
+  - [ ] include_shap: bool (default True)
+  - [ ] Validators: age range, year range
+- [ ] **PredictionResponse**
+  - [ ] prediction_id: UUID
+  - [ ] member_hash: str (SHA-256)
+  - [ ] measure_code: str
+  - [ ] risk_score: float (0-1)
+  - [ ] risk_tier: str (high/medium/low)
+  - [ ] gap_probability: float (0-1)
+  - [ ] shap_values: Optional[Dict]
+  - [ ] top_features: List[Dict]
+  - [ ] recommendation: str
+  - [ ] model_version: str
+  - [ ] prediction_date: datetime
+- [ ] **BatchPredictionRequest**
+  - [ ] member_ids: List[str]
+  - [ ] measurement_year: int
+  - [ ] include_shap: bool
+  - [ ] Validators: max 1000 members per batch
+- [ ] **BatchPredictionResponse**
+  - [ ] predictions: List[PredictionResponse]
+  - [ ] total_processed: int
+  - [ ] total_high_risk: int
+  - [ ] processing_time_ms: int
+- [ ] **PortfolioPredictionRequest**
+  - [ ] member_id: str
+  - [ ] measures: Optional[List[str]] (default all 12)
+  - [ ] include_shap: bool
+- [ ] **PortfolioPredictionResponse**
+  - [ ] member_hash: str
+  - [ ] predictions: Dict[str, PredictionResponse]
+  - [ ] total_gaps: int
+  - [ ] priority_score: float
+  - [ ] recommended_interventions: List[str]
+
+#### Portfolio Schemas
+- [ ] **PortfolioSummaryResponse**
+  - [ ] total_members: int
+  - [ ] total_gaps: int
+  - [ ] gaps_by_measure: Dict[str, int]
+  - [ ] gaps_by_tier: Dict[int, int]
+  - [ ] star_rating_current: float
+  - [ ] star_rating_projected: float
+  - [ ] estimated_value: float
+  - [ ] generation_date: datetime
+- [ ] **GapListRequest**
+  - [ ] measure_codes: Optional[List[str]]
+  - [ ] risk_tiers: Optional[List[str]]
+  - [ ] min_probability: Optional[float]
+  - [ ] limit: int (default 100)
+- [ ] **GapListResponse**
+  - [ ] gaps: List[GapRecord]
+  - [ ] total_gaps: int
+  - [ ] filters_applied: Dict
+- [ ] **GapRecord**
+  - [ ] member_hash: str
+  - [ ] measure_code: str
+  - [ ] gap_probability: float
+  - [ ] priority_score: float
+  - [ ] intervention_type: str
+- [ ] **PriorityListResponse**
+  - [ ] high_priority_members: List[MemberPriority]
+  - [ ] total_value: float
+  - [ ] expected_closures: int
+- [ ] **MemberPriority**
+  - [ ] member_hash: str
+  - [ ] total_gaps: int
+  - [ ] gap_measures: List[str]
+  - [ ] priority_score: float
+  - [ ] estimated_value: float
+  - [ ] interventions: List[str]
+
+#### Analytics Schemas
+- [ ] **StarRatingRequest**
+  - [ ] measure_rates: Dict[str, float]
+  - [ ] hei_factor: Optional[float]
+- [ ] **StarRatingResponse**
+  - [ ] overall_stars: float
+  - [ ] total_points: float
+  - [ ] measure_stars: Dict[str, float]
+  - [ ] hei_adjusted: bool
+  - [ ] revenue_estimate: float
+- [ ] **SimulationRequest**
+  - [ ] baseline_rates: Dict[str, float]
+  - [ ] closure_scenarios: List[float] (e.g., [0.1, 0.2, 0.3])
+  - [ ] strategy: str (triple_weighted, new_2025, multi_measure, balanced)
+- [ ] **SimulationResponse**
+  - [ ] scenarios: List[ScenarioResult]
+  - [ ] recommended_strategy: str
+- [ ] **ScenarioResult**
+  - [ ] closure_rate: float
+  - [ ] projected_stars: float
+  - [ ] revenue_impact: float
+  - [ ] investment_required: float
+  - [ ] roi: float
+
+#### Common Schemas
+- [ ] **ErrorResponse**
+  - [ ] error: str
+  - [ ] detail: str
+  - [ ] timestamp: datetime
+  - [ ] request_id: str
+- [ ] **HealthResponse**
+  - [ ] status: str
+  - [ ] version: str
+  - [ ] models_loaded: Dict[str, bool]
+  - [ ] uptime_seconds: int
+
+**Success Criteria:**
+- [ ] All schemas validate correctly
+- [ ] Pydantic validation catches invalid inputs
+- [ ] OpenAPI docs auto-generate correctly
+- [ ] PHI protection in all schemas (hashed IDs only)
+
+---
+
+### D.1.3: Prediction Endpoints
+
+**Goal:** Implement core prediction endpoints for all 12 measures
+
+#### Tasks
+- [ ] Create `src/api/routers/prediction.py`
+- [ ] Implement helper functions
+  - [ ] `load_measure_model(measure_code)` - Load trained model
+  - [ ] `load_measure_scaler(measure_code)` - Load feature scaler
+  - [ ] `hash_member_id(member_id)` - SHA-256 hashing
+  - [ ] `calculate_shap_values(model, features)` - SHAP explanations
+  - [ ] `determine_risk_tier(probability)` - High/medium/low
+  - [ ] `generate_recommendation(measure, probability)` - Action items
+- [ ] **Endpoint: POST /api/v1/predict/{measure_code}**
+  - [ ] Validate measure_code (must be in 12-measure registry)
+  - [ ] Hash member_id for privacy
+  - [ ] Load member features from existing pipeline
+  - [ ] Load trained model for measure
+  - [ ] Generate prediction (gap probability)
+  - [ ] Calculate SHAP values (if requested)
+  - [ ] Determine risk tier
+  - [ ] Generate recommendation
+  - [ ] Return PredictionResponse
+  - [ ] Log prediction (PHI-safe)
+  - [ ] Error handling: model not found, invalid input
+  - [ ] Target response time: < 50ms
+- [ ] **Endpoint: POST /api/v1/predict/batch/{measure_code}**
+  - [ ] Validate measure_code
+  - [ ] Validate batch size (max 1000)
+  - [ ] Hash all member_ids
+  - [ ] Load features for all members
+  - [ ] Batch prediction (vectorized)
+  - [ ] Calculate SHAP for high-risk members only
+  - [ ] Return BatchPredictionResponse
+  - [ ] Log batch stats (count, high-risk count)
+  - [ ] Target response time: < 500ms for 100 members
+- [ ] **Endpoint: POST /api/v1/predict/portfolio**
+  - [ ] Hash member_id
+  - [ ] Load features once (reuse for all measures)
+  - [ ] Iterate through requested measures (default all 12)
+  - [ ] Generate predictions for each measure
+  - [ ] Calculate portfolio priority score
+  - [ ] Identify multi-measure gaps
+  - [ ] Generate bundled interventions
+  - [ ] Return PortfolioPredictionResponse
+  - [ ] Target response time: < 200ms
+- [ ] **Endpoint: GET /api/v1/predictions/{prediction_id}**
+  - [ ] Retrieve prediction by ID (future: from database)
+  - [ ] Return cached prediction if available
+  - [ ] Error handling: prediction not found
+
+**Success Criteria:**
+- [ ] All 12 measures accessible via API
+- [ ] Single prediction < 50ms
+- [ ] Batch prediction < 500ms (100 members)
+- [ ] Portfolio prediction < 200ms
+- [ ] SHAP values calculated correctly
+- [ ] PHI-safe logging operational
+- [ ] Comprehensive error handling
+
+---
+
+### D.1.4: Portfolio Endpoints
+
+**Goal:** Implement portfolio analytics and optimization endpoints
+
+#### Tasks
+- [ ] Create `src/api/routers/portfolio.py`
+- [ ] Import portfolio utilities
+  - [ ] `src/utils/portfolio_calculator.py`
+  - [ ] `src/utils/cross_measure_optimizer.py`
+  - [ ] `src/utils/star_rating_simulator.py`
+- [ ] **Endpoint: GET /api/v1/portfolio/summary**
+  - [ ] Load all member predictions (future: from database)
+  - [ ] Calculate total gaps by measure
+  - [ ] Calculate gaps by tier
+  - [ ] Calculate current Star Rating
+  - [ ] Project Star Rating with gap closure
+  - [ ] Estimate portfolio value
+  - [ ] Return PortfolioSummaryResponse
+  - [ ] Cache results (5 minutes)
+- [ ] **Endpoint: GET /api/v1/portfolio/gaps**
+  - [ ] Parse query filters (measure, tier, risk level)
+  - [ ] Load all predictions
+  - [ ] Filter by criteria
+  - [ ] Sort by priority score
+  - [ ] Paginate results (default 100)
+  - [ ] Return GapListResponse
+- [ ] **Endpoint: GET /api/v1/portfolio/priority-list**
+  - [ ] Load all member predictions
+  - [ ] Identify multi-measure gap members
+  - [ ] Calculate priority scores
+  - [ ] Rank by ROI potential
+  - [ ] Generate intervention bundles
+  - [ ] Return PriorityListResponse
+  - [ ] Include estimated value per member
+- [ ] **Endpoint: POST /api/v1/portfolio/optimize**
+  - [ ] Load portfolio predictions
+  - [ ] Run cross-measure optimizer
+  - [ ] Apply budget constraints (if provided)
+  - [ ] Prioritize interventions
+  - [ ] Bundle multi-measure opportunities
+  - [ ] Calculate efficiency savings
+  - [ ] Return optimization results
+  - [ ] Include intervention timeline
+
+**Success Criteria:**
+- [ ] Portfolio summary generates in < 1 second
+- [ ] Gap lists filter correctly
+- [ ] Priority ranking logical (triple-weighted first)
+- [ ] Optimization produces actionable results
+- [ ] Caching improves performance
+
+---
+
+### D.1.5: Analytics Endpoints
+
+**Goal:** Implement Star Rating simulation and ROI analytics
+
+#### Tasks
+- [ ] Create `src/api/routers/analytics.py`
+- [ ] Import analytics utilities
+  - [ ] `src/utils/star_calculator.py`
+  - [ ] `src/utils/portfolio_calculator.py`
+- [ ] **Endpoint: GET /api/v1/analytics/star-rating**
+  - [ ] Calculate current Star Rating from portfolio
+  - [ ] Use StarRatingCalculator
+  - [ ] Apply HEI factor if available
+  - [ ] Calculate measure-level stars
+  - [ ] Estimate revenue by Star tier
+  - [ ] Return StarRatingResponse
+- [ ] **Endpoint: POST /api/v1/analytics/simulate**
+  - [ ] Parse simulation request
+  - [ ] Validate closure scenarios (0-1.0)
+  - [ ] Run StarRatingSimulator
+  - [ ] Calculate projected stars for each scenario
+  - [ ] Estimate investment required
+  - [ ] Calculate ROI by scenario
+  - [ ] Identify optimal strategy
+  - [ ] Return SimulationResponse
+  - [ ] Include break-even analysis
+- [ ] **Endpoint: GET /api/v1/analytics/roi**
+  - [ ] Calculate current portfolio value
+  - [ ] Project gap closure value
+  - [ ] Estimate intervention costs
+  - [ ] Calculate net ROI
+  - [ ] Show 1-year, 3-year, 5-year projections
+  - [ ] Return ROI analysis
+
+**Success Criteria:**
+- [ ] Star Rating calculations match manual calculations
+- [ ] Simulations produce realistic projections
+- [ ] ROI analysis aligns with business case
+- [ ] Scenarios compare correctly
+
+---
+
+### D.1.6: Measure & Health Endpoints
+
+**Goal:** Implement measure information and health check endpoints
+
+#### Tasks
+- [ ] Create `src/api/routers/measures.py`
+- [ ] **Endpoint: GET /api/v1/measures**
+  - [ ] Load all 12 measures from MEASURE_REGISTRY
+  - [ ] Return measure metadata (code, name, tier, weight)
+  - [ ] Include status (production, development)
+  - [ ] Include data requirements
+  - [ ] Include current performance (if available)
+- [ ] **Endpoint: GET /api/v1/measures/{measure_code}**
+  - [ ] Validate measure_code
+  - [ ] Return full MeasureSpec
+  - [ ] Include population criteria
+  - [ ] Include value sets (ICD-10, CPT, LOINC)
+  - [ ] Include model metadata
+  - [ ] Error handling: measure not found
+- [ ] **Endpoint: GET /api/v1/measures/{measure_code}/performance**
+  - [ ] Load measure performance metrics
+  - [ ] Return current rate, numerator, denominator
+  - [ ] Return Star Rating for measure
+  - [ ] Return estimated value
+  - [ ] Return gap count
+
+- [ ] Create `src/api/routers/health.py`
+- [ ] **Endpoint: GET /health**
+  - [ ] Return simple "OK" status
+  - [ ] Include API version
+  - [ ] Include uptime
+- [ ] **Endpoint: GET /health/ready**
+  - [ ] Check if all models loaded
+  - [ ] Check if configuration valid
+  - [ ] Return ready status (for Kubernetes)
+- [ ] **Endpoint: GET /health/live**
+  - [ ] Basic liveness check
+  - [ ] Return alive status (for Kubernetes)
+- [ ] **Endpoint: GET /api/v1/metrics**
+  - [ ] Expose Prometheus metrics
+  - [ ] Request count by endpoint
+  - [ ] Response time histograms
+  - [ ] Error rate
+  - [ ] Active predictions count
+
+**Success Criteria:**
+- [ ] Measure registry accessible
+- [ ] Health checks respond correctly
+- [ ] Prometheus metrics export properly
+- [ ] Ready for monitoring integration
+
+---
+
+### D.1.7: Authentication & Rate Limiting
+
+**Goal:** Implement API key authentication and rate limiting
+
+#### Tasks
+- [ ] Create `src/api/auth.py`
+- [ ] **API Key Management**
+  - [ ] Create APIKey model (key_id, hashed_key, name, created, expires)
+  - [ ] Implement `generate_api_key()` - 32-byte random
+  - [ ] Implement `hash_api_key(key)` - SHA-256
+  - [ ] Implement `verify_api_key(key)` - Compare hashes
+  - [ ] Store keys in config (future: database)
+  - [ ] Create default dev API key
+- [ ] **Authentication Dependency**
+  - [ ] Create `verify_api_key` dependency
+  - [ ] Check X-API-Key header
+  - [ ] Validate key against stored hashes
+  - [ ] Return 401 if invalid
+  - [ ] Log authentication attempts (PHI-safe)
+- [ ] **Rate Limiting Middleware**
+  - [ ] Track requests per API key per minute
+  - [ ] Default limit: 100 requests/minute
+  - [ ] Return 429 Too Many Requests if exceeded
+  - [ ] Include Retry-After header
+  - [ ] Reset counts every minute
+- [ ] **Apply authentication to endpoints**
+  - [ ] Add auth dependency to all prediction endpoints
+  - [ ] Add auth dependency to portfolio endpoints
+  - [ ] Add auth dependency to analytics endpoints
+  - [ ] Leave health endpoints public (no auth)
+  - [ ] Leave metrics endpoint public (for Prometheus)
+
+**Success Criteria:**
+- [ ] API keys validate correctly
+- [ ] Invalid keys return 401
+- [ ] Rate limiting enforces 100 req/min
+- [ ] Rate limit headers included in responses
+- [ ] PHI-safe authentication logging
+
+---
+
+### D.1.8: Error Handling & Logging
+
+**Goal:** Implement comprehensive error handling and PHI-safe logging
+
+#### Tasks
+- [ ] Create `src/api/exceptions.py`
+- [ ] **Custom Exception Classes**
+  - [ ] `MeasureNotFoundError` - Invalid measure code
+  - [ ] `ModelNotFoundError` - Model file missing
+  - [ ] `FeatureExtractionError` - Feature calculation failed
+  - [ ] `PredictionError` - Model prediction failed
+  - [ ] `ValidationError` - Input validation failed
+- [ ] **Exception Handlers**
+  - [ ] Handle MeasureNotFoundError → 404
+  - [ ] Handle ModelNotFoundError → 503
+  - [ ] Handle ValidationError → 422
+  - [ ] Handle PredictionError → 500
+  - [ ] Handle generic Exception → 500
+  - [ ] Return ErrorResponse for all errors
+  - [ ] Include request_id in all error responses
+  - [ ] Log errors with full context (PHI-safe)
+- [ ] **Logging Configuration**
+  - [ ] Create PHI-safe log formatter
+  - [ ] Remove member_ids from logs (use hashes)
+  - [ ] Structure logs as JSON
+  - [ ] Include: timestamp, level, message, request_id, endpoint, response_time
+  - [ ] Log all requests (INFO level)
+  - [ ] Log all errors (ERROR level)
+  - [ ] Log authentication attempts (WARNING for failures)
+- [ ] **Request/Response Logging**
+  - [ ] Log incoming requests (endpoint, method, API key hash)
+  - [ ] Log outgoing responses (status code, response time)
+  - [ ] Log prediction counts (not individual predictions)
+  - [ ] Never log member_ids or PII
+
+**Success Criteria:**
+- [ ] All errors handled gracefully
+- [ ] Error responses include helpful messages
+- [ ] Logs are structured JSON
+- [ ] No PHI in logs (verified with HIPAA scanner)
+- [ ] Request tracking via request_id
+
+---
+
+### D.1.9: API Documentation
+
+**Goal:** Create comprehensive API documentation with examples
+
+#### Tasks
+- [ ] **OpenAPI Documentation**
+  - [ ] Configure FastAPI OpenAPI metadata
+  - [ ] Add descriptions to all endpoints
+  - [ ] Add example requests/responses
+  - [ ] Document authentication (X-API-Key header)
+  - [ ] Document rate limits
+  - [ ] Document error responses
+  - [ ] Add tags for endpoint grouping
+- [ ] **Swagger UI Configuration**
+  - [ ] Enable Swagger UI at /docs
+  - [ ] Customize title and description
+  - [ ] Add API key input field
+  - [ ] Add "Try it out" examples
+- [ ] **ReDoc Configuration**
+  - [ ] Enable ReDoc at /redoc
+  - [ ] Alternative documentation view
+- [ ] **Create API Usage Guide**
+  - [ ] Create `docs/API_USAGE_GUIDE.md`
+  - [ ] Quick start with curl examples
+  - [ ] Python client examples
+  - [ ] Authentication setup
+  - [ ] Common use cases
+  - [ ] Error handling examples
+  - [ ] Rate limiting guidance
+- [ ] **Create API Examples**
+  - [ ] Example 1: Single member prediction
+  - [ ] Example 2: Batch prediction (100 members)
+  - [ ] Example 3: Portfolio prediction
+  - [ ] Example 4: Get priority list
+  - [ ] Example 5: Run Star Rating simulation
+  - [ ] Example 6: Portfolio optimization
+  - [ ] Save examples to `examples/api_examples.py`
+
+**Success Criteria:**
+- [ ] OpenAPI spec generates correctly
+- [ ] Swagger UI functional and user-friendly
+- [ ] API usage guide complete with examples
+- [ ] All endpoints documented
+- [ ] Examples work out-of-the-box
+
+---
+
+### D.1.10: API Testing
+
+**Goal:** Comprehensive API testing with 90%+ coverage
+
+#### Tasks
+- [ ] Create `tests/api/` test package
+  - [ ] `tests/api/__init__.py`
+  - [ ] `tests/api/conftest.py` - Test fixtures
+  - [ ] `tests/api/test_prediction_endpoints.py`
+  - [ ] `tests/api/test_portfolio_endpoints.py`
+  - [ ] `tests/api/test_analytics_endpoints.py`
+  - [ ] `tests/api/test_measures_endpoints.py`
+  - [ ] `tests/api/test_health_endpoints.py`
+  - [ ] `tests/api/test_authentication.py`
+  - [ ] `tests/api/test_rate_limiting.py`
+
+#### Test Fixtures
+- [ ] **pytest fixtures**
+  - [ ] `test_client` - FastAPI TestClient
+  - [ ] `valid_api_key` - Test API key
+  - [ ] `invalid_api_key` - Invalid key for testing
+  - [ ] `sample_prediction_request` - Valid request
+  - [ ] `sample_member_ids` - Test member IDs
+
+#### Prediction Endpoint Tests
+- [ ] Test single prediction success (200)
+- [ ] Test single prediction with SHAP
+- [ ] Test invalid measure code (404)
+- [ ] Test invalid member ID format (422)
+- [ ] Test batch prediction success
+- [ ] Test batch prediction size limit (422 if > 1000)
+- [ ] Test portfolio prediction success
+- [ ] Test portfolio prediction with subset of measures
+- [ ] Test response time < 50ms for single
+- [ ] Test response time < 500ms for batch (100)
+
+#### Portfolio Endpoint Tests
+- [ ] Test portfolio summary success
+- [ ] Test gap list with filters
+- [ ] Test priority list generation
+- [ ] Test optimization endpoint
+- [ ] Test caching behavior
+
+#### Analytics Endpoint Tests
+- [ ] Test Star Rating calculation
+- [ ] Test simulation with multiple scenarios
+- [ ] Test ROI calculation
+- [ ] Test simulation validation (closure rate 0-1)
+
+#### Measures & Health Endpoint Tests
+- [ ] Test list all measures
+- [ ] Test get single measure
+- [ ] Test invalid measure code (404)
+- [ ] Test health check
+- [ ] Test ready endpoint
+- [ ] Test live endpoint
+- [ ] Test metrics endpoint (Prometheus format)
+
+#### Authentication Tests
+- [ ] Test valid API key (200)
+- [ ] Test invalid API key (401)
+- [ ] Test missing API key (401)
+- [ ] Test expired API key (401)
+- [ ] Test authentication logging
+
+#### Rate Limiting Tests
+- [ ] Test under rate limit (200)
+- [ ] Test exceeding rate limit (429)
+- [ ] Test rate limit reset after 1 minute
+- [ ] Test rate limit headers (X-RateLimit-Remaining)
+- [ ] Test rate limit per API key isolation
+
+#### Error Handling Tests
+- [ ] Test model not found error (503)
+- [ ] Test prediction error (500)
+- [ ] Test validation error (422)
+- [ ] Test error response format
+- [ ] Test request_id in error responses
+
+#### Integration Tests
+- [ ] Test end-to-end: predict → analyze → optimize
+- [ ] Test with all 12 measures
+- [ ] Test concurrent requests
+- [ ] Test error recovery
+
+**Success Criteria:**
+- [ ] 90%+ test coverage
+- [ ] All endpoints tested
+- [ ] All error cases covered
+- [ ] Performance benchmarks met
+- [ ] Tests run in < 30 seconds
+
+---
+
+### D.1.11: Performance Optimization
+
+**Goal:** Optimize API for < 100ms response time
+
+#### Tasks
+- [ ] **Model Loading Optimization**
+  - [ ] Load all 12 models at startup (not per request)
+  - [ ] Cache loaded models in memory
+  - [ ] Use singleton pattern for model loader
+  - [ ] Implement lazy loading if memory constrained
+- [ ] **Feature Extraction Optimization**
+  - [ ] Cache feature extraction results (5 minutes)
+  - [ ] Vectorize feature calculations
+  - [ ] Reuse features across measures for portfolio predictions
+- [ ] **Response Caching**
+  - [ ] Implement in-memory cache (TTL 5 minutes)
+  - [ ] Cache portfolio summary
+  - [ ] Cache gap lists (by filter combination)
+  - [ ] Cache measure performance
+  - [ ] Clear cache on data updates
+- [ ] **Async Operations**
+  - [ ] Make endpoints async where beneficial
+  - [ ] Use asyncio for concurrent model loading
+  - [ ] Async database operations (Phase D.2)
+- [ ] **Batch Processing Optimization**
+  - [ ] Use numpy/pandas vectorization
+  - [ ] Parallel SHAP calculation (ThreadPoolExecutor)
+  - [ ] Batch size optimization testing
+- [ ] **Profiling & Benchmarking**
+  - [ ] Profile slow endpoints with cProfile
+  - [ ] Identify bottlenecks
+  - [ ] Optimize hot paths
+  - [ ] Benchmark before/after optimizations
+
+**Success Criteria:**
+- [ ] Single prediction < 50ms (p95)
+- [ ] Batch 100 predictions < 500ms (p95)
+- [ ] Portfolio prediction < 200ms (p95)
+- [ ] Portfolio summary < 1000ms (p95)
+- [ ] Memory usage < 2GB
+- [ ] CPU usage < 80% under load
+
+---
+
+### D.1.12: Healthcare Code Reviews
+
+**Goal:** Ensure HIPAA compliance and healthcare best practices
+
+#### Tasks
+- [ ] **Security Review** - Run on all API files
+  - [ ] `/review-security src/api/main.py`
+  - [ ] `/review-security src/api/routers/prediction.py`
+  - [ ] `/review-security src/api/routers/portfolio.py`
+  - [ ] `/review-security src/api/routers/analytics.py`
+  - [ ] `/review-security src/api/auth.py`
+  - [ ] Check: No PHI exposure in responses
+  - [ ] Check: API keys stored as hashes only
+  - [ ] Check: No hardcoded secrets
+  - [ ] Fix any security issues found
+  - [ ] Re-run until PASSED
+
+- [ ] **HIPAA Review** - Run on all API files
+  - [ ] `/review-hipaa src/api/main.py`
+  - [ ] `/review-hipaa src/api/routers/prediction.py`
+  - [ ] `/review-hipaa src/api/routers/portfolio.py`
+  - [ ] `/review-hipaa src/api/auth.py`
+  - [ ] Check: Member IDs hashed (SHA-256)
+  - [ ] Check: Audit logging operational
+  - [ ] Check: Data minimization applied
+  - [ ] Check: No PII in logs
+  - [ ] Fix any HIPAA issues found
+  - [ ] Re-run until PASSED
+
+- [ ] **Performance Review** - Run on performance-critical files
+  - [ ] `/review-performance src/api/routers/prediction.py`
+  - [ ] `/review-performance src/api/routers/portfolio.py`
+  - [ ] Check: Vectorized operations used
+  - [ ] Check: Caching implemented
+  - [ ] Check: No blocking I/O in async code
+  - [ ] Fix any performance issues found
+  - [ ] Re-run until PASSED
+
+- [ ] **Data Quality Review** - Run on all data-handling code
+  - [ ] `/review-data-quality src/api/routers/prediction.py`
+  - [ ] Check: Input validation comprehensive
+  - [ ] Check: Error handling complete
+  - [ ] Check: Edge cases handled
+  - [ ] Fix any data quality issues found
+  - [ ] Re-run until PASSED
+
+**Success Criteria:**
+- [ ] All security reviews PASSED
+- [ ] All HIPAA reviews PASSED
+- [ ] All performance reviews PASSED
+- [ ] All data quality reviews PASSED
+- [ ] No PHI exposure verified
+- [ ] Audit logging comprehensive
+
+---
+
+### D.1.13: Documentation & Wrap-Up
+
+**Goal:** Complete Phase D.1 with comprehensive documentation
+
+#### Tasks
+- [ ] **Update README.md**
+  - [ ] Add API section
+  - [ ] Add quick start for API
+  - [ ] Add API endpoints list
+  - [ ] Add authentication instructions
+  - [ ] Add deployment instructions
+- [ ] **Create Phase D.1 Summary**
+  - [ ] Create `reports/PHASE_D1_API_COMPLETE.md`
+  - [ ] Document all endpoints created
+  - [ ] Document performance benchmarks
+  - [ ] Document test coverage achieved
+  - [ ] Document healthcare review results
+  - [ ] Document known issues (if any)
+  - [ ] Document next steps (Phase D.2)
+- [ ] **Update config.yaml**
+  - [ ] Add API configuration section
+  - [ ] Add authentication settings
+  - [ ] Add rate limiting settings
+  - [ ] Add endpoint configurations
+- [ ] **Create Deployment Guide**
+  - [ ] Create `docs/API_DEPLOYMENT_GUIDE.md`
+  - [ ] Local development setup
+  - [ ] Running the API locally
+  - [ ] Environment variables
+  - [ ] Testing instructions
+  - [ ] Troubleshooting guide
+
+**Success Criteria:**
+- [ ] README updated with API info
+- [ ] Phase D.1 summary complete
+- [ ] Configuration documented
+- [ ] Deployment guide ready
+
+---
+
+## Phase D.1 Success Criteria - Summary
+
+**Technical Metrics:**
+- [ ] All 12 measures accessible via API
+- [ ] 20+ endpoints operational
+- [ ] Response time < 100ms (p95)
+- [ ] 90%+ test coverage
+- [ ] All healthcare code reviews PASSED
+- [ ] OpenAPI documentation complete
+
+**Business Metrics:**
+- [ ] Portfolio predictions available
+- [ ] Gap lists generated
+- [ ] Priority members identified
+- [ ] Star Rating simulations working
+- [ ] ROI analytics operational
+
+**Healthcare Compliance:**
+- [ ] No PHI exposure (verified)
+- [ ] Member IDs hashed (SHA-256)
+- [ ] Audit logging operational
+- [ ] HIPAA-compliant responses
+- [ ] Security reviews passed
+
+**Deliverables:**
+- [ ] `src/api/` package (~2,500 lines)
+- [ ] `tests/api/` tests (~1,500 lines)
+- [ ] `docs/API_USAGE_GUIDE.md`
+- [ ] `examples/api_examples.py`
+- [ ] OpenAPI specification
+- [ ] Phase D.1 completion report
+
+---
+
+## Review Section (Phase D.1 - To Be Completed After Implementation)
+
+- **Security Review:** [ ] PENDING
+- **HIPAA Review:** [ ] PENDING
+- **Performance Review:** [ ] PENDING
+- **Data Quality Review:** [ ] PENDING
+- **API Testing:** [ ] PENDING (target 90%+ coverage)
+- **Documentation:** [ ] PENDING
+
+---
+
+## 📋 READY FOR VERIFICATION
+
+**Please review the Phase D.1 task breakdown above.**
 
 **To proceed:**
-- Type "**approve**" or "**go**" to start Phase D.1 (API Development)
-- Type "**option1**", "**option2**", or "**option3**" to choose deployment approach
-- Type "**modify**" to suggest changes to the plan
+- Type "**approved**" or "**go**" to start implementation
+- Type "**modify [feedback]**" to suggest changes
+- Type "**questions**" if you need clarification
 
-**Current recommendation:** Option 1 (Full Deployment) for production-ready system
+Once approved, I will begin implementing Phase D.1 tasks systematically, marking them complete as I go. I'll run healthcare code reviews after each major component and provide high-level progress updates.
+
+**Estimated completion time:** 2 working days (if working continuously)  
+**Expected result:** Production-ready FastAPI serving all 12 HEDIS measures with < 100ms response time 🚀
