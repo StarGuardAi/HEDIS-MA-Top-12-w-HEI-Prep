@@ -1,9 +1,14 @@
 # HEDIS Star Rating Portfolio Optimizer
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 **Author:** Robert Reichert  
-**Portfolio Dashboard:** [Live Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)  
+**Live Demo:** [Streamlit Dashboard](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) 🚀  
 **GitHub:** [bobareichert](https://github.com/bobareichert)  
-**Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)
+**Portfolio Site:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)
 
 ---
 
@@ -86,29 +91,51 @@ Complete AI-driven HEDIS portfolio system demonstrating expertise in healthcare 
 
 ---
 
-## 🚀 Interactive Dashboard ✅ COMPLETE
+## 🚀 Try It Live!
 
-**Live Demo:** [Deploy to Streamlit Cloud](https://share.streamlit.io/) - See `DASHBOARD_DEPLOYMENT_GUIDE.md` for instructions
+### Live Demo
+**🌐 Streamlit Dashboard:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
 
-**Dashboard Pages (All 10 Complete):**
-1. 🏠 Executive Summary - Humana/Centene case studies
-2. ⚠️ Problem Statement - Industry Star Rating challenges
-3. 📊 Portfolio Overview - All 12 measures detailed
-4. 💰 Financial Impact - ROI calculator with scenarios
-5. ⭐ Star Rating Simulator - Crisis prevention modeling
-6. 🤖 AI/ML Models - Technical deep-dive with SHAP
-7. 🏥 Health Equity (HEI) - Disparity analysis for 2027
-8. 📈 Visualizations - 15 interactive charts
-9. 💻 Technical Details - Architecture & code quality
-10. 👤 About Me - Background & contact
+**Interactive Features:**
+- ⭐ Star Rating Simulator - Model crisis prevention scenarios
+- 💰 ROI Calculator - Project financial impact with your data
+- 🤖 ML Model Explorer - SHAP explanations for predictions
+- 📊 Portfolio Analytics - 12 HEDIS measures visualization
+- 🏥 Health Equity Index - 2027 CMS compliance analysis
 
-**Run Locally:**
+### Run Locally
 ```bash
-pip install streamlit plotly pandas numpy
+# Clone repository
+git clone https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep.git
+cd HEDIS-MA-Top-12-w-HEI-Prep
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Launch dashboard
 streamlit run streamlit_app.py
+
+# Or start API
+uvicorn src.api.main:app --reload
 ```
 
-**Deploy:** See `DASHBOARD_DEPLOYMENT_GUIDE.md` for complete instructions
+### Deploy Your Own
+Want to deploy your own instance? See [`docs/QUICK_DEPLOY_GUIDE.md`](docs/QUICK_DEPLOY_GUIDE.md) for 15-minute setup.
+
+---
+
+## 📱 Dashboard Pages (All 10 Complete)
+
+1. **🏠 Executive Summary** - Humana/Centene case studies  
+2. **⚠️ Problem Statement** - $150-200M Star Rating crisis  
+3. **📊 Portfolio Overview** - All 12 measures detailed  
+4. **💰 Financial Impact** - Interactive ROI calculator  
+5. **⭐ Star Rating Simulator** - Crisis prevention scenarios  
+6. **🤖 AI/ML Models** - Technical deep-dive with SHAP  
+7. **🏥 Health Equity Index** - 2027 CMS requirement readiness  
+8. **📈 Visualizations** - 15 interactive Plotly charts  
+9. **💻 Technical Architecture** - Code quality & testing  
+10. **👤 About Me** - Background, skills, and contact
 
 ---
 
