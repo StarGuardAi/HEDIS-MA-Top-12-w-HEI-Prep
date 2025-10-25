@@ -6,7 +6,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Author:** Robert Reichert  
-**Live Demo:** [Streamlit Dashboard](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) 🚀  
+**Live Demo:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) 🚀 **← TRY IT NOW!**  
 **GitHub:** [bobareichert](https://github.com/bobareichert)  
 **Portfolio Site:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)
 
@@ -94,7 +94,7 @@ Complete AI-driven HEDIS portfolio system demonstrating expertise in healthcare 
 ## 🚀 Try It Live!
 
 ### Live Demo
-**🌐 Streamlit Dashboard:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
+**🌐 Streamlit Dashboard:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) **← LIVE & INTERACTIVE**
 
 **Interactive Features:**
 - ⭐ Star Rating Simulator - Model crisis prevention scenarios
