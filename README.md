@@ -1,8 +1,9 @@
 # HEDIS Star Rating Portfolio Optimizer
 
 **Author:** Robert Reichert  
-**Portfolio Dashboard:** [Live Demo](https://bobareichert-hedis-portfolio.streamlit.app) _(deploying...)_  
-**GitHub:** [bobareichert](https://github.com/bobareichert)
+**Portfolio Dashboard:** [Live Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)  
+**GitHub:** [bobareichert](https://github.com/bobareichert)  
+**Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)
 
 ---
 
@@ -85,21 +86,29 @@ Complete AI-driven HEDIS portfolio system demonstrating expertise in healthcare 
 
 ---
 
-## 🚀 Interactive Dashboard
+## 🚀 Interactive Dashboard ✅ COMPLETE
 
-**Live Demo:** [bobareichert-hedis-portfolio.streamlit.app](https://bobareichert-hedis-portfolio.streamlit.app)
+**Live Demo:** [Deploy to Streamlit Cloud](https://share.streamlit.io/) - See `DASHBOARD_DEPLOYMENT_GUIDE.md` for instructions
 
-**Dashboard Pages:**
+**Dashboard Pages (All 10 Complete):**
 1. 🏠 Executive Summary - Humana/Centene case studies
 2. ⚠️ Problem Statement - Industry Star Rating challenges
 3. 📊 Portfolio Overview - All 12 measures detailed
 4. 💰 Financial Impact - ROI calculator with scenarios
 5. ⭐ Star Rating Simulator - Crisis prevention modeling
-6. 🤖 AI/ML Models - Technical deep-dive
-7. 🏥 Health Equity (HEI) - Disparity analysis
+6. 🤖 AI/ML Models - Technical deep-dive with SHAP
+7. 🏥 Health Equity (HEI) - Disparity analysis for 2027
 8. 📈 Visualizations - 15 interactive charts
 9. 💻 Technical Details - Architecture & code quality
 10. 👤 About Me - Background & contact
+
+**Run Locally:**
+```bash
+pip install streamlit plotly pandas numpy
+streamlit run streamlit_app.py
+```
+
+**Deploy:** See `DASHBOARD_DEPLOYMENT_GUIDE.md` for complete instructions
 
 ---
 
@@ -137,9 +146,11 @@ Complete AI-driven HEDIS portfolio system demonstrating expertise in healthcare 
 **Robert Reichert**  
 AI Support & HEDIS Data Specialist
 
-📧 **Email:** reichert@post.com  
-🔗 **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-💻 **GitHub:** [bobareichert](https://github.com/bobareichert)
+📧 **Email:** reichert99@gmail.com  
+🔗 **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
+💻 **GitHub:** [bobareichert](https://github.com/bobareichert)  
+🎨 **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
+📊 **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
 
 🎯 **Status:** Open to Work - Available Immediately
 

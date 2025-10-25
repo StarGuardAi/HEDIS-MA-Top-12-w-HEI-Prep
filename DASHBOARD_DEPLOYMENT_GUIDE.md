@@ -133,7 +133,7 @@ Would you have 15 minutes this week to discuss how this approach could benefit
 
 Best regards,
 Robert Reichert
-reichert@post.com
+reichert99@gmail.com
 linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 ```
 
