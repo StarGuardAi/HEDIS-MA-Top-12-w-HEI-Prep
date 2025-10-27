@@ -6,7 +6,8 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Author:** Robert Reichert  
-**Live Demo:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) 🚀 **← TRY IT NOW!**  
+**Portfolio Landing:** [Deploy to Vercel/Netlify](#-quick-deployment) (instant load, mobile-ready)  
+**Live Demo:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) 🚀 **← INTERACTIVE DASHBOARD**  
 **GitHub:** [bobareichert](https://github.com/bobareichert)  
 **Portfolio Site:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)
 
@@ -91,7 +92,32 @@ Complete AI-driven HEDIS portfolio system demonstrating expertise in healthcare 
 
 ---
 
-## 🚀 Try It Live!
+## 🚀 Quick Deployment
+
+### Option 1: Hybrid Strategy (Recommended)
+
+Deploy a lightning-fast landing page that links to your Streamlit dashboard:
+
+**Vercel (3 minutes):**
+1. Go to https://vercel.com
+2. Sign up with GitHub
+3. Import repository
+4. Deploy!
+
+**Netlify (3 minutes):**
+1. Go to https://netlify.com
+2. Sign up with GitHub
+3. Import repository
+4. Deploy!
+
+**Result:** <1 second load time → Professional landing page → Links to Streamlit demos
+
+📖 **Full guide:** [`docs/HYBRID_PORTFOLIO_GUIDE.md`](docs/HYBRID_PORTFOLIO_GUIDE.md)  
+⚡ **Quick start:** [`HYBRID_STRATEGY_QUICK_START.md`](HYBRID_STRATEGY_QUICK_START.md)
+
+---
+
+## 📱 Try It Live!
 
 ### Live Demo
 **🌐 Streamlit Dashboard:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) **← LIVE & INTERACTIVE**

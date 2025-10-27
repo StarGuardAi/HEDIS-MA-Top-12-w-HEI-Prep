@@ -1,0 +1,376 @@
+{
+  "info": {
+    "name": "HEDIS Star Rating Portfolio Optimizer API",
+    "description": "Complete API collection for 12 HEDIS measures + Health Equity Index (HEI)\n\nAuthor: Robert Reichert\nVersion: 2.0\nEndpoints: 17\n\nFeatures:\n- 12 HEDIS measures (GSD, KED, EED, PDC-DR, BPD, CBP, SUPD, PDC-RASA, PDC-STA, BCS, COL, HEI)\n- Health Equity Index (HEI) - 2+ years before CMS 2027 mandate\n- Portfolio optimization\n- Star Rating simulation\n- ROI calculation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Equity Index (HEI) - NEW!",
+      "item": [
+        {
+          "name": "Analyze Single Measure Equity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"measure_code\": \"GSD\",\n  \"measure_results\": [\n    {\"member_id\": \"M001\", \"GSD_in_denominator\": 1, \"GSD_in_numerator\": 1, \"GSD_gap\": 0},\n    {\"member_id\": \"M002\", \"GSD_in_denominator\": 1, \"GSD_in_numerator\": 0, \"GSD_gap\": 1}\n  ],\n  \"hei_data\": [\n    {\"member_id\": \"M001\", \"race_ethnicity_std\": \"WHITE\", \"language_std\": \"ENGLISH\", \"is_lep\": 0},\n    {\"member_id\": \"M002\", \"race_ethnicity_std\": \"BLACK\", \"language_std\": \"ENGLISH\", \"is_lep\": 0}\n  ],\n  \"stratification_var\": \"race_ethnicity_std\",\n  \"disparity_threshold\": 10.0,\n  \"measurement_year\": 2025\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/equity/analyze",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "equity", "analyze"]
+            },
+            "description": "Analyze health equity for a single HEDIS measure. Identifies disparities between demographic groups.\n\nUse Case: Detect if certain groups have lower compliance rates."
+          }
+        },
+        {
+          "name": "Calculate Portfolio Equity Score",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"measure_results\": {\n    \"GSD\": [{\"member_id\": \"M001\", \"GSD_in_denominator\": 1, \"GSD_in_numerator\": 1, \"GSD_gap\": 0}],\n    \"KED\": [{\"member_id\": \"M001\", \"KED_in_denominator\": 1, \"KED_in_numerator\": 1, \"KED_gap\": 0}]\n  },\n  \"hei_data\": [\n    {\"member_id\": \"M001\", \"race_ethnicity_std\": \"WHITE\", \"language_std\": \"ENGLISH\"}\n  ],\n  \"measure_weights\": {\n    \"GSD\": 3.0,\n    \"KED\": 3.0\n  },\n  \"stratification_vars\": [\"race_ethnicity_std\"],\n  \"measurement_year\": 2025\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/equity/score",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "equity", "score"]
+            },
+            "description": "Calculate portfolio-level HEI score and CMS penalty tier.\n\nPenalty Tiers:\n- ≥70: No penalty\n- 50-69: -0.25 stars ($10M)\n- <50: -0.5 stars ($20M)"
+          }
+        },
+        {
+          "name": "Get Priority Interventions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"measure_results\": {\n    \"GSD\": [{\"member_id\": \"M001\", \"GSD_in_denominator\": 1, \"GSD_in_numerator\": 1, \"GSD_gap\": 0}]\n  },\n  \"hei_data\": [\n    {\"member_id\": \"M001\", \"race_ethnicity_std\": \"WHITE\", \"language_std\": \"ENGLISH\"}\n  ],\n  \"measure_weights\": {\"GSD\": 3.0},\n  \"stratification_vars\": [\"race_ethnicity_std\"],\n  \"measurement_year\": 2025,\n  \"top_n\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/equity/interventions?top_n=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "equity", "interventions"],
+              "query": [{"key": "top_n", "value": "10"}]
+            },
+            "description": "Get actionable intervention recommendations to close equity gaps.\n\nIncludes: Priority ranking, target groups, recommended actions."
+          }
+        },
+        {
+          "name": "Generate Equity Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"measure_results\": {\n    \"GSD\": [{\"member_id\": \"M001\", \"GSD_in_denominator\": 1, \"GSD_in_numerator\": 1, \"GSD_gap\": 0}]\n  },\n  \"hei_data\": [{\"member_id\": \"M001\", \"race_ethnicity_std\": \"WHITE\"}],\n  \"measure_weights\": {\"GSD\": 3.0},\n  \"stratification_vars\": [\"race_ethnicity_std\"],\n  \"report_format\": \"summary\",\n  \"measurement_year\": 2025\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/equity/report",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "equity", "report"]
+            },
+            "description": "Generate comprehensive HEI report.\n\nFormats: 'summary' (1-2 pages) or 'detailed' (5-10 pages)"
+          }
+        }
+      ],
+      "description": "NEW Health Equity Index endpoints - CMS 2027 mandate (2+ years early)\n\nValue: $10M-$20M downside protection"
+    },
+    {
+      "name": "Measures",
+      "item": [
+        {
+          "name": "List All Measures",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "X-API-Key", "value": "{{api_key}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/measures",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "measures"]
+            },
+            "description": "Get list of all 12 HEDIS measures across 4 tiers"
+          }
+        },
+        {
+          "name": "Get Measure Details",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "X-API-Key", "value": "{{api_key}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/measures/GSD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "measures", "GSD"]
+            },
+            "description": "Get detailed information for a specific measure"
+          }
+        },
+        {
+          "name": "Get Measure Performance",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "X-API-Key", "value": "{{api_key}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/measures/GSD/performance",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "measures", "GSD", "performance"]
+            },
+            "description": "Get current performance metrics for a measure"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Predictions",
+      "item": [
+        {
+          "name": "Predict Single Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "X-API-Key", "value": "{{api_key}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member_id\": \"M12345\",\n  \"age\": 65,\n  \"gender\": \"F\",\n  \"diabetes_duration_years\": 8,\n  \"hba1c_last\": 7.5,\n  \"num_er_visits_last_year\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/GSD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "GSD"]
+            }
+          }
+        },
+        {
+          "name": "Batch Predictions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "X-API-Key", "value": "{{api_key}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"members\": [\n    {\"member_id\": \"M001\", \"age\": 65, \"hba1c_last\": 7.5},\n    {\"member_id\": \"M002\", \"age\": 70, \"hba1c_last\": 8.2}\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/batch/GSD",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "batch", "GSD"]
+            }
+          }
+        },
+        {
+          "name": "Portfolio Predictions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "X-API-Key", "value": "{{api_key}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member_id\": \"M001\",\n  \"member_data\": {\"age\": 65, \"gender\": \"F\"},\n  \"measures\": [\"GSD\", \"KED\", \"CBP\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/portfolio",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "portfolio"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Portfolio",
+      "item": [
+        {
+          "name": "Get Portfolio Summary",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "X-API-Key", "value": "{{api_key}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/portfolio/summary",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "portfolio", "summary"]
+            }
+          }
+        },
+        {
+          "name": "Generate Gap Lists",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "X-API-Key", "value": "{{api_key}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"measures\": [\"GSD\", \"KED\"],\n  \"min_risk_score\": 0.7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/portfolio/gaps",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "portfolio", "gaps"]
+            }
+          }
+        },
+        {
+          "name": "Get Priority List",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "X-API-Key", "value": "{{api_key}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/portfolio/priority-list?top_n=100",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "portfolio", "priority-list"],
+              "query": [{"key": "top_n", "value": "100"}]
+            }
+          }
+        },
+        {
+          "name": "Optimize Portfolio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "X-API-Key", "value": "{{api_key}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"budget\": 500000,\n  \"constraints\": {\"max_outreach_per_member\": 3}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/portfolio/optimize",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "portfolio", "optimize"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Calculate Star Rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "X-API-Key", "value": "{{api_key}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"measure_rates\": {\n    \"GSD\": 0.85,\n    \"KED\": 0.82,\n    \"CBP\": 0.78\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/analytics/star-rating",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analytics", "star-rating"]
+            }
+          }
+        },
+        {
+          "name": "Simulate Scenarios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "X-API-Key", "value": "{{api_key}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_rates\": {\"GSD\": 0.80},\n  \"scenarios\": [\n    {\"name\": \"Conservative\", \"improvement\": 0.02},\n    {\"name\": \"Aggressive\", \"improvement\": 0.05}\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/analytics/simulate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analytics", "simulate"]
+            }
+          }
+        },
+        {
+          "name": "Calculate ROI",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "X-API-Key", "value": "{{api_key}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/analytics/roi?plan_size=100000",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analytics", "roi"],
+              "query": [{"key": "plan_size", "value": "100000"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Check API health status"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "your-api-key-here",
+      "type": "string"
+    }
+  ]
+}
+

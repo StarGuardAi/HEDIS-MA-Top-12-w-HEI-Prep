@@ -1,0 +1,27 @@
+# GitHub Pages Configuration
+theme: null
+title: Robert Reichert - Healthcare AI Specialist
+description: $13M-$27M Healthcare Portfolio Value | 91% ML Accuracy | HEDIS Data Scientist
+author: Robert Reichert
+email: reichert99@gmail.com
+
+# SEO
+lang: en-US
+timezone: America/New_York
+
+# Analytics
+google_analytics: # Add your GA4 ID here
+
+# Social
+social:
+  name: Robert Reichert
+  links:
+    - https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+    - https://github.com/bobareichert
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
