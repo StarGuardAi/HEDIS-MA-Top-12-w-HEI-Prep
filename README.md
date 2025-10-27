@@ -199,7 +199,7 @@ Want to deploy your own instance? See [`docs/QUICK_DEPLOY_GUIDE.md`](docs/QUICK_
 **Robert Reichert**  
 AI Support & HEDIS Data Specialist
 
-📧 **Email:** reichert99@gmail.com  
+📧 **Email:** robert.reichert99@gmail.com  
 🔗 **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
 💻 **GitHub:** [bobareichert](https://github.com/bobareichert)  
 🎨 **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  

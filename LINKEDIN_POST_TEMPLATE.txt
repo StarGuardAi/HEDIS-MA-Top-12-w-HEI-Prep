@@ -29,7 +29,7 @@ Built with Python, ML, FastAPI, Streamlit - demonstrating expertise in healthcar
 
 #HealthcareAnalytics #MachineLearning #HEDIS #MedicareAdvantage #StarRatings #PredictiveAnalytics #ValueBasedCare #OpenToWork #HealthcareDataScience #AIinHealthcare #PopulationHealth #QualityMeasures
 
-Interested in discussing this work? 📧 reichert99@gmail.com | 🔗 [LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)
+Interested in discussing this work? 📧 robert.reichert99@gmail.com | 🔗 [LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)
 
 ---
 
