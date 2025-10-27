@@ -32,7 +32,7 @@ setup(
     name="hedis-star-rating-portfolio-optimizer",
     version="2.0.0",
     author="Robert Reichert",
-    author_email="reichert99@gmail.com",
+    author_email="robert.reichert99@gmail.com",
     description="12-measure AI platform for Medicare Advantage Star Rating optimization with Health Equity Index compliance",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
