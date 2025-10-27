@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Robert Reichert - Healthcare AI Specialist | $13M-$27M Portfolio Value | 91% ML Accuracy | HEDIS Data Scientist">
+    <meta name="keywords" content="Healthcare AI, HEDIS, Data Scientist, Medicare Advantage, Star Ratings, Machine Learning">
+    <meta name="author" content="Robert Reichert">
+    
+    <!-- Open Graph for LinkedIn sharing -->
+    <meta property="og:title" content="Robert Reichert - Healthcare AI Specialist">
+    <meta property="og:description" content="$13M-$27M Healthcare Portfolio Value | 91% ML Accuracy | Open to Work">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/0066cc/ffffff?text=Robert+Reichert+-+Healthcare+AI">
+    
+    <title>Robert Reichert - Healthcare AI Specialist | Portfolio</title>
+    
+    <style>
+        /* === MOBILE-FIRST CSS === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0066cc;
+            --primary-dark: #004c99;
+            --secondary: #00b894;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --bg-light: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--white);
+        }
+        
+        /* === HERO SECTION (ABOVE-THE-FOLD) === */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 2rem 1rem;
+            text-align: center;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .hero h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+        
+        .hero .value-prop {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+        
+        .cta-primary {
+            display: inline-block;
+            background: var(--white);
+            color: var(--primary);
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0.5rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .cta-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0.5rem;
+            transition: var(--transition);
+        }
+        
+        .cta-secondary:hover {
+            background: var(--white);
+            color: var(--primary);
+        }
+        
+        /* === STATS BAR === */
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 2rem 1rem;
+            background: var(--bg-light);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* === CONTAINER === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        /* === PROJECT CARDS === */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .project-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .project-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 1.5rem;
+        }
+        
+        .project-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-impact {
+            font-size: 1.2rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+        
+        .project-body {
+            padding: 1.5rem;
+        }
+        
+        .project-description {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .project-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .project-link {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .project-link:hover {
+            background: var(--primary-dark);
+        }
+        
+        .project-link.secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .project-link.secondary:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        /* === SKILLS SECTION === */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .skill-category {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .skill-category h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .skill-item {
+            background: var(--bg-light);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .skill-item.highlight {
+            background: var(--secondary);
+            color: var(--white);
+        }
+        
+        /* === CONTACT SECTION === */
+        .contact-section {
+            background: var(--bg-light);
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        
+        .contact-link {
+            display: block;
+            background: var(--white);
+            color: var(--primary);
+            padding: 1rem;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .contact-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .availability {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        /* === FOOTER === */
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        
+        /* === TABLET AND UP === */
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .hero .value-prop {
+                font-size: 1.8rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .contact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* === DESKTOP === */
+        @media (min-width: 1024px) {
+            .container {
+                padding: 4rem 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .skills-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* === ACCESSIBILITY === */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+            }
+        }
+        
+        /* === PRINT STYLES === */
+        @media print {
+            .hero, .contact-section, footer {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO SECTION (ABOVE-THE-FOLD) -->
+    <section class="hero">
+        <h1>👋 Robert Reichert</h1>
+        <p class="subtitle">Healthcare AI Specialist | HEDIS Data Scientist</p>
+        <p class="value-prop">
+            I prevent <strong>$150-200M</strong> Star Rating crises<br>
+            using AI-powered predictive analytics
+        </p>
+        <div>
+            <a href="mailto:reichert99@gmail.com" class="cta-primary">📧 Contact Me</a>
+            <a href="https://hedis-ma-top-12-w-hei-prep.streamlit.app/" target="_blank" class="cta-secondary">🚀 View Live Demo</a>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-number">$13M-$27M</div>
+            <div class="stat-label">Annual Portfolio Value</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">91%</div>
+            <div class="stat-label">ML Accuracy (AUC-ROC)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">&lt;100ms</div>
+            <div class="stat-label">API Response Time</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">$200M+</div>
+            <div class="stat-label">Total Impact Delivered</div>
+        </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    <section class="container">
+        <h2 class="section-title">🚀 Featured Projects</h2>
+        <p class="section-subtitle">Real healthcare challenges solved with AI and data science</p>
+        
+        <div class="projects-grid">
+            <!-- Project 1: HEDIS Star Rating System -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">HEDIS Star Rating Crisis Prevention</h3>
+                    <p class="project-impact">$150-200M Crisis Prevention Value</p>
+                </div>
+                <div class="project-body">
+                    <p class="project-description">
+                        AI system that predicts HEDIS measure gaps 6-12 months early across 12 quality measures, 
+                        preventing catastrophic Star Rating drops for Medicare Advantage plans.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Scikit-learn</span>
+                        <span class="tag">FastAPI</span>
+                        <span class="tag">HIPAA-Compliant</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://hedis-ma-top-12-w-hei-prep.streamlit.app/" target="_blank" class="project-link">🌐 Live Demo</a>
+                        <a href="https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep" target="_blank" class="project-link secondary">💻 Code</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2: SQL Data Integration -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">Enterprise SQL Data Integration</h3>
+                    <p class="project-impact">$200M+ Documented Savings</p>
+                </div>
+                <div class="project-body">
+                    <p class="project-description">
+                        Designed SQL Server data marts that integrated claims, clinical, and pharmacy data, 
+                        enhancing healthcare program performance by 34% and reducing readmissions by 40%.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">SQL Server</span>
+                        <span class="tag">ETL</span>
+                        <span class="tag">Healthcare Coding</span>
+                        <span class="tag">Data Quality</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="featured/sql-data-integration/" class="project-link">📄 Case Study</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3: Dashboard Suite -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">Executive Dashboard Suite</h3>
+                    <p class="project-impact">22% Satisfaction Gain | $32M Bonuses</p>
+                </div>
+                <div class="project-body">
+                    <p class="project-description">
+                        Built Tableau and Power BI dashboards that increased CMS member satisfaction by 22%, 
+                        supported $32M in performance bonuses, and saved 14 hours/week in reporting.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">Tableau</span>
+                        <span class="tag">Power BI</span>
+                        <span class="tag">Plotly</span>
+                        <span class="tag">Real-time Analytics</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="featured/dashboard-suite/" class="project-link">📄 Case Study</a>
+                        <a href="https://hedis-ma-top-12-w-hei-prep.streamlit.app/" target="_blank" class="project-link secondary">🌐 Demo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="container" style="background: var(--bg-light);">
+        <h2 class="section-title">💼 Skills That Drive Results</h2>
+        <p class="section-subtitle">Combining healthcare expertise with production AI engineering</p>
+        
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h3>🏥 Healthcare Domain</h3>
+                <div class="skill-list">
+                    <span class="skill-item highlight">HEDIS MY2025</span>
+                    <span class="skill-item highlight">Star Ratings</span>
+                    <span class="skill-item">CMS Compliance</span>
+                    <span class="skill-item">HIPAA Security</span>
+                    <span class="skill-item">ICD-10/CPT</span>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>🤖 AI/ML Engineering</h3>
+                <div class="skill-list">
+                    <span class="skill-item highlight">Scikit-learn</span>
+                    <span class="skill-item highlight">LightGBM</span>
+                    <span class="skill-item">XGBoost</span>
+                    <span class="skill-item">SHAP</span>
+                    <span class="skill-item">Feature Engineering</span>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>💻 Production Software</h3>
+                <div class="skill-list">
+                    <span class="skill-item highlight">Python</span>
+                    <span class="skill-item highlight">FastAPI</span>
+                    <span class="skill-item">Docker</span>
+                    <span class="skill-item">CI/CD</span>
+                    <span class="skill-item">99% Test Coverage</span>
+                </div>
+            </div>
+            
+            <div class="skill-category">
+                <h3>📊 Business Intelligence</h3>
+                <div class="skill-list">
+                    <span class="skill-item highlight">Tableau</span>
+                    <span class="skill-item highlight">Power BI</span>
+                    <span class="skill-item">SQL Server</span>
+                    <span class="skill-item">Plotly</span>
+                    <span class="skill-item">ROI Analysis</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact-section">
+        <h2 class="section-title">📞 Let's Connect</h2>
+        <p class="section-subtitle">Response guaranteed within 24 hours</p>
+        
+        <div class="contact-grid">
+            <a href="mailto:reichert99@gmail.com" class="contact-link">📧 Email Me</a>
+            <a href="https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI" target="_blank" class="contact-link">🔗 LinkedIn</a>
+            <a href="https://github.com/bobareichert" target="_blank" class="contact-link">💻 GitHub</a>
+            <a href="https://hedis-gap-in-care-prediction-engine.my.canva.site/" target="_blank" class="contact-link">🎨 Portfolio Site</a>
+        </div>
+        
+        <div class="availability">✅ Open to Work - Available Immediately</div>
+        
+        <p style="margin-top: 2rem; color: var(--text-light);">
+            📍 Pittsburgh, PA (Remote-friendly) | 💰 $90K-$130K
+        </p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2025 Robert Reichert. All rights reserved.</p>
+        <p>Built with healthcare expertise • Deployed with production quality</p>
+    </footer>
+
+    <!-- Simple Analytics (Privacy-Friendly) -->
+    <script>
+        // Track page views (replace with your analytics)
+        console.log('Portfolio viewed at', new Date().toISOString());
+        
+        // Track CTA clicks
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                console.log('Link clicked:', this.href);
+            });
+        });
+    </script>
+</body>
+</html>
+

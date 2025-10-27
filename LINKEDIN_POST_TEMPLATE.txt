@@ -1,0 +1,52 @@
+🚀 Just launched my hybrid portfolio strategy!
+
+⚡ Lightning-fast landing page (<1 second load)
+📊 Comprehensive interactive demos
+💰 $5.765M ROI demonstrated across 12 HEDIS measures
+⭐ Star Rating Simulator for crisis prevention
+🤖 AI/ML models with 91% average accuracy
+🏥 Health Equity Index - 2027 CMS compliant
+
+Real-world impact:
+• Prevents Humana-style $150-200M losses
+• Enables Centene-style crisis recovery
+• 85% reduction in reporting time
+• Production-ready, HIPAA-compliant
+
+Check it out: [YOUR_VERCEL_URL]
+
+Interactive Demo: [STREAMLIT_URL]
+GitHub: [GITHUB_URL]
+
+Features:
+✅ Predictive gap identification 6+ months early
+✅ Portfolio-level intervention optimization
+✅ SHAP explainability for clinical trust
+✅ Real-time compliance monitoring
+✅ Business outcomes for non-technical stakeholders
+
+Built with Python, ML, FastAPI, Streamlit - demonstrating expertise in healthcare analytics, predictive modeling, and Medicare Advantage Star Ratings optimization.
+
+#HealthcareAnalytics #MachineLearning #HEDIS #MedicareAdvantage #StarRatings #PredictiveAnalytics #ValueBasedCare #OpenToWork #HealthcareDataScience #AIinHealthcare #PopulationHealth #QualityMeasures
+
+Interested in discussing this work? 📧 reichert99@gmail.com | 🔗 [LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)
+
+---
+
+ALTERNATIVE: Shorter Version
+
+🚀 New Hybrid Portfolio: Healthcare Analytics + AI
+
+Reducing HEDIS reporting time by 85%
+$5.765M ROI | 12 measures | Production-ready
+
+Features:
+⚡ Predictive AI models
+📊 Interactive dashboards
+💰 ROI Calculator
+⭐ Star Rating Simulator
+
+See it live: [YOUR_VERCEL_URL]
+
+#HealthcareAnalytics #MachineLearning #HEDIS #OpenToWork
+

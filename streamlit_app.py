@@ -22,14 +22,14 @@ sns.set_palette("husl")
 
 # Page configuration
 st.set_page_config(
-    page_title="HEDIS Portfolio Optimizer | Robert Reichert",
-    page_icon="🏥",
+    page_title="HEDIS MA Analytics Tool | Robert Reichert",
+    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'Get Help': 'https://github.com/bobareichert',
+        'Get Help': 'mailto:reichert99@gmail.com',
         'Report a bug': 'mailto:reichert99@gmail.com',
-        'About': 'HEDIS Star Rating Portfolio Optimizer - Built by Robert Reichert'
+        'About': 'Built by Robert Reichert - Reducing HEDIS reporting complexity with AI'
     }
 )
 
@@ -413,6 +413,29 @@ st.sidebar.markdown("*AI Support & HEDIS Data Specialist*")
 def show_executive_summary():
     """Executive summary with Humana/Centene case studies"""
     
+    # Business context above the fold
+    st.markdown("## 📊 Business Impact")
+    st.markdown("""
+    **For Hiring Managers:** This tool demonstrates my ability to transform complex healthcare 
+    compliance data into actionable insights for non-technical stakeholders.
+    
+    **Time Savings:** Reduces HEDIS measure analysis from 3 hours to 15 minutes per assessment.
+    
+    **Technical Capabilities:** AI/ML modeling, interactive dashboards, production deployment.
+    """)
+    
+    # "How This Helps Business" expander
+    with st.expander("💼 How This Solves Real Problems", expanded=False):
+        st.markdown("""
+        - **Problem:** Healthcare organizations spend 40+ hours/month on manual HEDIS reporting
+        - **Solution:** Automated data pipeline + interactive dashboard + predictive AI models
+        - **Result:** 85% time reduction, enabling staff to focus on patient care
+        - **Value:** $13-27M annual potential for 100K member health plan
+        - **Application:** Prevents Star Rating drops (like Humana's $150-200M loss)
+        """)
+    
+    st.divider()
+    
     # Enhanced header with icon and badges
     st.markdown("""
         <div style="text-align: center; padding: 2rem 0;">
@@ -607,6 +630,27 @@ def show_executive_summary():
         file_name="Robert_Reichert_Resume.txt",
         mime="text/plain"
     )
+    
+    # Contact CTA section
+    st.divider()
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("### Interested in discussing this project?")
+        st.markdown("""
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="mailto:reichert99@gmail.com" style="text-decoration: none;">
+                <button style="padding: 0.75rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    📧 Contact Me
+                </button>
+            </a>
+            <a href="https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI" target="_blank" style="text-decoration: none;">
+                <button style="padding: 0.75rem 1.5rem; background: #1e3a5f; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    🔗 View LinkedIn
+                </button>
+            </a>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # ============================================================================

@@ -1,0 +1,107 @@
+# HEDIS Portfolio Optimizer - Docker Ignore File
+# Exclude unnecessary files from Docker image
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ===== Virtual Environments =====
+venv/
+env/
+ENV/
+.venv/
+
+# ===== IDEs =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== Git =====
+.git/
+.gitignore
+.gitattributes
+
+# ===== Documentation =====
+*.md
+!README.md
+docs/
+reports/
+prompts/
+
+# ===== Data Files =====
+data/raw/
+data/processed/
+*.csv
+*.parquet
+*.xlsx
+*.xls
+
+# ===== Notebooks =====
+notebooks/
+*.ipynb
+.ipynb_checkpoints/
+
+# ===== Test Files =====
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ===== CI/CD =====
+.github/
+.circleci/
+
+# ===== Docker =====
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== Temp Files =====
+tmp/
+temp/
+*.tmp
+
+# ===== OS Files =====
+.DS_Store
+Thumbs.db
+
+# ===== Environment Files (sensitive) =====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ===== Large Files =====
+visualizations/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# ===== Scripts =====
+scripts/
+*.bat
+*.sh
+
+# ===== Misc =====
+TODO.md
+tasks/
+*.bak
+*.swp
+
+
