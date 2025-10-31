@@ -8,7 +8,7 @@
 **Author:** Robert Reichert  
 **Portfolio Landing:** [Deploy to Vercel/Netlify](#-quick-deployment) (instant load, mobile-ready)  
 **Live Demo:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) 🚀 **← INTERACTIVE DASHBOARD**  
-**GitHub:** [bobareichert](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/tree/main)  
+**GitHub:** [HEDIS-MA-Top-12-w-HEI-Prep](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/tree/main)  
 **Portfolio Site:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)
 
 ---
