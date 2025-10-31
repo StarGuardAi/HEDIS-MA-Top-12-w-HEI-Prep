@@ -62,7 +62,7 @@ Interactive demos, $13-27M ROI demonstrated,
 ```
 Robert Reichert | AI Support & HEDIS Data Specialist
 🌐 Portfolio: [your-netlify-url]
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 ```
 
 ---

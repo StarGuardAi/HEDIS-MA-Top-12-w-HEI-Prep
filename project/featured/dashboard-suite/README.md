@@ -319,7 +319,7 @@ Dr. Davis         |   68%   |   50%    | Training
 | **HEDIS Portfolio** | Streamlit | [Live Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) | Public |
 | **Star Rating Simulator** | Streamlit | [View](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) | Public |
 | **ROI Calculator** | Streamlit | [Interactive](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) | Public |
-| **Technical Docs** | GitHub | [Repository](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep) | Public |
+| **Technical Docs** | GitHub | [Repository](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep) | Public |
 
 ---
 
@@ -328,9 +328,9 @@ Dr. Davis         |   68%   |   50%    | Training
 **Robert Reichert**  
 Healthcare Data Scientist | BI Specialist
 
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 🔗 [LinkedIn](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-💻 [GitHub](https://github.com/bobareichert)
+💻 [GitHub](https://github.com/StarGuardAi)
 
 **Status:** Open to Work - Available Immediately
 

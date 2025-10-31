@@ -90,8 +90,8 @@ Ready to deploy and start capturing this value! 🚀
 
 ---
 
-📧 reichert99@gmail.com
-💻 https://github.com/bobareichert/hedis-gsd-prediction-engine
+📧 reichert.starguardai@gmail.com
+💻 https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 🔗 Open to collaboration and discussing healthcare AI innovation!
 
 ---
@@ -127,8 +127,8 @@ Ready to deploy! 🚀
 
 #HealthcareAnalytics #HEDIS #MachineLearning #StarRatings #HealthEquityIndex #Python #DataScience #AIinHealthcare
 
-📧 reichert99@gmail.com
-💻 github.com/bobareichert/hedis-gsd-prediction-engine
+📧 reichert.starguardai@gmail.com
+💻 github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 
 ---
 

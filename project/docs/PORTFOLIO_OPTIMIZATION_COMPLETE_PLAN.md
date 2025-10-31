@@ -52,7 +52,7 @@ All content has been created. Here's what you need to do next:
 - [ ] **Experience** → Add new HEDIS project entry
 - [ ] **Featured** → Add 3 featured items:
   1. Portfolio Website (https://bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep/)
-  2. GitHub Repository (https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep)
+  2. GitHub Repository (https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep)
   3. Best LinkedIn Post
 - [ ] **Skills** → Reorder to healthcare-first (see recommended order in doc)
 
@@ -70,7 +70,7 @@ All content has been created. Here's what you need to do next:
 - [ ] **Header** → Update name, title, contact info
 - [ ] **Value Proposition** → Change to $13M-$27M (not $620K-$1M)
 - [ ] **Featured Project** → Update with new content
-- [ ] **Contact Info** → Update email to robert.reichert99@gmail.com
+- [ ] **Contact Info** → Update email to robert.reichert.starguardai@gmail.com
 - [ ] **Demo Links** → Update to bobareichert.github.io URLs
 - [ ] **Add Portfolio Breakdown** → Show 12-measure portfolio
 - [ ] **Add Health Equity Index** → Highlight HEI achievement

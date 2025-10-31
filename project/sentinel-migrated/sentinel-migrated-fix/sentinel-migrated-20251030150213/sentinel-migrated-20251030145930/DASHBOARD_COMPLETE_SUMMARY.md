@@ -310,7 +310,7 @@ You now have a **world-class portfolio dashboard** that directly addresses the b
 **Questions or issues?** 
 - Deployment: See `DASHBOARD_DEPLOYMENT_GUIDE.md`
 - Streamlit docs: https://docs.streamlit.io/
-- GitHub repo: https://github.com/bobareichert/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep
+- GitHub repo: https://github.com/StarGuardAi/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep
 
 
 

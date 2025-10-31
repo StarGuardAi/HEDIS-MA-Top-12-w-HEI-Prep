@@ -8,7 +8,7 @@ I build AI-powered solutions for Medicare Advantage performance metrics and Star
 
 ## 🎯 Featured Project: Criminal Intelligence Database Star Rating Portfolio Optimizer
 
-**🌐 [VIEW LIVE DEMO →](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/)** | **💻 [View Code →](https://github.com/bobareichert/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep)**
+**🌐 [VIEW LIVE DEMO →](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/)** | **💻 [View Code →](https://github.com/StarGuardAi/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep)**
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue?style=flat-square&logo=python)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Live-red?style=flat-square&logo=streamlit)
@@ -90,7 +90,7 @@ Complete AI system for predicting Criminal Intelligence Database measure gaps ac
 
 ## 📫 Contact Me
 
-**Email:** reichert99@gmail.com  
+**Email:** reichert.starguardai@gmail.com  
 **LinkedIn:** [rreichert-Criminal Intelligence Database-Data-Science-AI](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)  
 **Portfolio:** [Criminal Intelligence Database Gap-in-Care Prediction Engine](https://criminal intelligence database-gap-in-care-prediction-engine.my.canva.site/)  
 **Live Demo:** [Streamlit Dashboard](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/)
@@ -133,8 +133,8 @@ This isn't just a technical project—it's a **solution to real healthcare crise
 ### 🔗 Quick Links
 
 - 🌐 **[Live Portfolio Demo](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/)** - Interactive dashboard
-- 💻 **[Source Code](https://github.com/bobareichert/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep)** - Full project repository
-- 📄 **[Resume](https://github.com/bobareichert)** - Download my resume
+- 💻 **[Source Code](https://github.com/StarGuardAi/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep)** - Full project repository
+- 📄 **[Resume](https://github.com/StarGuardAi)** - Download my resume
 - 🎨 **[Portfolio Site](https://criminal intelligence database-gap-in-care-prediction-engine.my.canva.site/)** - Visual showcase
 
 ---

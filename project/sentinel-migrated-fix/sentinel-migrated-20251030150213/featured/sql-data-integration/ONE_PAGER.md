@@ -202,9 +202,9 @@ Immediate value in:
 **Robert Reichert**  
 Healthcare Data Scientist | SQL Expert
 
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 🔗 [LinkedIn: rreichert-Criminal Intelligence Database-Data-Science-AI](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)  
-💻 [GitHub: bobareichert](https://github.com/bobareichert)
+💻 [GitHub: bobareichert](https://github.com/StarGuardAi)
 
 **Status:** ✅ Open to Work - Available Immediately  
 **Location:** Pittsburgh, PA (Remote-friendly)
@@ -254,7 +254,7 @@ Healthcare Data Scientist | SQL Expert
 
 **Ready to integrate your data and unlock insights? Let's talk.**
 
-📧 reichert99@gmail.com | Response within 24 hours
+📧 reichert.starguardai@gmail.com | Response within 24 hours
 
 
 

@@ -186,7 +186,7 @@ pytest tests/test_streamlit_app.py -v
 **Solution:**
 - Read: `STREAMLIT_TESTING_QUICK_START.md`
 - Full guide: `docs/STREAMLIT_TESTING_GUIDE.md`
-- Email: reichert99@gmail.com
+- Email: reichert.starguardai@gmail.com
 
 ---
 
@@ -314,7 +314,7 @@ pytest tests/test_streamlit_app.py -v
 **Need details?** See `docs/STREAMLIT_TESTING_GUIDE.md`  
 **Visual guide?** Check `docs/STREAMLIT_TESTING_WORKFLOW.md`
 
-**Contact:** Robert Reichert | reichert99@gmail.com | github.com/bobareichert
+**Contact:** Robert Reichert | reichert.starguardai@gmail.com | github.com/StarGuardAi
 
 ---
 

@@ -258,9 +258,9 @@
 ## 📞 Contact & Demo
 
 **Author:** Robert Reichert  
-**Email:** reichert99@gmail.com  
+**Email:** reichert.starguardai@gmail.com  
 **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-**GitHub:** [bobareichert](https://github.com/bobareichert)
+**GitHub:** [bobareichert](https://github.com/StarGuardAi)
 
 **Live Demo:** [https://hedis-ma-top-12-w-hei-prep.streamlit.app/](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
 

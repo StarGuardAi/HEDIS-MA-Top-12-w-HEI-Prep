@@ -241,9 +241,9 @@
 ## 📞 Contact Information (For Portfolio)
 
 **Robert Reichert**
-- 📧 Email: reichert99@gmail.com
+- 📧 Email: reichert.starguardai@gmail.com
 - 🔗 LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
-- 💻 GitHub: github.com/bobareichert
+- 💻 GitHub: github.com/StarGuardAi
 - 🎨 Portfolio: hedis-gap-in-care-prediction-engine.my.canva.site
 - 📊 Live Demo: hedis-ma-top-12-w-hei-prep.streamlit.app (pending update)
 

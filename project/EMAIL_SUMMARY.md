@@ -1,6 +1,6 @@
 # Email Summary: HEDIS Portfolio Complete
 
-**To:** reichert99@gmail.com  
+**To:** reichert.starguardai@gmail.com  
 **Subject:** HEDIS Top 12 Portfolio - Complete & Ready to Deploy ($13M-$27M/year)
 
 ---

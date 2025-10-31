@@ -105,8 +105,8 @@ What's your experience with HEDIS Star Rating optimization or health equity init
 
 #HealthcareAnalytics #HEDIS #MachineLearning #ValueBasedCare #MedicareAdvantage #StarRatings #PredictiveAnalytics #HealthEquityIndex #HEI2027 #HEDIS2025 #Python #MLOps #DataScience #HealthTech #ExplainableAI #HIPAA #AIinHealthcare #PopulationHealth #QualityMeasures
 
-📧 reichert99@gmail.com
-💻 https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep/tree/main
+📧 reichert.starguardai@gmail.com
+💻 https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/tree/main
 
 
 -------------------------------------------------------------------
@@ -186,8 +186,8 @@ What's your experience with HEDIS Star Rating optimization?
 
 #HealthcareAnalytics #HEDIS #MachineLearning #StarRatings #HealthEquityIndex #Python #AIinHealthcare #ValueBasedCare
 
-📧 reichert99@gmail.com
-💻 https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep
+📧 reichert.starguardai@gmail.com
+💻 https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 
 -------------------------------------------------------------------
 CHARACTER COUNT: ~1,450 (Well under 3,000 limit) ✅

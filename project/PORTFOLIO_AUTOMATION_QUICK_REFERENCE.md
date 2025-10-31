@@ -175,9 +175,9 @@ Shorten descriptions
 
 ## 📞 CONTACT
 
-**Email:** reichert99@gmail.com  
+**Email:** reichert.starguardai@gmail.com  
 **LinkedIn:** linkedin.com/in/rreichert-HEDIS-Data-Science-AI  
-**GitHub:** github.com/bobareichert  
+**GitHub:** github.com/StarGuardAi  
 **Portfolio:** bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep
 
 ---

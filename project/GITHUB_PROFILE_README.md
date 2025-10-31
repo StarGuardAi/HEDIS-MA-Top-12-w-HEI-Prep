@@ -8,7 +8,7 @@ I build AI-powered solutions for Medicare Advantage quality measures and Star Ra
 
 ## 🎯 Featured Project: HEDIS Star Rating Portfolio Optimizer
 
-**🌐 [VIEW LIVE DEMO →](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)** | **💻 [View Code →](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep)**
+**🌐 [VIEW LIVE DEMO →](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)** | **💻 [View Code →](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep)**
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue?style=flat-square&logo=python)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Live-red?style=flat-square&logo=streamlit)
@@ -90,7 +90,7 @@ Complete AI system for predicting HEDIS measure gaps across 12 quality measures,
 
 ## 📫 Contact Me
 
-**Email:** reichert99@gmail.com  
+**Email:** reichert.starguardai@gmail.com  
 **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
 **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
 **Live Demo:** [Streamlit Dashboard](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
@@ -133,8 +133,8 @@ This isn't just a technical project—it's a **solution to real healthcare crise
 ### 🔗 Quick Links
 
 - 🌐 **[Live Portfolio Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)** - Interactive dashboard
-- 💻 **[Source Code](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep)** - Full project repository
-- 📄 **[Resume](https://github.com/bobareichert)** - Download my resume
+- 💻 **[Source Code](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep)** - Full project repository
+- 📄 **[Resume](https://github.com/StarGuardAi)** - Download my resume
 - 🎨 **[Portfolio Site](https://hedis-gap-in-care-prediction-engine.my.canva.site/)** - Visual showcase
 
 ---

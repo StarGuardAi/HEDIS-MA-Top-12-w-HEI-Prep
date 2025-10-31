@@ -23,7 +23,7 @@ I prevent **$150-200M** Star Rating crises for Medicare Advantage health plans u
 ## 🚀 **Featured Projects**
 
 ### 1. HEDIS Star Rating Crisis Prevention System
-**[🌐 LIVE DEMO](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)** | **[💻 View Code](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep)** | **[📄 Case Study PDF](#)**
+**[🌐 LIVE DEMO](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)** | **[💻 View Code](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep)** | **[📄 Case Study PDF](#)**
 
 **Business Impact:**
 - Prevents $150-200M losses (like Humana's 2024 crisis)
@@ -94,10 +94,10 @@ Medicare Advantage plans face contract termination and massive revenue loss when
 
 ## 📞 **Let's Connect - Response Within 24 Hours**
 
-📧 **Email:** reichert99@gmail.com *(Best way to reach me)*  
+📧 **Email:** reichert.starguardai@gmail.com *(Best way to reach me)*  
 🔗 **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
 🎨 **Portfolio:** [Visual Case Studies](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
-💻 **GitHub:** [bobareichert](https://github.com/bobareichert)
+💻 **GitHub:** [bobareichert](https://github.com/StarGuardAi)
 
 📍 **Location:** Pittsburgh, PA (Remote-friendly)  
 🎯 **Status:** **Open to Work** - Available Immediately  
@@ -161,10 +161,10 @@ Medicare Advantage plans face contract termination and massive revenue loss when
 | What You Need | Where to Find It | Time Required |
 |---------------|------------------|---------------|
 | **See My Work Live** | [Interactive Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) | 2 minutes |
-| **Review My Code** | [GitHub Repository](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep) | 5 minutes |
+| **Review My Code** | [GitHub Repository](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep) | 5 minutes |
 | **Download Resume** | [PDF Resume](#) | 30 seconds |
 | **Case Studies** | [Portfolio Site](https://hedis-gap-in-care-prediction-engine.my.canva.site/) | 3 minutes |
-| **Schedule Call** | [reichert99@gmail.com](mailto:reichert99@gmail.com) | 24hr response |
+| **Schedule Call** | [reichert.starguardai@gmail.com](mailto:reichert.starguardai@gmail.com) | 24hr response |
 
 ---
 
@@ -180,7 +180,7 @@ Medicare Advantage plans face contract termination and massive revenue loss when
 
 **🚀 Ready to prevent the next $150M Star Rating crisis? Let's talk.**
 
-**📧 reichert99@gmail.com** | Response guaranteed within 24 hours
+**📧 reichert.starguardai@gmail.com** | Response guaranteed within 24 hours
 
 ---
 

@@ -5,7 +5,7 @@ Version: 2.0.0
 Production-ready REST API for 12 HEDIS measures prediction and portfolio optimization.
 
 Author: Robert Reichert
-GitHub: github.com/bobareichert
+GitHub: github.com/StarGuardAi
 """
 
 __version__ = "2.0.0"

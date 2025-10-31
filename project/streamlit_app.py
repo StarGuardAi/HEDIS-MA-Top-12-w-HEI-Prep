@@ -3,7 +3,7 @@ HEDIS Star Rating Portfolio Optimizer
 Interactive Dashboard for Recruiters & Hiring Managers
 
 Author: Robert Reichert
-GitHub: github.com/bobareichert
+GitHub: github.com/StarGuardAi
 Portfolio: Targeted for AI Support & HEDIS Data Specialist roles
 """
 
@@ -27,8 +27,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'Get Help': 'mailto:robert.reichert99@gmail.com',
-        'Report a bug': 'mailto:robert.reichert99@gmail.com',
+        'Get Help': 'mailto:reichert.starguardai@gmail.com',
+        'Report a bug': 'mailto:reichert.starguardai@gmail.com',
         'About': 'Built by Robert Reichert - Reducing HEDIS reporting complexity with AI'
     }
 )
@@ -396,11 +396,11 @@ page = st.sidebar.selectbox(
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 📞 Contact")
 st.sidebar.markdown("**Robert Reichert**")
-st.sidebar.markdown("📧 robert.reichert99@gmail.com")
+st.sidebar.markdown("📧 reichert.starguardai@gmail.com")
 st.sidebar.markdown("🎨 [Portfolio](https://hedis-gap-in-care-prediction-engine.my.canva.site/)")
 st.sidebar.markdown("📊 [Live Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)")
 st.sidebar.markdown("[🔗 LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)")
-st.sidebar.markdown("[💻 GitHub](https://github.com/bobareichert)")
+st.sidebar.markdown("[💻 GitHub](https://github.com/StarGuardAi)")
 st.sidebar.markdown("---")
 st.sidebar.markdown("🎯 **Open to Work**")
 st.sidebar.markdown("*AI Support & HEDIS Data Specialist*")
@@ -616,9 +616,9 @@ def show_executive_summary():
     - ✅ Prepare for HEI 2027 compliance
     - ✅ Deploy production-ready predictive systems
     
-    **Contact:** robert.reichert99@gmail.com  
+    **Contact:** reichert.starguardai@gmail.com  
     **LinkedIn:** [rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-    **GitHub:** [bobareichert](https://github.com/bobareichert)  
+    **GitHub:** [StarGuardAi](https://github.com/StarGuardAi)  
     **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
     **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
     """)
@@ -626,7 +626,7 @@ def show_executive_summary():
     # Download resume button
     st.download_button(
         label="📄 Download Resume",
-        data="Resume available upon request - Contact: robert.reichert99@gmail.com",
+        data="Resume available upon request - Contact: reichert.starguardai@gmail.com",
         file_name="Robert_Reichert_Resume.txt",
         mime="text/plain"
     )
@@ -639,7 +639,7 @@ def show_executive_summary():
         st.markdown("### Interested in discussing this project?")
         st.markdown("""
         <div style="display: flex; gap: 1rem; justify-content: center;">
-            <a href="mailto:robert.reichert99@gmail.com" style="text-decoration: none;">
+            <a href="mailto:reichert.starguardai@gmail.com" style="text-decoration: none;">
                 <button style="padding: 0.75rem 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
                     📧 Contact Me
                 </button>
@@ -1523,7 +1523,7 @@ Based on this analysis, the HEDIS portfolio implementation shows
 a strong business case with {roi_percentage:.0f}% ROI over {years_projection} years.
 
 Contact: Robert Reichert
-Email: robert.reichert99@gmail.com
+Email: reichert.starguardai@gmail.com
 LinkedIn: www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
 Live Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
@@ -1908,7 +1908,7 @@ RECOMMENDATION
 {"Target achieved with current strategy." if target_met else f"Increase gap closure rates to reach target. Current gap: {gap_to_target:.2f} stars"}
 
 Contact: Robert Reichert
-Email: robert.reichert99@gmail.com
+Email: reichert.starguardai@gmail.com
 LinkedIn: www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
 Live Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
@@ -3395,7 +3395,7 @@ GET  /api/v1/health
     st.info("""
     **Complete source code available on GitHub:**
     
-    🔗 **Repository:** [github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep)
+    🔗 **Repository:** [github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep)
     
     **What's Included:**
     - ✅ Full source code (12,500+ lines)
@@ -3426,8 +3426,8 @@ GET  /api/v1/health
     - Production deployment strategies
     - Integration with existing systems
     
-    📧 **Contact:** robert.reichert99@gmail.com  
-    💻 **GitHub:** @bobareichert  
+    📧 **Contact:** reichert.starguardai@gmail.com  
+    💻 **GitHub:** @StarGuardAi  
     🔗 **LinkedIn:** www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI  
     🎨 **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
     📊 **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
@@ -3463,9 +3463,9 @@ elif page == "👤 About Me":
     # Contact header
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("📧 **robert.reichert99@gmail.com**")
+        st.markdown("📧 **reichert.starguardai@gmail.com**")
     with col2:
-        st.markdown("💻 **[GitHub: @bobareichert](https://github.com/bobareichert)**")
+        st.markdown("💻 **[GitHub: @StarGuardAi](https://github.com/StarGuardAi)**")
     with col3:
         st.markdown("🔗 **[LinkedIn Profile](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)**")
     
@@ -3648,9 +3648,9 @@ elif page == "👤 About Me":
     - Technical presentations and demos
     - Strategic planning sessions
     
-    📧 **Email:** robert.reichert99@gmail.com  
+    📧 **Email:** reichert.starguardai@gmail.com  
     🔗 **LinkedIn:** www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI  
-    💻 **GitHub:** github.com/bobareichert  
+    💻 **GitHub:** github.com/StarGuardAi  
     🎨 **Portfolio:** [HEDIS Gap-in-Care Prediction Engine](https://hedis-gap-in-care-prediction-engine.my.canva.site/)  
     📊 **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)  
     📱 **Response time:** < 24 hours
@@ -3694,7 +3694,7 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666;'>
     <p>Built by Robert Reichert | AI Support & HEDIS Data Specialist</p>
-    <p>📧 robert.reichert99@gmail.com | 🔗 <a href="https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI">LinkedIn</a> | 💻 <a href="https://github.com/bobareichert">GitHub</a> | 🎨 <a href="https://hedis-gap-in-care-prediction-engine.my.canva.site/">Portfolio</a> | 📊 <a href="https://hedis-ma-top-12-w-hei-prep.streamlit.app/">Live Demo</a></p>
+    <p>📧 reichert.starguardai@gmail.com | 🔗 <a href="https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI">LinkedIn</a> | 💻 <a href="https://github.com/StarGuardAi">GitHub</a> | 🎨 <a href="https://hedis-gap-in-care-prediction-engine.my.canva.site/">Portfolio</a> | 📊 <a href="https://hedis-ma-top-12-w-hei-prep.streamlit.app/">Live Demo</a></p>
     <p>🎯 <strong>Open to Work</strong> - Available for immediate employment</p>
 </div>
 """, unsafe_allow_html=True)

@@ -8,7 +8,7 @@
 **Author:** Robert Reichert  
 **Portfolio Landing:** [Deploy to Vercel/Netlify](#-quick-deployment) (instant load, mobile-ready)  
 **Live Demo:** [https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/) 🚀 **← INTERACTIVE DASHBOARD**  
-**GitHub:** [bobareichert](https://github.com/bobareichert)  
+**GitHub:** [bobareichert](https://github.com/StarGuardAi)  
 **Portfolio Site:** [Criminal Intelligence Database Gap-in-Care Prediction Engine](https://criminal intelligence database-gap-in-care-prediction-engine.my.canva.site/)
 
 ---
@@ -132,7 +132,7 @@ Deploy a lightning-fast landing page that links to your Streamlit dashboard:
 ### Run Locally
 ```bash
 # Clone repository
-git clone https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep.git
+git clone https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep.git
 cd HEDIS-MA-Top-12-w-HEI-Prep
 
 # Install dependencies
@@ -199,9 +199,9 @@ Want to deploy your own instance? See [`docs/QUICK_DEPLOY_GUIDE.md`](docs/QUICK_
 **Robert Reichert**  
 AI Support & Criminal Intelligence Database Data Specialist
 
-📧 **Email:** robert.reichert99@gmail.com  
+📧 **Email:** robert.reichert.starguardai@gmail.com  
 🔗 **LinkedIn:** [rreichert-Criminal Intelligence Database-Data-Science-AI](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)  
-💻 **GitHub:** [bobareichert](https://github.com/bobareichert)  
+💻 **GitHub:** [bobareichert](https://github.com/StarGuardAi)  
 🎨 **Portfolio:** [Criminal Intelligence Database Gap-in-Care Prediction Engine](https://criminal intelligence database-gap-in-care-prediction-engine.my.canva.site/)  
 📊 **Live Demo:** [Streamlit App](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/)
 

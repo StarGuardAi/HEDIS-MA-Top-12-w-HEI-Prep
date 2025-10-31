@@ -249,9 +249,9 @@ Check it out: [YOUR_URL]
 - **Netlify Docs:** https://docs.netlify.com
 
 ### Contact
-- 📧 Email: reichert99@gmail.com
+- 📧 Email: reichert.starguardai@gmail.com
 - 🔗 LinkedIn: linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI
-- 💻 GitHub: github.com/bobareichert
+- 💻 GitHub: github.com/StarGuardAi
 
 ---
 

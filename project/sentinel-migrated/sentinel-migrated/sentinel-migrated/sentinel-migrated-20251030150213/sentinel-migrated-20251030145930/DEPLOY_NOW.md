@@ -73,7 +73,7 @@ Features:
 **Email Signature:**
 ```
 Robert Reichert | AI Support & HEDIS Data Specialist
-📧 robert.reichert99@gmail.com
+📧 robert.reichert.starguardai@gmail.com
 🌐 Portfolio: [your-vercel-url]
 🔗 LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 ```
@@ -110,7 +110,7 @@ Built with Python, ML, FastAPI, Streamlit
 
 #HealthcareAnalytics #MachineLearning #MedicareAdvantage #StarRatings #PredictiveAnalytics #ValueBasedCare
 
-Interested in discussing? 📧 robert.reichert99@gmail.com
+Interested in discussing? 📧 robert.reichert.starguardai@gmail.com
 ```
 
 ### Post Template 2: Problem-Solution Focus

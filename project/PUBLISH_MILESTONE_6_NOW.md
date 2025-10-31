@@ -54,8 +54,8 @@ This API provides the foundation for real-time gap prediction, portfolio optimiz
 
 #HealthcareAnalytics #HEDIS #MachineLearning #ValueBasedCare #Python #MLOps #DataScience #HealthTech #ExplainableAI #HIPAA
 
-📧 reichert99@gmail.com
-💻 github.com/bobareichert
+📧 reichert.starguardai@gmail.com
+💻 github.com/StarGuardAi
 ```
 
 4. Click "Post"

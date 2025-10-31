@@ -124,7 +124,7 @@ Feature Store → Production API → Dashboard
 | Resource | Link | Description |
 |----------|------|-------------|
 | **Live Dashboard** | [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) | Interactive demo with all features |
-| **Source Code** | [GitHub Repository](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep) | Full implementation with tests |
+| **Source Code** | [GitHub Repository](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep) | Full implementation with tests |
 | **API Documentation** | [FastAPI Docs](#) | OpenAPI specification |
 | **Case Study PDF** | [Download](#) | 3-page executive summary |
 
@@ -182,9 +182,9 @@ I can start contributing on day one:
 **Robert Reichert**  
 Healthcare AI Specialist | HEDIS Data Scientist
 
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 🔗 [LinkedIn](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-💻 [GitHub](https://github.com/bobareichert)
+💻 [GitHub](https://github.com/StarGuardAi)
 
 **Status:** Open to Work - Available Immediately
 

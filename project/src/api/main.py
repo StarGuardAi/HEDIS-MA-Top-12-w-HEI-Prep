@@ -4,7 +4,7 @@ HEDIS Star Rating Portfolio Optimizer - Main API Application
 Production-ready FastAPI application serving 12 HEDIS measures.
 
 Author: Robert Reichert
-GitHub: github.com/bobareichert
+GitHub: github.com/StarGuardAi
 """
 
 import time

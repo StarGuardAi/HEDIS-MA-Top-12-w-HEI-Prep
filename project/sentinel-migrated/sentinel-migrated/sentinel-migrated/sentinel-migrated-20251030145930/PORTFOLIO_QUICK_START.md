@@ -15,7 +15,7 @@
 # Click "Create repository"
 
 # 2. Clone it
-git clone https://github.com/bobareichert/bobareichert.git
+git clone https://github.com/StarGuardAi/bobareichert.git
 cd bobareichert
 
 # 3. Copy the optimized README
@@ -29,14 +29,14 @@ git push origin main
 ```
 
 ### **Verify:**
-Visit `https://github.com/bobareichert` - you should see your new profile
+Visit `https://github.com/StarGuardAi` - you should see your new profile
 
 ---
 
 ## ✅ **Action 2: Enable GitHub Pages (5 minutes)**
 
 ### **Steps:**
-1. Go to: `https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep/settings/pages`
+1. Go to: `https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/settings/pages`
 2. Under "Source":
    - Branch: **main**
    - Folder: **/docs/portfolio**
@@ -65,7 +65,7 @@ cd HEDIS-MA-Top-12-w-HEI-Prep
 
 I prevent **$150-200M** Star Rating crises for Medicare Advantage health plans using AI-powered predictive analytics.
 
-🚀 **[VIEW LIVE DEMO](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)** | 📧 **[CONTACT ME](mailto:reichert99@gmail.com)** | 🌐 **[PORTFOLIO SITE](https://bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep/)**
+🚀 **[VIEW LIVE DEMO](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)** | 📧 **[CONTACT ME](mailto:reichert.starguardai@gmail.com)** | 🌐 **[PORTFOLIO SITE](https://bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep/)**
 
 ---
 
@@ -98,7 +98,7 @@ git push origin main
 ## ✅ **Action 4: Add Repository Topics (5 minutes)**
 
 ### **Steps:**
-1. Go to: `https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep`
+1. Go to: `https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep`
 2. Click the ⚙️ gear icon next to "About" (top right)
 3. Add these topics:
    ```
@@ -132,8 +132,8 @@ git push origin main
 4. Select "iPhone SE"
 
 Test these pages:
-- [ ] https://github.com/bobareichert (profile)
-- [ ] https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep (repo)
+- [ ] https://github.com/StarGuardAi (profile)
+- [ ] https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep (repo)
 - [ ] https://bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep/ (portfolio)
 - [ ] https://hedis-ma-top-12-w-hei-prep.streamlit.app/ (demo)
 
@@ -164,7 +164,7 @@ for Medicare Advantage plans using predictive analytics.
 • HIPAA-compliant architecture
 
 🌐 Try the live demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
-💻 View the code: https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep
+💻 View the code: https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 
 Open to Healthcare AI / HEDIS Data Specialist roles.
 
@@ -221,7 +221,7 @@ All detailed instructions in:
 - `PORTFOLIO_AUDIT_AND_RECOMMENDATIONS.md` (analysis)
 
 Contact:
-- 📧 reichert99@gmail.com
+- 📧 reichert.starguardai@gmail.com
 - 🔗 [LinkedIn](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)
 
 ---

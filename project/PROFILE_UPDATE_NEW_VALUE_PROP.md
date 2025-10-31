@@ -84,7 +84,7 @@ Python • Cursor AI • Claude Sonnet • ChatGPT-4 • scikit-learn • XGBoos
 pandas • SHAP • HEDIS • HIPAA
 
 ### 📫 Available for Part-Time Projects
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 💼 LinkedIn: [rreichert-hedis-data-science-ai](https://linkedin.com/in/rreichert-hedis-data-science-ai)  
 🔗 Portfolio: [Canva](https://www.canva.com/design/DAG2WzhiLwM/N_iXUe3eEKL3dzQ2M_0PgQ/edit)
 
@@ -144,7 +144,7 @@ Part-time/fractional consulting for mid-size MA plans (25K-100K members)
 
 Let's talk if you're facing Star Ratings pressure in diabetes measures.
 
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 ```
 
 **Experience Section:**
@@ -225,9 +225,9 @@ Focus: Medicare Advantage • Star Ratings • Diabetes Care Management • HEDI
 "Available for part-time diabetes analytics projects. Let's protect your Star revenue."
 
 **Contact:**
-- Email: reichert99@gmail.com
+- Email: reichert.starguardai@gmail.com
 - LinkedIn: rreichert-hedis-data-science-ai
-- GitHub: github.com/bobareichert/hedis-gsd-prediction-engine
+- GitHub: github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 
 ---
 
@@ -238,7 +238,7 @@ Focus: Medicare Advantage • Star Ratings • Diabetes Care Management • HEDI
 ROBERT REICHERT
 Medicare Advantage Diabetes Analytics Specialist
 
-reichert99@gmail.com | linkedin.com/in/rreichert-hedis-data-science-ai | github.com/bobareichert
+reichert.starguardai@gmail.com | linkedin.com/in/rreichert-hedis-data-science-ai | github.com/StarGuardAi
 ```
 
 **Update Professional Summary:**
@@ -337,7 +337,7 @@ python scripts/generate_resume_word.py
 
 ---
 
-**Contact:** reichert99@gmail.com  
+**Contact:** reichert.starguardai@gmail.com  
 **LinkedIn:** https://linkedin.com/in/rreichert-hedis-data-science-ai  
-**GitHub:** https://github.com/bobareichert
+**GitHub:** https://github.com/StarGuardAi
 
