@@ -1,0 +1,11 @@
+# Portfolio Content Generation Requirements
+# Install with: pip install -r requirements-portfolio.txt
+
+# Core dependencies (already in main requirements.txt)
+python-docx>=1.1.0    # Word document generation
+reportlab>=4.0.7      # PDF generation
+
+# Optional but recommended
+Pillow>=10.0.0        # Image processing (if adding screenshots)
+
+
