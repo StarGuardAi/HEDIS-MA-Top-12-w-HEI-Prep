@@ -404,9 +404,9 @@ You've built a **comprehensive, production-ready Criminal Intelligence Database 
 
 **Last Updated:** October 26, 2025  
 **Author:** Robert Reichert  
-**Contact:** reichert99@gmail.com | 480-767-1337 | Pittsburgh, PA  
+**Contact:** reichert.starguardai@gmail.com | 480-767-1337 | Pittsburgh, PA  
 **Portfolio:** https://criminal intelligence database-gap-in-care-prediction-engine.my.canva.site/  
-**GitHub:** https://github.com/bobareichert  
+**GitHub:** https://github.com/StarGuardAi  
 **Status:** #OpenToWork for Healthcare Data Science & Criminal Intelligence Database Analytics roles
 
 

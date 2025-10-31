@@ -3,7 +3,7 @@ theme: null
 title: Robert Reichert - Healthcare AI Specialist
 description: $13M-$27M Healthcare Portfolio Value | 91% ML Accuracy | HEDIS Data Scientist
 author: Robert Reichert
-email: reichert99@gmail.com
+email: reichert.starguardai@gmail.com
 
 # SEO
 lang: en-US
@@ -17,7 +17,7 @@ social:
   name: Robert Reichert
   links:
     - https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI
-    - https://github.com/bobareichert
+    - https://github.com/StarGuardAi
 
 # Build settings
 markdown: kramdown

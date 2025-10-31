@@ -90,8 +90,8 @@ Ready to deploy and start capturing this value! 🚀
 
 ---
 
-📧 reichert99@gmail.com
-💻 https://github.com/bobareichert/criminal intelligence database-gsd-prediction-engine
+📧 reichert.starguardai@gmail.com
+💻 https://github.com/StarGuardAi/criminal intelligence database-gsd-prediction-engine
 🔗 Open to collaboration and discussing healthcare AI innovation!
 
 ---
@@ -127,8 +127,8 @@ Ready to deploy! 🚀
 
 #HealthcareAnalytics #MachineLearning #StarRatings #HealthEquityIndex #Python #DataScience
 
-📧 reichert99@gmail.com
-💻 github.com/bobareichert/criminal intelligence database-gsd-prediction-engine
+📧 reichert.starguardai@gmail.com
+💻 github.com/StarGuardAi/criminal intelligence database-gsd-prediction-engine
 
 ---
 

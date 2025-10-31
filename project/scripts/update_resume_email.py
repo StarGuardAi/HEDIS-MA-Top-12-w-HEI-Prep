@@ -22,9 +22,9 @@ def update_resume():
     
     # Update in paragraphs
     for paragraph in doc.paragraphs:
-        if "reichert99@gmail.com" in paragraph.text:
+        if "reichert.starguardai@gmail.com" in paragraph.text:
             for run in paragraph.runs:
-                run.text = run.text.replace("reichert99@gmail.com", "robert.reichert99@gmail.com")
+                run.text = run.text.replace("reichert.starguardai@gmail.com", "robert.reichert.starguardai@gmail.com")
                 changes_made += 1
         
         if "bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep" in paragraph.text:
@@ -40,9 +40,9 @@ def update_resume():
         for row in table.rows:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
-                    if "reichert99@gmail.com" in paragraph.text:
+                    if "reichert.starguardai@gmail.com" in paragraph.text:
                         for run in paragraph.runs:
-                            run.text = run.text.replace("reichert99@gmail.com", "robert.reichert99@gmail.com")
+                            run.text = run.text.replace("reichert.starguardai@gmail.com", "robert.reichert.starguardai@gmail.com")
                             changes_made += 1
                     
                     if "bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep" in paragraph.text:

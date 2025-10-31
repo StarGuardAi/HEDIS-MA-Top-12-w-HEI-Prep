@@ -49,8 +49,8 @@ This API provides the foundation for real-time gap prediction, portfolio optimiz
 
 #HealthcareAnalytics #HEDIS #MachineLearning #ValueBasedCare #Python #MLOps #DataScience #HealthTech #ExplainableAI #HIPAA
 
-📧 reichert99@gmail.com
-💻 github.com/bobareichert
+📧 reichert.starguardai@gmail.com
+💻 github.com/StarGuardAi
 🌐 Portfolio: [Your Canva Link]
 
 ---
@@ -256,8 +256,8 @@ Developed a complete REST API serving all 12 HEDIS quality measures with healthc
 #### Call-to-Action Section:
 ```
 🌐 Live API Demo Available
-📧 Contact: reichert99@gmail.com
-💻 GitHub: github.com/bobareichert
+📧 Contact: reichert.starguardai@gmail.com
+💻 GitHub: github.com/StarGuardAi
 ```
 
 ---
@@ -276,8 +276,8 @@ Healthcare Data Scientist | Medicare Advantage Analytics Specialist
    • HIPAA-compliant, production-ready
 
 💼 Portfolio Value: $13M-$27M optimization for 100K-member plans
-📧 reichert99@gmail.com
-💻 github.com/bobareichert
+📧 reichert.starguardai@gmail.com
+💻 github.com/StarGuardAi
 🔗 linkedin.com/in/rreichert-hedis-data-science-ai
 ```
 
@@ -353,7 +353,7 @@ All content is prepared and ready to copy/paste to your professional platforms.
 
 **Next Milestone Preview:** Phase D.2 - Database Integration (PostgreSQL, prediction storage, historical tracking)
 
-**Contact:** reichert99@gmail.com | github.com/bobareichert
+**Contact:** reichert.starguardai@gmail.com | github.com/StarGuardAi
 
 
 

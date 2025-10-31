@@ -438,7 +438,7 @@ jobs:
 - Edit contact info (lines 18-25)
 
 **Need help:**
-- 📧 Email: reichert99@gmail.com
+- 📧 Email: reichert.starguardai@gmail.com
 - 💻 GitHub Issues: Create an issue in the repo
 - 🔗 LinkedIn: Message for quick questions
 

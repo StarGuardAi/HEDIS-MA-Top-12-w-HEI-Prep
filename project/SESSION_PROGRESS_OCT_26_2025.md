@@ -425,7 +425,7 @@ for quality improvement teams.
 
 🔗 Live Demo: [link]
 💻 GitHub: [link]
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 
 #OpenToWork for Healthcare Data Science & AI Support roles
 ```

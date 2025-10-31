@@ -27,5 +27,5 @@ Complete 12-measure HEDIS Star Rating Portfolio System
 
 #HealthcareAnalytics #HEDIS #MachineLearning #ValueBasedCare #Python #MLOps #DataScience #HealthTech #ExplainableAI #HIPAA
 
-📧 Contact: reichert99@gmail.com
-💻 GitHub: https://github.com/bobareichert/hedis-gsd-prediction-engine
+📧 Contact: reichert.starguardai@gmail.com
+💻 GitHub: https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep

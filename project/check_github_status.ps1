@@ -114,7 +114,7 @@ if ($GitHubToken) {
     Write-Host '  .\check_github_status.ps1 -GitHubToken "your_token_here"' -ForegroundColor Gray
     
     Write-Host "`n[Manual Check URLs]" -ForegroundColor Yellow
-    Write-Host "  Personal Account: https://github.com/bobareichert" -ForegroundColor Cyan
+    Write-Host "  Personal Account: https://github.com/StarGuardAi" -ForegroundColor Cyan
     Write-Host "  Settings: https://github.com/settings/admin" -ForegroundColor Cyan
     Write-Host "  Organizations: https://github.com/settings/organizations" -ForegroundColor Cyan
     Write-Host ""

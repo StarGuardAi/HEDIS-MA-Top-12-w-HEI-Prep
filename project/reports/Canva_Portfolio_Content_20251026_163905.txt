@@ -15,7 +15,7 @@ VALUE PROPOSITION (Large):
 I prevent $150-200M Star Rating crises for Medicare Advantage health plans using AI-powered predictive analytics.
 
 CTA BUTTONS (Prominent):
-[📧 CONTACT ME] → mailto:reichert99@gmail.com
+[📧 CONTACT ME] → mailto:reichert.starguardai@gmail.com
 [🚀 VIEW LIVE DEMO] → https://hedis-ma-top-12-w-hei-prep.streamlit.app/
 
 ---
@@ -141,10 +141,10 @@ Response guaranteed within 24 hours
 CONTACT GRID (2x2):
 ┌──────────────────┬──────────────────┐
 │ 📧 Email         │ 🔗 LinkedIn      │
-│ reichert99@gmail.com │ linkedin.com/in/rreichert-HEDIS-Data-Science-AI │
+│ reichert.starguardai@gmail.com │ linkedin.com/in/rreichert-HEDIS-Data-Science-AI │
 ├──────────────────┼──────────────────┤
 │ 💻 GitHub        │ 📍 Location      │
-│ github.com/bobareichert │ Pittsburgh, PA   │
+│ github.com/StarGuardAi │ Pittsburgh, PA   │
 └──────────────────┴──────────────────┘
 
 AVAILABILITY BADGE (Large, Green):
@@ -200,9 +200,9 @@ CRITICAL ELEMENTS:
 --------------------------
 
 Primary CTAs:
-- Email: reichert99@gmail.com
+- Email: reichert.starguardai@gmail.com
 - Live Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
-- GitHub: github.com/bobareichert
+- GitHub: github.com/StarGuardAi
 - LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 - Portfolio Site: bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep
 
@@ -254,5 +254,5 @@ Target Engagement:
 ---
 
 CONTACT INFORMATION (Footer on every page):
-📧 reichert99@gmail.com | 📞 480-767-1337 | 🔗 linkedin.com/in/rreichert-HEDIS-Data-Science-AI
-💻 github.com/bobareichert | 🌐 bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep
+📧 reichert.starguardai@gmail.com | 📞 480-767-1337 | 🔗 linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+💻 github.com/StarGuardAi | 🌐 bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep

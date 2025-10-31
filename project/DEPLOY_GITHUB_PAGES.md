@@ -5,7 +5,7 @@ Since Vercel and Netlify are having auth issues, let's use GitHub Pages - it's F
 ## Quick Deploy (2 Minutes)
 
 ### Step 1: Enable GitHub Pages
-1. Go to: https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep
+1. Go to: https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 2. Click **"Settings"** tab
 3. Scroll to **"Pages"** in left sidebar
 4. Under "Source":
@@ -48,7 +48,7 @@ Interactive demos, $13-27M ROI demonstrated,
 ```
 Robert Reichert | AI Support & HEDIS Data Specialist
 🌐 Portfolio: https://bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 ```
 
 ---

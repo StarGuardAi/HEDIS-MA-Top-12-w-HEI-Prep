@@ -294,7 +294,7 @@ Target roles:
 
 Live portfolio: [your-streamlit-url]
 GitHub: [your-github-url]
-Contact: reichert99@gmail.com
+Contact: reichert.starguardai@gmail.com
 
 Ideal company:
 • Medicare Advantage health plan

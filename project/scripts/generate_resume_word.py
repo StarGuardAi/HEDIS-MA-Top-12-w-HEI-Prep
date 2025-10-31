@@ -69,9 +69,9 @@ class ResumeGenerator:
             contact = {
                 'location': 'Pittsburgh, PA',
                 'phone': '480-767-1337',
-                'email': 'reichert99@gmail.com',
+                'email': 'reichert.starguardai@gmail.com',
                 'linkedin': 'linkedin.com/in/rreichert-hedis-data-science-ai',
-                'github': 'github.com/bobareichert',
+                'github': 'github.com/StarGuardAi',
                 'portfolio': 'Canva Portfolio'
             }
         

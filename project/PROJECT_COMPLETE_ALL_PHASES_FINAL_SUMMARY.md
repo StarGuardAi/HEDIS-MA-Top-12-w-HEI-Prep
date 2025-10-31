@@ -404,8 +404,8 @@ You've built a **comprehensive, production-ready HEDIS Star Rating Portfolio Opt
 
 **Last Updated:** October 26, 2025  
 **Author:** Robert Reichert  
-**Contact:** reichert99@gmail.com | 480-767-1337 | Pittsburgh, PA  
+**Contact:** reichert.starguardai@gmail.com | 480-767-1337 | Pittsburgh, PA  
 **Portfolio:** https://hedis-gap-in-care-prediction-engine.my.canva.site/  
-**GitHub:** https://github.com/bobareichert  
+**GitHub:** https://github.com/StarGuardAi  
 **Status:** #OpenToWork for Healthcare Data Science & HEDIS Analytics roles
 

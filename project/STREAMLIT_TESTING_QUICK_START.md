@@ -289,8 +289,8 @@ Before showcasing to recruiters/hiring managers:
 
 **Contact:**
 - Robert Reichert
-- reichert99@gmail.com
-- GitHub: github.com/bobareichert
+- reichert.starguardai@gmail.com
+- GitHub: github.com/StarGuardAi
 
 ---
 

@@ -140,9 +140,9 @@ Population Health | Predictive Analytics | Health Equity
 📧 Open to opportunities in: Healthcare Data Science, Analytics Leadership, 
 Star Rating Optimization, Population Health Analytics
 
-📍 Pittsburgh, PA | 📞 480-767-1337 | ✉️ reichert99@gmail.com
+📍 Pittsburgh, PA | 📞 480-767-1337 | ✉️ reichert.starguardai@gmail.com
 🔗 Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
-💻 GitHub: https://github.com/bobareichert
+💻 GitHub: https://github.com/StarGuardAi
 ```
 
 ### LinkedIn Posts Strategy (5 Posts)
@@ -173,7 +173,7 @@ improvement teams.
 #StarRatings #PredictiveAnalytics #HEI2027 #Python #DataScience #HealthTech 
 #PopulationHealth
 
-📧 reichert99@gmail.com | #OpenToWork for Healthcare Data Science roles
+📧 reichert.starguardai@gmail.com | #OpenToWork for Healthcare Data Science roles
 ```
 
 **Post 2: HEI First-Mover Advantage**
@@ -319,7 +319,7 @@ Healthcare organizations that:
 Star Rating Optimization | Population Health Analytics
 
 📍 Pittsburgh, PA
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 🔗 Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
 
 #OpenToWork #HealthcareJobs #DataScienceJobs #HEDIS #StarRatings 
@@ -381,7 +381,7 @@ I've prepared a quick demo (can be done over Zoom/Teams) and would be happy to
 work around your schedule.
 
 Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
-GitHub: https://github.com/bobareichert
+GitHub: https://github.com/StarGuardAi
 LinkedIn: https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 
 Thank you for considering, and regardless of whether you have time for a demo, 
@@ -389,7 +389,7 @@ I'd love to stay connected and continue learning from your expertise.
 
 Best regards,
 Robert Reichert
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 📞 480-767-1337
 📍 Pittsburgh, PA
 ```
@@ -399,7 +399,7 @@ Robert Reichert
 **Slide 1: Title (30 seconds)**
 - HEDIS Star Rating Portfolio Optimizer
 - $13.6M-$23.6M Annual Value
-- Robert Reichert | reichert99@gmail.com
+- Robert Reichert | reichert.starguardai@gmail.com
 
 **Slide 2: The Problem (1 minute)**
 - MA plans struggle with Star Rating optimization

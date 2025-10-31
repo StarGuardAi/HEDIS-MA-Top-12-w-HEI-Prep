@@ -34,7 +34,7 @@ You now have a **complete 10-page interactive portfolio dashboard** showcasing y
 
 Your code is already in GitHub:
 ```bash
-https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep
+https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 ```
 
 ### **Step 2: Sign Up for Streamlit Cloud**
@@ -133,7 +133,7 @@ Would you have 15 minutes this week to discuss how this approach could benefit
 
 Best regards,
 Robert Reichert
-reichert99@gmail.com
+reichert.starguardai@gmail.com
 linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 ```
 

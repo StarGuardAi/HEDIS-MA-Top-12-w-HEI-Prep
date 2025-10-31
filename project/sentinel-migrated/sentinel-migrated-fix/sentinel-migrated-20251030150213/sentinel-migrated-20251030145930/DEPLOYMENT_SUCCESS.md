@@ -71,20 +71,20 @@ Real-world impact:
 Check it out: https://bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep
 
 Interactive Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
-GitHub: https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep
+GitHub: https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 
 #HealthcareAnalytics #MachineLearning #MedicareAdvantage #StarRatings #PredictiveAnalytics #ValueBasedCare
 
-Interested in discussing this work? 📧 robert.reichert99@gmail.com | 🔗 [LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)
+Interested in discussing this work? 📧 robert.reichert.starguardai@gmail.com | 🔗 [LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)
 ```
 
 ### 3. Update Email Signature
 ```
 Robert Reichert | AI Support & HEDIS Data Specialist
-📧 robert.reichert99@gmail.com
+📧 robert.reichert.starguardai@gmail.com
 🌐 Portfolio: https://bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep
 🔗 LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
-💻 GitHub: github.com/bobareichert
+💻 GitHub: github.com/StarGuardAi
 ```
 
 ### 4. Update GitHub README
@@ -170,9 +170,9 @@ The README is already updated with hybrid strategy info!
 - `LINKEDIN_POST_TEMPLATE.txt` - LinkedIn templates
 
 ### Contact
-- 📧 robert.reichert99@gmail.com
+- 📧 robert.reichert.starguardai@gmail.com
 - 🔗 LinkedIn: linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI
-- 💻 GitHub: github.com/bobareichert
+- 💻 GitHub: github.com/StarGuardAi
 
 ---
 

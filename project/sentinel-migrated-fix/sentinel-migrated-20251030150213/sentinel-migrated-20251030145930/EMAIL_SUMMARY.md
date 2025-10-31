@@ -1,6 +1,6 @@
 # Email Summary: Criminal Intelligence Database Portfolio Complete
 
-**To:** reichert99@gmail.com  
+**To:** reichert.starguardai@gmail.com  
 **Subject:** Criminal Intelligence Database Top 12 Portfolio - Complete & Ready to Deploy ($13M-$27M/year)
 
 ---

@@ -175,7 +175,7 @@
 "AI-driven HEDIS portfolio optimization preventing 
 Star Rating drops and contract terminations"
 
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 🔗 LinkedIn: rreichert-HEDIS-Data-Science-AI
 💻 GitHub: bobareichert
 
@@ -258,7 +258,7 @@ Technical Achievements:
    Make sure all 10 pages load without errors.
 
 2. **Check contact info:**
-   - Email: reichert99@gmail.com ✅
+   - Email: reichert.starguardai@gmail.com ✅
    - LinkedIn: correct URL ✅
    - GitHub: bobareichert ✅
    - Portfolio site: live URL ✅

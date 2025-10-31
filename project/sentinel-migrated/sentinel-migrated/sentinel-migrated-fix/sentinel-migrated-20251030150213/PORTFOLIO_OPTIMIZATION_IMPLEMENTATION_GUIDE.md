@@ -94,8 +94,8 @@
 
 **Verification:**
 ```bash
-grep -r "reichert99@gmail.com" featured/
-grep -r "reichert99@gmail.com" docs/portfolio/
+grep -r "reichert.starguardai@gmail.com" featured/
+grep -r "reichert.starguardai@gmail.com" docs/portfolio/
 ```
 
 **Why This Works:**
@@ -141,7 +141,7 @@ $150-200M crisis prevention value | 91% accuracy | <100ms API
 </details>
 
 ## 📞 Contact
-Robert Reichert | reichert99@gmail.com
+Robert Reichert | reichert.starguardai@gmail.com
 ```
 
 3. Push changes
@@ -574,9 +574,9 @@ window.addEventListener('scroll', function() {
 ## 📧 **SUPPORT**
 
 **Questions? Issues?**
-- 📧 Email: reichert99@gmail.com
+- 📧 Email: reichert.starguardai@gmail.com
 - 🔗 LinkedIn: [rreichert-Criminal Intelligence Database-Data-Science-AI](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)
-- 💻 GitHub: [bobareichert](https://github.com/bobareichert)
+- 💻 GitHub: [bobareichert](https://github.com/StarGuardAi)
 
 ---
 

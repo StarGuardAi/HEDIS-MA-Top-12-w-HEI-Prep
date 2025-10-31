@@ -259,7 +259,7 @@
   - Code quality (10,650 lines, 200+ tests, 99% coverage)
   - HIPAA compliance (PHI protection, audit logging)
   - Deployment-ready (Docker, AWS, CI/CD)
-  - GitHub repo: https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep
+  - GitHub repo: https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 
 **Deliverables:** Complete visual showcase + technical depth
 
@@ -288,9 +288,9 @@
   - HEI 2027 compliance preparation
   
   Contact:
-  - Email: reichert99@gmail.com
+  - Email: reichert.starguardai@gmail.com
   - LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
-  - GitHub: github.com/bobareichert
+  - GitHub: github.com/StarGuardAi
   
   Available for:
   - Full-time roles (AI Support, HEDIS Data Specialist)
@@ -420,7 +420,7 @@ facing similar challenges.
 
 Best,
 Robert Reichert
-reichert99@gmail.com
+reichert.starguardai@gmail.com
 ```
 
 **To Michael Ford (HEDIS Analytics):**
@@ -486,7 +486,7 @@ Open to opportunities where clinical expertise + AI/ML creates impact.
 
 Best regards,
 Robert Reichert
-reichert99@gmail.com
+reichert.starguardai@gmail.com
 ```
 
 ---
@@ -524,7 +524,7 @@ Available for interview to discuss implementation strategy.
 
 Best regards,
 Robert Reichert
-reichert99@gmail.com
+reichert.starguardai@gmail.com
 LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
 ```
 
@@ -559,7 +559,7 @@ Available immediately for interview.
 
 Best regards,
 Robert Reichert
-reichert99@gmail.com
+reichert.starguardai@gmail.com
 ```
 
 **To UnitedHealthcare/Optum (Analytics Team):**
@@ -594,8 +594,8 @@ Available for technical interview.
 
 Best regards,
 Robert Reichert
-reichert99@gmail.com
-GitHub: github.com/bobareichert
+reichert.starguardai@gmail.com
+GitHub: github.com/StarGuardAi
 ```
 
 ---

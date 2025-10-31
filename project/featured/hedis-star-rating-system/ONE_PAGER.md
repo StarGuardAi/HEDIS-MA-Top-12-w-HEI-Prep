@@ -89,7 +89,7 @@ CMS Claims Data → Feature Engineering → 12 ML Models → Production API → 
 | Resource | Access |
 |----------|--------|
 | **Interactive Demo** | [hedis-ma-top-12-w-hei-prep.streamlit.app](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) |
-| **Source Code** | [github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep) |
+| **Source Code** | [github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep) |
 | **Full Case Study** | [View on GitHub](featured/hedis-star-rating-system/README.md) |
 
 **Try It Yourself:**
@@ -132,9 +132,9 @@ I can start on day one:
 **Robert Reichert**  
 Healthcare AI Specialist | HEDIS Data Scientist
 
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 🔗 [LinkedIn: rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-💻 [GitHub: bobareichert](https://github.com/bobareichert)
+💻 [GitHub: bobareichert](https://github.com/StarGuardAi)
 
 **Status:** ✅ Open to Work - Available Immediately  
 **Location:** Pittsburgh, PA (Remote-friendly)  
@@ -166,6 +166,6 @@ Healthcare AI Specialist | HEDIS Data Scientist
 
 **Ready to prevent your next Star Rating crisis? Let's talk.**
 
-📧 reichert99@gmail.com | Response within 24 hours
+📧 reichert.starguardai@gmail.com | Response within 24 hours
 
 

@@ -410,9 +410,9 @@ Canva:
 - Regenerate after changes
 
 **Need Help:**
-- 📧 Email: reichert99@gmail.com
+- 📧 Email: reichert.starguardai@gmail.com
 - 🔗 LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
-- 💻 GitHub: github.com/bobareichert
+- 💻 GitHub: github.com/StarGuardAi
 
 ---
 

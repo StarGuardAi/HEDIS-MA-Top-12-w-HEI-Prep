@@ -319,7 +319,7 @@ Dr. Davis         |   68%   |   50%    | Training
 | **Criminal Intelligence Database Portfolio** | Streamlit | [Live Demo](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/) | Public |
 | **Star Rating Simulator** | Streamlit | [View](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/) | Public |
 | **ROI Calculator** | Streamlit | [Interactive](https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/) | Public |
-| **Technical Docs** | GitHub | [Repository](https://github.com/bobareichert/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep) | Public |
+| **Technical Docs** | GitHub | [Repository](https://github.com/StarGuardAi/Criminal Intelligence Database-MA-Top-12-w-HEI-Prep) | Public |
 
 ---
 
@@ -328,9 +328,9 @@ Dr. Davis         |   68%   |   50%    | Training
 **Robert Reichert**  
 Healthcare Data Scientist | BI Specialist
 
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 🔗 [LinkedIn](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)  
-💻 [GitHub](https://github.com/bobareichert)
+💻 [GitHub](https://github.com/StarGuardAi)
 
 **Status:** Open to Work - Available Immediately
 

@@ -255,9 +255,9 @@ After Optimization:
 **Robert Reichert**  
 Healthcare Data Scientist | SQL Expert
 
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 🔗 [LinkedIn](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)  
-💻 [GitHub](https://github.com/bobareichert)
+💻 [GitHub](https://github.com/StarGuardAi)
 
 **Status:** Open to Work - Available Immediately
 

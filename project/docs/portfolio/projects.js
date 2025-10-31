@@ -9,7 +9,7 @@ const projects = [
         tags: ["Python", "Scikit-learn", "FastAPI", "HIPAA", "Healthcare", "Machine Learning"],
         skills: ["Machine Learning", "Python", "Healthcare", "API Development"],
         liveDemo: "https://hedis-ma-top-12-w-hei-prep.streamlit.app/",
-        code: "https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep",
+        code: "https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep",
         caseStudy: "featured/hedis-star-rating-system/",
         featured: true,
         metrics: {

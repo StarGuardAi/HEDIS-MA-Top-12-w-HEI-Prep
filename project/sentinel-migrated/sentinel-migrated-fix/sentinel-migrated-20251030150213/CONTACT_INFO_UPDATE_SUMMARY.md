@@ -5,7 +5,7 @@
 
 ### Email Address Updated
 - **Old:** reichert@post.com
-- **New:** reichert99@gmail.com
+- **New:** reichert.starguardai@gmail.com
 - **Total files updated:** 21 files with 52 occurrences
 
 ### New Links Added
@@ -19,7 +19,7 @@
    - Added to 6 key files
 
 3. **GitHub Profile:**
-   - https://github.com/bobareichert
+   - https://github.com/StarGuardAi
    - Verified in all files
 
 4. **LinkedIn Profile:**
@@ -63,7 +63,7 @@
 
 ### Email Search Results
 - **Old email (reichert@post.com):** 0 occurrences found ✅
-- **New email (reichert99@gmail.com):** 52 occurrences across 21 files ✅
+- **New email (reichert.starguardai@gmail.com):** 52 occurrences across 21 files ✅
 
 ### Link Verification
 - **Streamlit link:** Present in 6 key files ✅
@@ -76,9 +76,9 @@
 **Robert Reichert**  
 AI Support & Criminal Intelligence Database Data Specialist
 
-📧 **Email:** reichert99@gmail.com  
+📧 **Email:** reichert.starguardai@gmail.com  
 🔗 **LinkedIn:** www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI  
-💻 **GitHub:** https://github.com/bobareichert  
+💻 **GitHub:** https://github.com/StarGuardAi  
 🎨 **Portfolio:** https://criminal intelligence database-gap-in-care-prediction-engine.my.canva.site/  
 📊 **Live Demo:** https://criminal intelligence database-ma-top-12-w-hei-prep.streamlit.app/
 

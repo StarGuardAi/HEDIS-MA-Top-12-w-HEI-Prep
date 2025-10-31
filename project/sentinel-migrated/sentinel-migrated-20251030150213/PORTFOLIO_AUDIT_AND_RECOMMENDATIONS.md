@@ -86,7 +86,7 @@ README.md starts with:
 I prevent $150-200M Star Rating crises for Medicare Advantage health plans 
 using AI-powered predictive analytics.
 
-🚀 [TRY LIVE DEMO](link) | 📧 [CONTACT ME](mailto:reichert99@gmail.com)
+🚀 [TRY LIVE DEMO](link) | 📧 [CONTACT ME](mailto:reichert.starguardai@gmail.com)
 ```
 
 **Impact:** 70% of recruiters now understand your value in 3 seconds (vs 15%)
@@ -684,7 +684,7 @@ git push
 # Create
 
 # Step 2: Clone and add README
-git clone https://github.com/bobareichert/bobareichert.git
+git clone https://github.com/StarGuardAi/bobareichert.git
 cd bobareichert
 cp ../HEDIS-MA-Top-12-w-HEI-Prep/PROFILE_README_RECRUITER_OPTIMIZED.md README.md
 git add README.md
@@ -692,7 +692,7 @@ git commit -m "feat: Add recruiter-optimized profile"
 git push
 
 # Step 3: Enable GitHub Pages for main project
-# Go to: github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep/settings/pages
+# Go to: github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/settings/pages
 # Source: main branch, /docs/portfolio folder
 # Save
 
@@ -805,9 +805,9 @@ Most people say "I can do machine learning."
 ---
 
 **Questions? Issues?**
-- 📧 reichert99@gmail.com
+- 📧 reichert.starguardai@gmail.com
 - 🔗 [LinkedIn](https://www.linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI)
-- 💻 [GitHub](https://github.com/bobareichert)
+- 💻 [GitHub](https://github.com/StarGuardAi)
 
 *Portfolio optimization complete - October 26, 2025*
 

@@ -40,10 +40,10 @@ class LinkedInPublisher:
     """Automates posting milestones to LinkedIn"""
     
     # Contact Information
-    EMAIL = "reichert99@gmail.com"
+    EMAIL = "reichert.starguardai@gmail.com"
     LINKEDIN_URL = "https://www.linkedin.com/in/rreichert-hedis-data-science-ai/"
-    GITHUB_URL = "https://github.com/bobareichert"
-    GITHUB_REPO = "https://github.com/bobareichert/hedis-gsd-prediction-engine"
+    GITHUB_URL = "https://github.com/StarGuardAi"
+    GITHUB_REPO = "https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep"
     PORTFOLIO_URL = "https://www.canva.com/design/DAG2WzhiLwM/N_iXUe3eEKL3dzQ2M_0PgQ/edit"
     
     # Hashtag Strategy (Following LinkedIn Best Practices)

@@ -5,9 +5,9 @@ LinkedIn Profile Update Automation
 Automatically posts achievement updates to LinkedIn with context-aware hashtags.
 
 Contact Information:
-- Email: reichert99@gmail.com
+- Email: reichert.starguardai@gmail.com
 - LinkedIn: https://www.linkedin.com/in/rreichert-hedis-data-science-ai/
-- GitHub: https://github.com/bobareichert
+- GitHub: https://github.com/StarGuardAi
 - Portfolio: https://www.canva.com/design/DAG2WzhiLwM/N_iXUe3eEKL3dzQ2M_0PgQ/edit
 
 Usage:
@@ -36,11 +36,11 @@ class LinkedInProfileUpdater:
     """Automates LinkedIn profile updates with intelligent hashtag selection"""
     
     # Contact Information
-    EMAIL = "reichert99@gmail.com"
+    EMAIL = "reichert.starguardai@gmail.com"
     LINKEDIN_URL = "https://www.linkedin.com/in/rreichert-hedis-data-science-ai/"
-    GITHUB_URL = "https://github.com/bobareichert"
+    GITHUB_URL = "https://github.com/StarGuardAi"
     PORTFOLIO_URL = "https://www.canva.com/design/DAG2WzhiLwM/N_iXUe3eEKL3dzQ2M_0PgQ/edit"
-    GITHUB_REPO = "https://github.com/bobareichert/hedis-gsd-prediction-engine"
+    GITHUB_REPO = "https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep"
     
     # Value Proposition
     TAGLINE = "Medicare Advantage Diabetes Analytics | Protecting $M in Star Revenue | Part-Time/Fractional"

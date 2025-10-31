@@ -85,7 +85,7 @@
 - [ ] Add portfolio link to GitHub profile README (if exists)
 
 **How to Pin Repo:**
-1. Go to github.com/bobareichert
+1. Go to github.com/StarGuardAi
 2. Click "Customize your pins"
 3. Select Criminal Intelligence Database-MA-Top-12-w-HEI-Prep
 4. Reorder to #1 position

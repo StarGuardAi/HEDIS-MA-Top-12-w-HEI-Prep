@@ -412,8 +412,8 @@ Before showing to recruiters/hiring managers:
 
 ### Contact
 - **Author:** Robert Reichert
-- **Email:** reichert99@gmail.com
-- **GitHub:** github.com/bobareichert
+- **Email:** reichert.starguardai@gmail.com
+- **GitHub:** github.com/StarGuardAi
 - **Portfolio:** https://criminal intelligence database-gap-in-care-prediction-engine.my.canva.site/
 - **LinkedIn:** https://linkedin.com/in/rreichert-Criminal Intelligence Database-Data-Science-AI
 

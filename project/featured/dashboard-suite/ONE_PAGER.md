@@ -230,7 +230,7 @@ Immediate value in:
 | **HEDIS Portfolio** | Streamlit | [Live Demo](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) |
 | **Star Rating Simulator** | Streamlit | [Interactive](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) |
 | **ROI Calculator** | Streamlit | [Try It](https://hedis-ma-top-12-w-hei-prep.streamlit.app/) |
-| **Full Code** | GitHub | [Repository](https://github.com/bobareichert/HEDIS-MA-Top-12-w-HEI-Prep) |
+| **Full Code** | GitHub | [Repository](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep) |
 
 ---
 
@@ -239,9 +239,9 @@ Immediate value in:
 **Robert Reichert**  
 Healthcare Data Scientist | BI Specialist
 
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 🔗 [LinkedIn: rreichert-HEDIS-Data-Science-AI](https://www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI)  
-💻 [GitHub: bobareichert](https://github.com/bobareichert)
+💻 [GitHub: bobareichert](https://github.com/StarGuardAi)
 
 **Status:** ✅ Open to Work - Available Immediately  
 **Location:** Pittsburgh, PA (Remote-friendly)
@@ -305,6 +305,6 @@ ML API         ─┘                                  └─→ Analysts
 
 **Ready to visualize your healthcare data? Let's talk.**
 
-📧 reichert99@gmail.com | Response within 24 hours
+📧 reichert.starguardai@gmail.com | Response within 24 hours
 
 

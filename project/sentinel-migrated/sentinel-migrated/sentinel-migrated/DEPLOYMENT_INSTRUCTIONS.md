@@ -188,7 +188,7 @@ help prevent similar Star Rating crises.
 
 Best regards,
 Robert Reichert
-reichert99@gmail.com
+reichert.starguardai@gmail.com
 ```
 
 ---

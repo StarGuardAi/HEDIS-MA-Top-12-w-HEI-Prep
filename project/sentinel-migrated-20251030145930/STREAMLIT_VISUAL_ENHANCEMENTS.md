@@ -707,7 +707,7 @@ st.markdown("""
     <p style="margin: 0.5rem 0;">
         <strong>Email:</strong> reichert@post.com | 
         <strong>LinkedIn:</strong> linkedin.com/in/rreichert-HEDIS-Data-Science-AI | 
-        <strong>GitHub:</strong> github.com/bobareichert
+        <strong>GitHub:</strong> github.com/StarGuardAi
     </p>
     <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
         🎯 Open to Work | AI Support & HEDIS Data Specialist Roles

@@ -44,7 +44,7 @@ I help Medicare Advantage plans identify and close diabetes care gaps before the
 `Python` • `Cursor AI` • `Claude Sonnet` • `ChatGPT-4` • `scikit-learn` • `XGBoost` • `pandas` • `SHAP` • `HEDIS` • `HIPAA`
 
 ### 📫 Available for Part-Time Projects
-📧 reichert99@gmail.com  
+📧 reichert.starguardai@gmail.com  
 💼 [LinkedIn](https://linkedin.com/in/rreichert-hedis-data-science-ai)  
 🔗 [Portfolio](https://www.canva.com/design/DAG2WzhiLwM/N_iXUe3eEKL3dzQ2M_0PgQ/edit)
 
@@ -111,14 +111,14 @@ Built using AI-assisted development:
 ## 🔗 Links to Update
 
 ### GitHub Profile
-1. Go to: https://github.com/bobareichert
+1. Go to: https://github.com/StarGuardAi
 2. Click on `bobareichert` repository (your profile repo)
 3. Edit `README.md`
 4. Paste new content from above
 5. Commit: "Update profile: Medicare Advantage diabetes analytics focus"
 
 ### Project Repository
-1. Go to: https://github.com/bobareichert/hedis-gsd-prediction-engine
+1. Go to: https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep
 2. Edit `README.md`
 3. Add diabetes portfolio section at top
 4. Commit: "Add diabetes portfolio value proposition ($620K-$1M)"
@@ -184,7 +184,7 @@ THE SOLUTION: I focus on the diabetes portfolio - four interconnected HEDIS meas
 
 ---
 
-**Contact:** reichert99@gmail.com  
+**Contact:** reichert.starguardai@gmail.com  
 **LinkedIn:** https://linkedin.com/in/rreichert-hedis-data-science-ai  
-**GitHub:** https://github.com/bobareichert
+**GitHub:** https://github.com/StarGuardAi
 

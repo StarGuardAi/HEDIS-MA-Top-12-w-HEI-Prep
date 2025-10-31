@@ -27,7 +27,7 @@ class CanvaPortfolioOptimizer:
                 "title": "Healthcare Data Science & AI Specialist",
                 "location": "Pittsburgh, PA",
                 "phone": "480-767-1337",
-                "email": "reichert99@gmail.com"
+                "email": "reichert.starguardai@gmail.com"
             },
             "sections": [
                 {
@@ -91,8 +91,8 @@ class CanvaPortfolioOptimizer:
             "links": {
                 "canva_portfolio": "https://www.canva.com/design/DAGpa3zpXTw/Y7ycEdZ2_vnKjlFWGdcQwg/edit",
                 "linkedin": "www.linkedin.com/in/rreichert-hedis-data-science-ai",
-                "github": "https://github.com/bobareichert/hedis-gsd-prediction-engine",
-                "email": "reichert99@gmail.com"
+                "github": "https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep",
+                "email": "reichert.starguardai@gmail.com"
             }
         }
     
@@ -175,7 +175,7 @@ class CanvaPortfolioOptimizer:
         content = f"""
 🎯 ROBERT REICHERT
 Senior Healthcare Data Scientist & AI Engineer | HEDIS Expert | $200M+ Cost Savings
-📍 Pittsburgh, PA | 📞 480-767-1337 | ✉️ reichert99@gmail.com
+📍 Pittsburgh, PA | 📞 480-767-1337 | ✉️ reichert.starguardai@gmail.com
 
 🚀 HEDIS GSD PREDICTION ENGINE - AI/ML INNOVATION
 Leading development of production-ready AI system for predicting diabetic patients at risk of poor glycemic control, improving HEDIS GSD measure performance.
@@ -253,9 +253,9 @@ CERTIFICATIONS & ACHIEVEMENTS
 Healthcare Data Science Specialist | HEDIS Compliance Expert | AI/ML Model Development | Production System Deployment
 
 CONNECT
-📧 reichert99@gmail.com
+📧 reichert.starguardai@gmail.com
 🔗 LinkedIn: www.linkedin.com/in/rreichert-HEDIS-Data-Science-AI
-💻 GitHub: https://github.com/bobareichert
+💻 GitHub: https://github.com/StarGuardAi
 🎨 Portfolio: https://hedis-gap-in-care-prediction-engine.my.canva.site/
 📊 Live Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
 """
