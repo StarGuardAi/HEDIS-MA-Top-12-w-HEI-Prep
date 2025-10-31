@@ -1,0 +1,109 @@
+# HEDIS Portfolio Optimizer - Production Configuration
+# docker-compose.prod.yml
+
+version: '3.8'
+
+services:
+  # ===== HEDIS API (Production) =====
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_DATE: ${BUILD_DATE}
+        VCS_REF: ${VCS_REF}
+    image: ${ECR_REGISTRY}/hedis-portfolio-api:${IMAGE_TAG:-latest}
+    container_name: hedis_api_prod
+    restart: unless-stopped
+    environment:
+      # API Configuration
+      ENVIRONMENT: production
+      API_VERSION: ${API_VERSION:-2.0.0}
+      LOG_LEVEL: INFO
+      
+      # Database Configuration (use AWS RDS endpoint)
+      DATABASE_URL: ${DATABASE_URL}
+      
+      # Redis Configuration (use AWS ElastiCache endpoint)
+      REDIS_URL: ${REDIS_URL}
+      
+      # Model Configuration
+      LOAD_MODELS_ON_STARTUP: "true"
+      
+      # Security (from AWS Secrets Manager)
+      API_KEY_HASH: ${API_KEY_HASH}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-100}
+      
+      # AWS Configuration
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
+      
+    ports:
+      - "8000:8000"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    
+    # Security settings
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/logs
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    # Logging configuration
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ${AWS_REGION:-us-east-1}
+        awslogs-group: /ecs/hedis-portfolio-api
+        awslogs-stream-prefix: api
+        awslogs-create-group: "true"
+    
+    # Network configuration
+    networks:
+      - hedis_prod_network
+
+  # ===== Nginx Reverse Proxy (Optional, if not using ALB) =====
+  nginx:
+    image: nginx:alpine
+    container_name: hedis_nginx_prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+    networks:
+      - hedis_prod_network
+    profiles:
+      - with-nginx
+
+networks:
+  hedis_prod_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+
+
