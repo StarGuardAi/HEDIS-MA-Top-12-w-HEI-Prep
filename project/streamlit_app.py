@@ -425,7 +425,7 @@ def show_executive_summary():
     """)
     
     # "How This Helps Business" expander
-    with st.expander("💼 How This Solves Real Problems", expanded=False):
+    with st.expander("💼 How This Solves Real Problems", expanded=True):
         st.markdown("""
         - **Problem:** Healthcare organizations spend 40+ hours/month on manual HEDIS reporting
         - **Solution:** Automated data pipeline + interactive dashboard + predictive AI models
@@ -434,11 +434,9 @@ def show_executive_summary():
         - **Application:** Prevents Star Rating drops (like Humana's $150-200M loss)
         """)
     
-    st.divider()
-    
     # Enhanced header with icon and badges
     st.markdown("""
-        <div style="text-align: center; padding: 2rem 0;">
+        <div style="text-align: center; padding: 0;">
             <div style="font-size: 4rem; margin-bottom: 1rem;">🏥</div>
             <h1 class="main-header">HEDIS Star Rating Portfolio Optimizer</h1>
             <p class="sub-header">AI-Powered Solution for Medicare Advantage Quality Improvement</p>
