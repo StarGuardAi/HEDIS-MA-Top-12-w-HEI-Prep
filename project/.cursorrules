@@ -98,6 +98,13 @@ After writing code, ALWAYS run these reviews in order:
 | `/review-model-code` | Bias, leakage, validation | ML training, evaluation |
 | `/review-sql` | Query optimization for EHR data | All SQL files |
 
+### Speed Shortcuts (See .cursor/prompts/speed-shortcuts.md)
+| Shortcut | Purpose | Time |
+|----------|---------|------|
+| `/quick-review [file]` | Security + HIPAA, failures only | ~12s |
+| `/full-review [file]` | All checks, detailed report | ~28s |
+| `/safe-commit` | PHI scan + review changed files | ~45s |
+
 ### How to Use Commands
 1. Select code in editor (or specify filename)
 2. Open Cursor chat (Cmd/Ctrl + L)
@@ -258,6 +265,8 @@ Your current workflow (from claude-rules.md):
 ```
 .cursorrules                          ← Main rules (auto-loaded)
 .cursor/prompts/code-review.md        ← Detailed review commands
+.cursor/prompts/speed-shortcuts.md    ← Speed shortcuts guide
+.cursor/prompts/QUICK_REFERENCE.md    ← Quick reference card
 docs/healthcare-glossary.md           ← Domain terminology
 scripts/hipaa-scanner.py              ← PHI detector
 scripts/pre-commit-checks.sh          ← Final validation
@@ -385,6 +394,54 @@ python scripts/update_profile.py --milestone 1 --post-type business
 
 ---
 
+## 🔄 MULTI-CHAT SEGMENTATION STRATEGY
+
+### When to Segment Large Builds
+Always segment complex build activities into **small, focused chats** when:
+- **Scope exceeds 2000 lines of code output**
+- **Multiple distinct components** (data, models, API, dashboard)
+- **Incremental value** can be delivered progressively
+- **Testing/debugging** benefits from smaller iterations
+
+### Chat Segmentation Principles
+1. **Single Focus**: Each chat addresses ONE specific task/goal
+2. **Logical Progression**: Chats build on previous work incrementally
+3. **Fast Execution**: Each chat completes in 1-2 hours
+4. **Limited Output**: Under 2000 lines of code per chat
+5. **Clear Handoffs**: Document inputs/outputs between chats
+6. **Visible Value**: Each chat produces testable, deployable artifacts
+
+### Chat Handoff Requirements
+After each chat completion, document:
+- **Inputs**: What dependencies from previous chats
+- **Outputs**: What files/artifacts created
+- **Test Results**: What works and what's validated
+- **Next Steps**: What the next chat needs to continue
+
+### Example: Segmented Build
+**Single Large Chat** (AVOID):
+```
+"Build complete fraud detection system: data, models, API, dashboard"
+→ 4000+ lines, 8+ hours, difficult to test/debug
+```
+
+**Segmented Chats** (PREFERRED):
+```
+Chat 1: Data acquisition & feature engineering (800 lines, 1-2h)
+Chat 2: Model training & evaluation (700 lines, 1-2h)
+Chat 3: FastAPI backend (900 lines, 1-2h)
+Chat 4: Streamlit dashboard (1100 lines, 1-2h)
+Chat 5: Testing & deployment (600 lines, 1-2h)
+→ Each chat testable, debuggable, clear handoffs
+```
+
+### Reference Documents
+- **MULTI_CHAT_SEGMENTATION_PLAN.md**: Complete chat breakdown guide
+- **CHAT_SEGMENTATION_EXECUTIVE_SUMMARY.md**: Overview and strategy
+- **CHAT_1_IMPLEMENTATION_GUIDE.md**: Example segmented implementation
+
+---
+
 ## ✅ SUCCESS CRITERIA
 
 ### For Every Code File
@@ -401,9 +458,379 @@ python scripts/update_profile.py --milestone 1 --post-type business
 - [ ] Review summary documented
 - [ ] Task archived to completed folder
 
+### For Every Chat Segment
+- [ ] Scope under 2000 lines of code
+- [ ] Single focused objective
+- [ ] Clear handoff documentation
+- [ ] Testable outputs delivered
+- [ ] Next chat prerequisites defined
+
 ### For Every LinkedIn Post
 - [ ] Hashtag strategy applied (10 total: 4 core + 6 context)
 - [ ] Contact information included (email, GitHub, portfolio)
 - [ ] Post type auto-detected or manually specified
 - [ ] Engagement tracked in linkedin_engagement_tracker.json
 - [ ] Quarterly review scheduled
+
+---
+
+## ⚡ SPEED OPTIMIZATION (CRITICAL FOR PERFORMANCE)
+
+### Daily Speed Shortcuts (See .cursor/prompts/speed-shortcuts.md)
+
+#### Starting Work
+```
+"Read tasks/todo.md lines 1-20 only, show current task"
+[Instead of: "Read my todo file"]
+```
+
+#### Fast Reviews
+```
+"/quick-review [file]"     → Security + HIPAA, show failures only (~12s)
+"/full-review [file]"      → All checks, detailed report (~28s)
+"/safe-commit"             → PHI scan + review changed files (~45s)
+```
+
+#### Targeted Fixes
+```
+"Fix line 45 only: remove member_id from log"
+"Add docstring to calculate_age() only"
+"Review src/data/*.py security, failures only"
+```
+
+#### Model Selection
+```
+Default: Sonnet 3.5 (fast for all tasks)
+"FAST - [question]"        → Explicitly use Sonnet 3.5 speed
+"DEEP - [question]"        → Use Claude Sonnet 4.5 for depth
+```
+
+### Context Loading Strategy - CRITICAL FOR SPEED
+#### Load Minimum Context First
+- Current task lines from tasks/todo.md (not full file)
+- Specific function/class being edited (not entire file)
+- Only relevant healthcare terms (not full glossary)
+
+#### Load On Demand Only (when explicitly requested)
+- Complete Plan.md
+- Full source files
+- Test files
+- Completed tasks history
+
+#### NEVER Auto-Load
+- .csv, .pkl, .parquet files
+- data/ directories
+- venv/, node_modules/
+- Full git history
+- Log files
+
+### Model Selection for Speed
+#### Default to Sonnet 3.5 for:
+- All code generation and editing
+- Code reviews (security, HIPAA, performance, clinical)
+- Quick fixes and debugging
+- Documentation
+
+#### Switch to Claude Sonnet 4.5 only when I say "DEEP":
+- Complex architectural decisions
+- Novel algorithm design
+- Learning new healthcare concepts
+
+### Response Format (Progressive Disclosure)
+#### ALWAYS structure responses as:
+1. **Quick Answer** (1-2 sentences)
+2. **Code/Action** (immediate fix)
+3. **Details** (only if needed)
+
+#### Example:
+**Issue:** PHI exposure line 45
+**Fix:** 
+```python
+# BEFORE
+logger.info(f"Processing member {member_id}")
+
+# AFTER
+logger.info(f"Processing member record")
+```
+**Details:** Member IDs are PHI under HIPAA. Never log identifiers without hashing.
+
+---
+
+## 🛡️ CURSOR AI PROJECT RULES
+# These rules apply to all Cursor AI chats in this project
+# Apply to all projects: Guardian, Foresight, Cipher, and main HEDIS project
+
+## GENERAL PRINCIPLES
+
+### Rule 1: Sequential Execution Only
+- NEVER suggest running multiple complex tasks simultaneously
+- ALWAYS complete one task fully before starting the next
+- Each chat/script should have ONE clear objective
+- Wait for explicit user confirmation before proceeding to next step
+
+### Rule 2: Task Sizing
+- Break large tasks (>2 hours) into smaller chunks (30 min - 1 hour each)
+- Each chunk should:
+  * Have a single, testable deliverable
+  * Complete in under 1 hour
+  * Not depend on incomplete parallel work
+  * Have clear success criteria
+
+### Rule 3: Synthetic Data First
+- For demonstration/portfolio projects, ALWAYS prefer synthetic/sample data
+- Default to 10K-100K records for rapid iteration
+- Only use large datasets (>1M records) if explicitly requested
+- Optimize for development speed over scale
+
+### Rule 4: File Conflict Prevention
+- NEVER modify the same file from multiple processes/sessions
+- Check if files are being written by other processes before editing
+- Use file locking or sequential execution for shared resources
+- Warn user if concurrent file access detected
+
+## SPECIFIC PROJECT RULES
+
+### Data Processing
+- Default dataset size: 100K transactions (not 6M)
+- Training time target: <15 minutes per model
+- Test data should be 20% of total, stratified by fraud label
+- ALWAYS provide quick synthetic data option for testing
+
+### Model Training
+- Provide both "quick" and "full" training options
+- Quick option: <100K samples, <15 min training
+- Full option: 1M+ samples, clearly warn about time (2+ hours)
+- ALWAYS test on synthetic data first before full dataset
+
+### Enhancement Sprints
+- Each sprint must be independently runnable
+- Sprint duration: 30 min - 2 hours maximum
+- MUST have clear "Success Criteria" checklist
+- MUST have "STOP: Test before proceeding" markers
+- Dependencies must be explicitly stated upfront
+
+### Testing Requirements
+- Every sprint ends with verification commands
+- Provide specific test commands to run
+- Include expected output for validation
+- Don't proceed to next sprint without user confirmation
+
+## CHAT SEQUENCING RULES
+
+### Rule: No Parallel Long-Running Tasks
+NEVER suggest:
+```
+# ❌ BAD: Running these simultaneously
+Terminal 1: python train_large_model.py  # 2+ hours
+Terminal 2: python run_enhancements.py   # 1+ hour
+```
+
+ALWAYS suggest:
+```
+# ✅ GOOD: Sequential with checkpoints
+1. Run train_quick_model.py (15 min)
+2. Test and verify
+3. Run enhancement U1 (30 min)
+4. Test and verify
+5. Run enhancement U2 (1.5 hours)
+```
+
+### Rule: Resource-Intensive Tasks
+If suggesting a task that will take >30 minutes:
+1. Warn user about time commitment
+2. Offer a "quick test" alternative first
+3. Suggest running overnight if >2 hours
+4. Provide progress monitoring commands
+
+### Rule: File Creation Sequence
+When creating multiple files:
+1. Create one file at a time
+2. Test each file independently
+3. Wait for user confirmation
+4. Then create next file
+5. NEVER batch-create 10+ files without testing
+
+## ENHANCEMENT SPRINT PROTOCOL
+
+### Before Starting Any Sprint:
+```markdown
+## Prerequisites Check
+- [ ] Previous sprint completed and verified
+- [ ] All files from previous sprint committed to git
+- [ ] No long-running processes active
+- [ ] Dependencies installed and tested
+
+## Deliverables
+- List exactly what files will be created/modified
+- Estimated completion time
+- Success criteria checklist
+
+## Stop Conditions
+- IF any test fails → STOP and debug
+- IF time exceeds estimate by 50% → STOP and reassess
+- IF file conflicts detected → STOP and resolve
+```
+
+### After Completing Sprint:
+```markdown
+## Verification Required
+Run these commands to verify:
+- [ ] Command 1
+- [ ] Command 2
+- [ ] Command 3
+
+Expected output:
+[Specific output user should see]
+
+✅ Sprint complete when all checkboxes checked
+⏸️  PAUSE: Wait for user confirmation before next sprint
+```
+
+## ERROR HANDLING
+
+### If User Asks to Run Multiple Tasks:
+```
+⚠️  WAIT: You've asked to run [Task A] and [Task B] simultaneously.
+
+RISK: This may cause:
+- File conflicts
+- Resource competition  
+- Failed tasks requiring restart
+
+RECOMMENDATION: Run sequentially
+1. Complete Task A first (estimated: XX min)
+2. Verify success
+3. Then start Task B (estimated: XX min)
+
+Proceed? (yes/no)
+```
+
+### If Detecting Long-Running Task:
+```
+⏰ TIME WARNING: This task will take approximately [X hours]
+
+OPTIONS:
+A) Run quick version first (~15 min) ✅ RECOMMENDED
+B) Run full version now (warn: may take hours)
+C) Schedule for overnight run
+D) Skip and use pre-trained model
+
+Which option? (A/B/C/D)
+```
+
+## DOCUMENTATION RULES
+
+### Every Code Block Must Include:
+- Purpose (one-line description)
+- Estimated runtime
+- Dependencies required
+- Expected output
+- Failure modes and solutions
+
+### Every Script Must Have:
+```python
+"""
+Script: [Name]
+Purpose: [One line]
+Runtime: [Estimated time]
+Dependencies: [List]
+Usage: python script.py [args]
+
+Success criteria:
+- [ ] Criterion 1
+- [ ] Criterion 2
+"""
+```
+
+## GIT WORKFLOW
+
+### Commit Frequency:
+- After EACH sprint completion
+- Before starting ANY new sprint
+- After ANY successful test
+- NEVER commit mid-task or broken state
+
+### Commit Messages:
+```bash
+# ✅ GOOD
+git commit -m "feat: Add professional badges (U1 complete)"
+git commit -m "docs: Add model performance dashboard (G1 complete)"
+
+# ❌ BAD
+git commit -m "work in progress"
+git commit -m "updates"
+```
+
+## PROHIBITED PATTERNS
+
+### ❌ NEVER Do This:
+1. Suggest running >3 commands simultaneously
+2. Create 10+ files without testing
+3. Start new task before previous one verified
+4. Assume user has unlimited time/patience
+5. Use production-scale data for demos
+6. Suggest "just run it and see what happens"
+
+### ✅ ALWAYS Do This:
+1. One task at a time
+2. Test after each file created
+3. Explicit checkpoints with STOP markers
+4. Provide quick alternatives
+5. Use sample/synthetic data by default
+6. Clear success criteria before starting
+
+## PORTFOLIO PROJECT SPECIFIC
+
+### Remember: This is a DEMONSTRATION project
+- Optimize for: Iteration speed, clarity, completeness
+- NOT optimizing for: Scale, production performance, real-time processing
+- Recruiters care about: Code quality, documentation, explanation
+- Recruiters DON'T care about: 6M vs 100K records, 2hr vs 15min training
+
+### Quick Test Mode (Default)
+- 10K-100K samples
+- <15 min end-to-end
+- Full feature set
+- Professional appearance
+
+### Full Scale Mode (Optional)
+- 1M+ samples
+- 1-4 hour runtime
+- Same features as quick mode
+- Only if user explicitly requests
+
+## CURSOR-SPECIFIC RULES
+
+### When Using Cursor Composer:
+- Limit to 3-5 file edits per session
+- Test after each Composer run
+- Don't chain multiple Composer sessions
+- Verify changes before closing
+
+### When Using Cursor Chat:
+- Keep conversations focused on ONE task
+- Create new chat for new major task
+- Reference previous chats explicitly
+- Don't assume context carries over
+
+### When Using Cursor CMD+K:
+- Use for single-file edits only
+- Not for multi-file changes
+- Test immediately after applying
+- Undo if unexpected results
+
+## FINAL RULE: ASK BEFORE ASSUMING
+
+If uncertain about:
+- Task duration
+- User's time availability  
+- Whether to use quick vs full mode
+- Whether tasks can run in parallel
+
+ALWAYS ASK: "Would you prefer [quick option] or [full option]?"
+DON'T ASSUME: User wants the longest, most complex version
+
+---
+
+END OF PROJECT RULES
+These rules apply to all Cursor AI interactions in this project.

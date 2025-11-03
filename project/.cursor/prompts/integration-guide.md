@@ -609,12 +609,149 @@ Act like you're a senior engineer teaching me."
 ```
 .cursorrules                          ← Main rules (auto-loaded)
 .cursor/prompts/code-review.md        ← Detailed review commands
+.cursor/prompts/SPRINT_TEMPLATE.md    ← Sprint template structure
 docs/healthcare-glossary.md           ← Domain terminology
 scripts/hipaa-scanner.py              ← PHI detector
 scripts/pre-commit-checks.sh          ← Final validation
 tasks/todo.md                         ← Current sprint tasks
 Plan.md                               ← Master development plan
 ```
+
+---
+
+## 🛡️ Guardian Fraud Detection System Rules
+
+### Core Principles (Apply to All Projects)
+
+These rules from the Guardian Fraud Detection System apply to all Cursor AI chats:
+
+**Sequential Execution Only**
+- NEVER suggest running multiple complex tasks simultaneously
+- ALWAYS complete one task fully before starting the next
+- Each chat/script should have ONE clear objective
+- Wait for explicit user confirmation before proceeding to next step
+
+**Task Sizing**
+- Break large tasks (>2 hours) into smaller chunks (30 min - 1 hour each)
+- Each chunk should have a single, testable deliverable
+- Complete in under 1 hour when possible
+- Not depend on incomplete parallel work
+
+**Synthetic Data First**
+- For demonstration/portfolio projects, ALWAYS prefer synthetic/sample data
+- Default to 10K-100K records for rapid iteration
+- Only use large datasets (>1M records) if explicitly requested
+- Optimize for development speed over scale
+
+**Quick vs Full Mode**
+- **Quick Mode (Default):** 10K-100K samples, <15 min training, full feature set
+- **Full Mode (Optional):** 1M+ samples, 1-4 hour runtime, only if explicitly requested
+
+**No Parallel Long-Running Tasks**
+- ❌ NEVER suggest running multiple 30+ minute tasks simultaneously
+- ✅ ALWAYS suggest sequential execution with checkpoints
+
+**File Conflict Prevention**
+- NEVER modify the same file from multiple processes/sessions
+- Check if files are being written by other processes before editing
+- Use sequential execution for shared resources
+
+### ⚠️ Rule: Sequential Execution Only
+
+**Never Suggest Parallel Tasks**
+
+**❌ BAD Response:**
+```
+Run these in separate terminals:
+Terminal 1: python train_model.py
+Terminal 2: python run_enhancements.py
+Terminal 3: python generate_reports.py
+```
+
+**✅ GOOD Response:**
+```
+Let's do this step-by-step:
+
+**Step 1:** Train model (15 min)
+python train_model.py
+
+⏸️  PAUSE: Verify training succeeded before proceeding
+
+**Step 2:** Run enhancements (30 min)
+python run_enhancements.py
+
+⏸️  PAUSE: Verify enhancements succeeded
+
+**Step 3:** Generate reports (10 min)
+python generate_reports.py
+```
+
+**Detection Pattern:**
+If user says:
+- "Can I run X and Y at the same time?"
+- "Should I run this while that's running?"
+- "Can I start the next thing?"
+
+**ALWAYS respond with:**
+```
+⚠️  I recommend waiting for [current task] to complete first.
+
+REASON: [Specific conflict or risk]
+
+SAFE APPROACH:
+1. Finish current task
+2. Verify success
+3. Then start next task
+
+This prevents [specific problem] and ensures clean results.
+```
+
+**Exception: Independent Tasks Only**
+Only allow parallel execution if:
+1. Tasks use completely different files
+2. Tasks use different resources (CPU vs network)
+3. No shared state between tasks
+4. Both tasks are read-only
+
+**Example of SAFE parallel execution:**
+```
+✅ SAFE: Can run these together:
+Terminal 1: jupyter notebook (interactive exploration)
+Terminal 2: git push origin main (network operation)
+
+These don't conflict because:
+- No shared files being written
+- Different resources (CPU vs network)
+- Independent operations
+```
+
+See `.cursorrules` for complete Guardian Fraud Detection System rules (lines 559-836).
+
+---
+
+## 📋 Sprint Template
+
+Every sprint must follow the structured template in `.cursor/prompts/SPRINT_TEMPLATE.md`:
+
+### Template Structure
+- **Prerequisites:** Previous sprint verified, git status clean, dependencies installed
+- **Objective:** One clear sentence describing the sprint goal
+- **Deliverables:** List of files to create/modify with paths
+- **Implementation Steps:** Step-by-step with test commands and expected output
+- **Success Criteria:** Clear checklist that must be met
+- **STOP Marker:** Do not proceed to next sprint until all criteria met
+
+### Using the Template
+1. Copy `SPRINT_TEMPLATE.md` for each new sprint
+2. Fill in sprint name and estimated time
+3. Complete prerequisites checklist
+4. Define clear objective
+5. List all deliverables
+6. Add implementation steps with tests
+7. Define success criteria
+8. Add STOP marker before proceeding
+
+This ensures sequential execution, clear deliverables, and proper verification before moving to the next sprint.
 
 ---
 
