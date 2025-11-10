@@ -96,12 +96,19 @@ st.markdown("""
         text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
     }
 
-    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h1 {
+        color: #ffffff !important;
+        text-shadow: 0 0 18px rgba(255, 255, 255, 0.65);
+        font-weight: 750;
+        letter-spacing: 0.8px;
+    }
+
     [data-testid="stSidebar"] h2,
     [data-testid="stSidebar"] h3 {
-        color: #ffffff !important;
-        text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
-        font-weight: 650;
+        color: #f6faff !important;
+        text-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
+        font-weight: 700;
+        letter-spacing: 0.6px;
     }
 
     [data-testid="stSidebar"] a {
