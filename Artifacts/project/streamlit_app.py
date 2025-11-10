@@ -64,6 +64,9 @@ st.markdown("""
         padding-top: 2rem;
         padding-bottom: 3rem;
         animation: fadeIn 0.5s ease-out;
+        background: linear-gradient(180deg, rgba(250, 245, 255, 0.65) 0%, rgba(255, 255, 255, 0.92) 45%, rgba(249, 250, 255, 0.95) 100%);
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 60px rgba(76, 29, 149, 0.08);
     }
     
     @keyframes fadeIn {
@@ -206,42 +209,43 @@ st.markdown("""
     
     [data-testid="stMetricLabel"] {
         font-size: 0.95rem;
-        font-weight: 600;
-        color: #4b5563;
+        font-weight: 650;
+        color: #6d28d9;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.6px;
     }
     
     /* Metric container with card styling */
     [data-testid="metric-container"] {
-        background: white;
-        padding: 1.25rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-        border: 1px solid #e5e7eb;
-        transition: all 0.3s ease;
+        background: linear-gradient(145deg, rgba(248, 240, 255, 0.9) 0%, rgba(236, 233, 254, 0.92) 100%);
+        padding: 1.4rem;
+        border-radius: 0.9rem;
+        box-shadow: 0 16px 36px rgba(76, 29, 149, 0.12);
+        border: 1px solid rgba(168, 85, 247, 0.2);
+        transition: all 0.4s ease;
     }
     
     [data-testid="metric-container"]:hover {
-        box-shadow: 0 8px 12px rgba(37, 99, 235, 0.15);
-        transform: translateY(-2px);
+        box-shadow: 0 24px 48px rgba(124, 58, 237, 0.18);
+        transform: translateY(-4px);
     }
     
     /* ==================== ALERT BOXES ==================== */
     
     /* Enhanced info boxes */
     .stAlert {
-        border-radius: 0.75rem;
-        border-left: 5px solid;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        padding: 1.25rem;
+        border-radius: 0.95rem;
+        border-left: 6px solid #7c3aed;
+        box-shadow: 0 14px 32px rgba(124, 58, 237, 0.16);
+        padding: 1.35rem 1.5rem;
+        background: linear-gradient(135deg, rgba(243, 232, 255, 0.92) 0%, rgba(241, 233, 255, 0.95) 100%);
     }
     
     /* Success boxes */
     .success-box {
         background: linear-gradient(135deg, rgba(221, 214, 254, 0.95) 0%, rgba(216, 180, 254, 0.92) 100%);
-        padding: 1.75rem;
-        border-radius: 0.875rem;
+        padding: 1.9rem;
+        border-radius: 1rem;
         border-left: 6px solid #7c3aed;
         margin: 1.5rem 0;
         box-shadow: 0 12px 30px rgba(124, 58, 237, 0.18);
@@ -257,8 +261,8 @@ st.markdown("""
     /* Crisis alert boxes */
     .crisis-alert {
         background: linear-gradient(135deg, rgba(253, 224, 255, 0.95) 0%, rgba(251, 207, 232, 0.92) 100%);
-        padding: 1.75rem;
-        border-radius: 0.875rem;
+        padding: 1.9rem;
+        border-radius: 1rem;
         border-left: 6px solid #db2777;
         margin: 1.5rem 0;
         box-shadow: 0 12px 30px rgba(219, 39, 119, 0.18);
@@ -269,6 +273,21 @@ st.markdown("""
         font-weight: 700;
         margin-top: 0;
         margin-bottom: 1rem;
+    }
+
+    .info-box {
+        background: linear-gradient(135deg, rgba(243, 232, 255, 0.96) 0%, rgba(233, 213, 255, 0.92) 100%);
+        padding: 1.75rem;
+        border-radius: 0.95rem;
+        border: 1px solid rgba(168, 85, 247, 0.28);
+        box-shadow: 0 18px 36px rgba(124, 58, 237, 0.14);
+        color: #3b0764;
+    }
+
+    .info-box h4 {
+        margin-top: 0;
+        color: #5b21b6;
+        font-weight: 700;
     }
     
     /* ==================== BUTTONS ==================== */
@@ -331,43 +350,47 @@ st.markdown("""
     
     /* Radio buttons */
     .stRadio > div > label {
-        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        padding: 0.875rem 1.5rem;
-        border-radius: 0.625rem;
+        background: linear-gradient(135deg, rgba(244, 237, 255, 0.95) 0%, rgba(230, 216, 255, 0.92) 100%);
+        padding: 0.9rem 1.6rem;
+        border-radius: 0.75rem;
         transition: all 0.3s ease;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: 650;
+        color: #4c1d95;
+        border: 1px solid rgba(168, 85, 247, 0.22);
+        box-shadow: 0 10px 24px rgba(91, 33, 182, 0.15);
     }
     
     .stRadio > div > label:hover {
-        background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        background: linear-gradient(135deg, rgba(233, 216, 255, 0.98) 0%, rgba(219, 197, 255, 0.95) 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 16px 32px rgba(124, 58, 237, 0.2);
     }
     
     /* ==================== DATA DISPLAY ==================== */
     
     /* DataFrames with enhanced styling */
     .stDataFrame {
-        border-radius: 0.75rem;
+        border-radius: 0.85rem;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-        border: 1px solid #e5e7eb;
+        box-shadow: 0 18px 36px rgba(91, 33, 182, 0.12);
+        border: 1px solid rgba(165, 85, 247, 0.25);
     }
     
     /* Expanders with better styling */
     .streamlit-expanderHeader {
-        background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 100%);
-        border-radius: 0.625rem;
-        font-weight: 700;
-        color: #1f2937;
-        padding: 1rem 1.5rem;
+        background: linear-gradient(120deg, rgba(244, 237, 255, 0.95) 0%, rgba(230, 216, 255, 0.92) 100%);
+        border-radius: 0.75rem;
+        font-weight: 750;
+        color: #4c1d95;
+        padding: 1.1rem 1.6rem;
         transition: all 0.3s ease;
+        border: 1px solid rgba(168, 85, 247, 0.25);
     }
     
     .streamlit-expanderHeader:hover {
-        background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        background: linear-gradient(120deg, rgba(233, 216, 255, 0.98) 0%, rgba(219, 197, 255, 0.95) 100%);
+        box-shadow: 0 12px 28px rgba(124, 58, 237, 0.18);
     }
     
     /* ==================== CHARTS & VISUALIZATIONS ==================== */
@@ -432,18 +455,18 @@ st.markdown("""
     
     /* Card containers */
     .card {
-        background: white;
-        padding: 2rem;
-        border-radius: 0.875rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        margin: 1.5rem 0;
-        border: 1px solid #e5e7eb;
-        transition: all 0.3s ease;
+        background: linear-gradient(145deg, rgba(248, 243, 255, 0.96) 0%, rgba(240, 231, 255, 0.94) 100%);
+        padding: 2.1rem;
+        border-radius: 1.1rem;
+        box-shadow: 0 26px 60px rgba(88, 28, 135, 0.18);
+        margin: 1.75rem 0;
+        border: 1px solid rgba(196, 181, 253, 0.35);
+        transition: all 0.35s ease;
     }
     
     .card:hover {
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
-        transform: translateY(-2px);
+        box-shadow: 0 36px 72px rgba(124, 58, 237, 0.24);
+        transform: translateY(-6px);
     }
     
     /* ==================== RESPONSIVE DESIGN ==================== */
