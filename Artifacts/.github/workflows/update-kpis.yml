@@ -1,0 +1,38 @@
+name: Update KPIs
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6 AM UTC
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  update-kpis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests pyyaml
+      
+      - name: Generate KPIs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPO: ${{ github.event.repository.name }}
+        run: |
+          python scripts/generate-kpis.py
+      
+      - name: Commit changes
+        run: |
+          git config --local user.email "bot@sentinel-analytics.dev"
+          git config --local user.name "KPI Bot"
+          git add KEY_PERFORMANCE_INDICATORS.md
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: Update KPIs [automated]"
+          git push
+

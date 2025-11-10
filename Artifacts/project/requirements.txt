@@ -1,0 +1,17 @@
+# HEDIS Star Rating Portfolio Optimizer - Streamlit Dashboard Dependencies
+# Minimal version for fast deployment
+# Author: Robert Reichert
+
+# ===== Dashboard Framework =====
+streamlit==1.39.0
+rich==13.7.1  # Streamlit 1.39 requires <14
+
+# ===== Data Processing =====
+pandas==2.2.3
+numpy==2.1.1
+
+# ===== Visualization =====
+plotly==5.18.0
+
+# Note: This is the minimal set for dashboard deployment.
+# Full ML/API dependencies are in requirements-full.txt for local development.

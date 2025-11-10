@@ -1,0 +1,37 @@
+{
+  "cursor.ai.enabled": true,
+  "cursor.ai.streaming": true,
+  "cursor.ai.maxContextSize": 8000,
+  "cursor.ai.modelPreference": "claude-sonnet-3.5",
+  
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true,
+    "**/venv": true,
+    "**/.venv": true,
+    "**/*.pkl": true,
+    "**/*.csv": true,
+    "**/*.parquet": true,
+    "**/data/raw": true,
+    "**/data/processed": true
+  },
+  
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/venv": true,
+    "**/*.pkl": true,
+    "**/data/raw": true,
+    "**/data/processed": true,
+    "**/.git": true
+  },
+  
+  "cursor.ai.ignorePatterns": [
+    "**/data/**",
+    "**/models/*.pkl",
+    "**/*.csv",
+    "**/*.parquet",
+    "**/venv/**",
+    "**/__pycache__/**"
+  ]
+}

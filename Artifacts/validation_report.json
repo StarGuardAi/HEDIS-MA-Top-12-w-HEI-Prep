@@ -1,0 +1,144 @@
+{
+  "is_valid": true,
+  "issues_count": 0,
+  "warnings_count": 0,
+  "issues": [],
+  "warnings": [],
+  "statistics": {
+    "missing_values": {
+      "total_missing": 0,
+      "columns_with_missing": 0,
+      "missing_percentage": 0.0
+    },
+    "duplicates": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "class_distribution": {
+      "class_counts": {
+        "0": 788,
+        "1": 12
+      },
+      "class_percentages": {
+        "0": 98.5,
+        "1": 1.5
+      },
+      "total_samples": 800
+    },
+    "shape": {
+      "rows": 800,
+      "columns": 12
+    },
+    "columns": [
+      "transaction_id",
+      "customer_id",
+      "merchant_id",
+      "timestamp",
+      "amount",
+      "hour",
+      "amount_log",
+      "is_weekend",
+      "velocity_24h",
+      "amount_deviation",
+      "merchant_risk_score",
+      "is_fraud"
+    ],
+    "dtypes": {
+      "transaction_id": "object",
+      "customer_id": "object",
+      "merchant_id": "object",
+      "timestamp": "object",
+      "amount": "float64",
+      "hour": "int64",
+      "amount_log": "float64",
+      "is_weekend": "int64",
+      "velocity_24h": "int64",
+      "amount_deviation": "float64",
+      "merchant_risk_score": "float64",
+      "is_fraud": "int64"
+    },
+    "memory_usage_mb": 0.2572364807128906,
+    "numeric_summary": {
+      "amount": {
+        "count": 800.0,
+        "mean": 135.3699018893703,
+        "std": 151.24542499179367,
+        "min": 5.992741523488708,
+        "25%": 54.99827613184681,
+        "50%": 96.1913465769399,
+        "75%": 163.3619311841085,
+        "max": 1941.0284962865949
+      },
+      "hour": {
+        "count": 800.0,
+        "mean": 14.43375,
+        "std": 4.2178606986945395,
+        "min": 0.0,
+        "25%": 11.0,
+        "50%": 14.0,
+        "75%": 18.0,
+        "max": 21.0
+      },
+      "amount_log": {
+        "count": 800.0,
+        "mean": 4.5705665531999,
+        "std": 0.8100928883550165,
+        "min": 1.9448726858605347,
+        "25%": 4.0253208517345165,
+        "50%": 4.576680596113082,
+        "75%": 5.102070759548793,
+        "max": 7.5714883224236305
+      },
+      "is_weekend": {
+        "count": 800.0,
+        "mean": 0.28125,
+        "std": 0.44989047478150046,
+        "min": 0.0,
+        "25%": 0.0,
+        "50%": 0.0,
+        "75%": 1.0,
+        "max": 1.0
+      },
+      "velocity_24h": {
+        "count": 800.0,
+        "mean": 3.15875,
+        "std": 2.319002080812675,
+        "min": 0.0,
+        "25%": 2.0,
+        "50%": 3.0,
+        "75%": 4.0,
+        "max": 22.0
+      },
+      "amount_deviation": {
+        "count": 800.0,
+        "mean": 0.515924853541699,
+        "std": 0.5086212757311998,
+        "min": 0.0006577491596228,
+        "25%": 0.15373388288154452,
+        "50%": 0.3840881192670313,
+        "75%": 0.7010680133281065,
+        "max": 3.5014550239525994
+      },
+      "merchant_risk_score": {
+        "count": 800.0,
+        "mean": 0.2078477281539286,
+        "std": 0.13816830598673013,
+        "min": 0.0015691450775861,
+        "25%": 0.11102142396481618,
+        "50%": 0.17881095622093213,
+        "75%": 0.2855127105306354,
+        "max": 0.954710369297642
+      },
+      "is_fraud": {
+        "count": 800.0,
+        "mean": 0.015,
+        "std": 0.12162849939397855,
+        "min": 0.0,
+        "25%": 0.0,
+        "50%": 0.0,
+        "75%": 0.0,
+        "max": 1.0
+      }
+    }
+  }
+}
