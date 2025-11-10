@@ -4746,35 +4746,39 @@ GET  /api/v1/health
     st.markdown("---")
 
     st.markdown("""
-    🤝 **For Healthcare Influencers & Talent Partners**
+    🤝 For Healthcare Influencers & Talent Partners
 
-    **Why this matters for you:**
+    Why this matters for you:
 
-    - Translate technical delivery into executive-ready storylines
-    - Showcase measurable financial impact within minutes
-    - Demonstrate candidate readiness for Medicare Advantage innovation roles
+    Translate technical delivery into executive-ready storylines
+    Showcase measurable financial impact within minutes
+    Demonstrate candidate readiness for Medicare Advantage innovation roles
 
     This demo is a guided narrative you can share with leadership, hiring teams, or your professional audience. Every section is built to answer the top recruiter questions: What can they deliver? How fast? What business value?
 
-    **Recruiter Snapshot**
-    - Time-to-Value: Launch in 60-90 days
-    - Industry Proof: Humana & Centene scenarios included
-    - Equity Ready: HEI dashboards aligned to 2027 CMS mandate
+    Recruiter Snapshot
 
-    **Executive Storytelling**
+    Time-to-Value: Launch in 60-90 days
+    Industry Proof: Humana & Centene scenarios included
+    Equity Ready: HEI dashboards aligned to 2027 CMS mandate
+
+    Executive Storytelling
+
     Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
 
-    **Hiring Confidence**
+    Hiring Confidence
+
     Full SDLC ownership showcased: data, ML, UX, and deployment.
 
-    **Shareable Assets**
+    Shareable Assets
+
     Streamlit demo, landing collateral, and recruiter one-pagers provided.
 
-    📅 **Book a Live Walkthrough**
+    📅 Book a Live Walkthrough
 
-    🔗 **Connect on LinkedIn**
+    🔗 Connect on LinkedIn
 
-    📧 **Email the Candidate**
+    📧 Email the Candidate
 
     Share these links directly in outreach messages or during interview debriefs.
     """)
