@@ -780,67 +780,6 @@ st.sidebar.markdown("*AI Support & HEDIS Data Specialist*")
 
 def show_executive_summary():
     """Executive summary with Humana/Centene case studies"""
-    
-    st.markdown("## 🤝 For Healthcare Influencers & Talent Partners")
-    hero_cols = st.columns([2, 1])
-    with hero_cols[0]:
-        st.success(
-            """
-            **Why this matters for you:**  
-            - Translate technical delivery into executive-ready storylines  
-            - Showcase measurable financial impact within minutes  
-            - Demonstrate candidate readiness for Medicare Advantage innovation roles
-            """
-        )
-        st.markdown(
-            """
-            This demo is a guided narrative you can share with leadership, hiring teams,
-            or your professional audience. Every section is built to answer the top
-            recruiter questions: *What can they deliver? How fast? What business value?*
-            """
-        )
-    with hero_cols[1]:
-        st.markdown(
-            """
-            ### Recruiter Snapshot
-            - **Time-to-Value:** Launch in 60-90 days  
-            - **Industry Proof:** Humana & Centene scenarios included  
-            - **Equity Ready:** HEI dashboards aligned to 2027 CMS mandate
-            """
-        )
-
-    callout_cols = st.columns(3)
-    with callout_cols[0]:
-        st.info(
-            """
-            **Executive Storytelling**  
-            Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
-            """
-        )
-    with callout_cols[1]:
-        st.info(
-            """
-            **Hiring Confidence**  
-            Full SDLC ownership showcased: data, ML, UX, and deployment.
-            """
-        )
-    with callout_cols[2]:
-        st.info(
-            """
-            **Shareable Assets**  
-            Streamlit demo, landing collateral, and recruiter one-pagers provided.
-            """
-        )
-
-    cta_cols = st.columns([1, 1, 1])
-    with cta_cols[0]:
-        st.markdown("[📅 Book a Live Walkthrough](https://calendly.com/reichert-starguardai/30min)", unsafe_allow_html=True)
-    with cta_cols[1]:
-        st.markdown("[🔗 Connect on LinkedIn](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)", unsafe_allow_html=True)
-    with cta_cols[2]:
-        st.markdown("[📧 Email the Candidate](mailto:reichert.starguardai@gmail.com?subject=HEDIS%20AI%20Portfolio)", unsafe_allow_html=True)
-
-    st.caption("Share these links directly in outreach messages or during interview debriefs.")
 
     # Business context above the fold
     st.markdown("## 📊 Business Impact")
@@ -1078,6 +1017,44 @@ def show_executive_summary():
             </a>
         </div>
         """, unsafe_allow_html=True)
+
+    st.markdown("""
+🤝 For Healthcare Influencers & Talent Partners
+
+Why this matters for you:
+
+Translate technical delivery into executive-ready storylines
+Showcase measurable financial impact within minutes
+Demonstrate candidate readiness for Medicare Advantage innovation roles
+
+This demo is a guided narrative you can share with leadership, hiring teams, or your professional audience. Every section is built to answer the top recruiter questions: What can they deliver? How fast? What business value?
+
+Recruiter Snapshot
+
+Time-to-Value: Launch in 60-90 days
+Industry Proof: Humana & Centene scenarios included
+Equity Ready: HEI dashboards aligned to 2027 CMS mandate
+
+Executive Storytelling
+
+Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
+
+Hiring Confidence
+
+Full SDLC ownership showcased: data, ML, UX, and deployment.
+
+Shareable Assets
+
+Streamlit demo, landing collateral, and recruiter one-pagers provided.
+
+📅 Book a Live Walkthrough
+
+🔗 Connect on LinkedIn
+
+📧 Email the Candidate
+
+Share these links directly in outreach messages or during interview debriefs.
+""")
 
 
 # ============================================================================
@@ -4781,45 +4758,6 @@ elif page == "👤 About Me":
         st.markdown("🔗 **[LinkedIn Profile](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)**")
     
     st.markdown("---")
-
-    if page == "🏠 Executive Summary":
-        st.markdown("""
-        🤝 For Healthcare Influencers & Talent Partners
-
-        Why this matters for you:
-
-        Translate technical delivery into executive-ready storylines
-        Showcase measurable financial impact within minutes
-        Demonstrate candidate readiness for Medicare Advantage innovation roles
-
-        This demo is a guided narrative you can share with leadership, hiring teams, or your professional audience. Every section is built to answer the top recruiter questions: What can they deliver? How fast? What business value?
-
-        Recruiter Snapshot
-
-        Time-to-Value: Launch in 60-90 days
-        Industry Proof: Humana & Centene scenarios included
-        Equity Ready: HEI dashboards aligned to 2027 CMS mandate
-
-        Executive Storytelling
-
-        Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
-
-        Hiring Confidence
-
-        Full SDLC ownership showcased: data, ML, UX, and deployment.
-
-        Shareable Assets
-
-        Streamlit demo, landing collateral, and recruiter one-pagers provided.
-
-        📅 Book a Live Walkthrough
-
-        🔗 Connect on LinkedIn
-
-        📧 Email the Candidate
-
-        Share these links directly in outreach messages or during interview debriefs.
-        """)
     
     # Professional summary
     st.markdown("## 🎯 Professional Summary")
