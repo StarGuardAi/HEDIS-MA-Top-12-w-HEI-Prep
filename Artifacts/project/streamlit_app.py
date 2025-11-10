@@ -75,7 +75,7 @@ st.markdown("""
     
     /* Professional sidebar with gradient */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1e3a5f 0%, #2c5282 100%);
+        background: linear-gradient(180deg, #4e2a84 0%, #8f67d1 100%);
         padding-top: 2rem;
     }
     
@@ -109,23 +109,43 @@ st.markdown("""
 
     [data-testid="stSidebar"] h1 {
         color: #ffffff !important;
-        text-shadow: 0 0 18px rgba(255, 255, 255, 0.65);
+        text-shadow: 0 0 22px rgba(171, 141, 255, 0.7);
         font-weight: 750;
         letter-spacing: 0.8px;
     }
 
     [data-testid="stSidebar"] h2,
     [data-testid="stSidebar"] h3 {
-        color: #f9fbff !important;
-        text-shadow: 0 0 16px rgba(255, 255, 255, 0.58);
+        color: #f9f5ff !important;
+        text-shadow: 0 0 18px rgba(209, 196, 255, 0.6);
         font-weight: 720;
         letter-spacing: 0.7px;
     }
 
     [data-testid="stSidebar"] a {
-        color: #ffffff !important;
+        color: #ede8ff !important;
         font-weight: 600;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+        text-shadow: 0 0 14px rgba(214, 189, 255, 0.45);
+    }
+
+    [data-testid="stSidebar"] a:hover {
+        color: #ffffff !important;
+        text-decoration: underline;
+    }
+
+    [data-testid="stSidebar"] .stButton>button {
+        background: linear-gradient(90deg, #7c3aed 0%, #a855f7 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 999px;
+        padding: 0.6rem 1.3rem;
+        font-weight: 600;
+        box-shadow: 0 12px 25px rgba(124, 58, 237, 0.32);
+    }
+
+    [data-testid="stSidebar"] .stButton>button:hover {
+        background: linear-gradient(90deg, #a855f7 0%, #c084fc 100%);
+        box-shadow: 0 18px 38px rgba(168, 85, 247, 0.35);
     }
     
     /* ==================== HEADERS ==================== */
@@ -134,10 +154,10 @@ st.markdown("""
     .main-header {
         font-size: 2.75rem;
         font-weight: 800;
-        color: #1e3a5f;
+        color: #37195e;
         text-align: center;
         padding: 1.5rem 0;
-        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #8b5cf6 100%);
+        background: linear-gradient(90deg, #6b21a8 0%, #9333ea 45%, #c026d3 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -148,26 +168,26 @@ st.markdown("""
     .sub-header {
         font-size: 1.4rem;
         font-weight: 500;
-        color: #4b5563;
+        color: #5b21b6;
         text-align: center;
         margin-bottom: 2.5rem;
         padding-bottom: 1.5rem;
         border-bottom: 3px solid transparent;
-        border-image: linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%) 1;
+        border-image: linear-gradient(90deg, transparent 0%, #a855f7 50%, transparent 100%) 1;
     }
     
     /* H2 headers */
     h2 {
-        color: #1e3a5f;
+        color: #4c1d95;
         font-weight: 700;
         margin-top: 2rem;
         padding-left: 1rem;
-        border-left: 4px solid #3b82f6;
+        border-left: 4px solid #a855f7;
     }
     
     /* H3 headers */
     h3 {
-        color: #2563eb;
+        color: #7c3aed;
         font-weight: 600;
         margin-top: 1.5rem;
     }
@@ -219,16 +239,16 @@ st.markdown("""
     
     /* Success boxes */
     .success-box {
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        background: linear-gradient(135deg, rgba(221, 214, 254, 0.95) 0%, rgba(216, 180, 254, 0.92) 100%);
         padding: 1.75rem;
         border-radius: 0.875rem;
-        border-left: 6px solid #10b981;
+        border-left: 6px solid #7c3aed;
         margin: 1.5rem 0;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        box-shadow: 0 12px 30px rgba(124, 58, 237, 0.18);
     }
     
     .success-box h4 {
-        color: #047857;
+        color: #5b21b6;
         font-weight: 700;
         margin-top: 0;
         margin-bottom: 1rem;
@@ -236,16 +256,16 @@ st.markdown("""
     
     /* Crisis alert boxes */
     .crisis-alert {
-        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        background: linear-gradient(135deg, rgba(253, 224, 255, 0.95) 0%, rgba(251, 207, 232, 0.92) 100%);
         padding: 1.75rem;
         border-radius: 0.875rem;
-        border-left: 6px solid #ef4444;
+        border-left: 6px solid #db2777;
         margin: 1.5rem 0;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+        box-shadow: 0 12px 30px rgba(219, 39, 119, 0.18);
     }
     
     .crisis-alert h4 {
-        color: #991b1b;
+        color: #be185d;
         font-weight: 700;
         margin-top: 0;
         margin-bottom: 1rem;
@@ -255,38 +275,38 @@ st.markdown("""
     
     /* Primary buttons with gradient */
     .stButton > button {
-        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
-        color: white;
+        background: linear-gradient(100deg, #7c3aed 0%, #a855f7 100%);
+        color: #ffffff;
         border: none;
         border-radius: 0.625rem;
         padding: 0.875rem 2.25rem;
         font-weight: 700;
         font-size: 1rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);
+        box-shadow: 0 15px 35px rgba(124, 58, 237, 0.25);
     }
     
     .stButton > button:hover {
-        background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
-        box-shadow: 0 8px 12px rgba(37, 99, 235, 0.35);
+        background: linear-gradient(100deg, #a855f7 0%, #c084fc 100%);
+        box-shadow: 0 18px 40px rgba(168, 85, 247, 0.32);
         transform: translateY(-3px);
     }
     
     /* Download buttons - green theme */
     .stDownloadButton > button {
-        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(100deg, #9333ea 0%, #7c3aed 100%);
         color: white;
         border: none;
         border-radius: 0.625rem;
         padding: 0.875rem 2.25rem;
         font-weight: 700;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
+        box-shadow: 0 12px 28px rgba(147, 51, 234, 0.25);
     }
     
     .stDownloadButton > button:hover {
-        background: linear-gradient(90deg, #059669 0%, #047857 100%);
-        box-shadow: 0 8px 12px rgba(16, 185, 129, 0.35);
+        background: linear-gradient(100deg, #a855f7 0%, #8b5cf6 100%);
+        box-shadow: 0 16px 36px rgba(168, 85, 247, 0.32);
         transform: translateY(-3px);
     }
     
@@ -294,7 +314,19 @@ st.markdown("""
     
     /* Slider styling */
     .stSlider > div > div > div > div {
-        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+        background: linear-gradient(90deg, #7c3aed 0%, #a855f7 100%);
+        box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25);
+    }
+
+    .stSlider > div > div > div > div:nth-child(4) {
+        background-color: #ede9fe;
+        border: 2px solid #a855f7;
+    }
+
+    .stSlider span[class*="thumbValue"] {
+        background: #7c3aed;
+        color: #fdf7ff;
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.32);
     }
     
     /* Radio buttons */
@@ -362,7 +394,7 @@ st.markdown("""
         margin: 3rem 0;
         border: none;
         height: 3px;
-        background: linear-gradient(90deg, transparent 0%, #3b82f6 20%, #8b5cf6 50%, #3b82f6 80%, transparent 100%);
+        background: linear-gradient(90deg, transparent 0%, #7c3aed 20%, #c084fc 50%, #7c3aed 80%, transparent 100%);
         opacity: 0.3;
     }
     
@@ -375,24 +407,25 @@ st.markdown("""
         border-radius: 1.5rem;
         font-size: 0.875rem;
         font-weight: 700;
-        background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
-        color: white;
+        background: linear-gradient(100deg, rgba(107, 33, 168, 0.9) 0%, rgba(168, 85, 247, 0.95) 100%);
+        color: #f8f5ff;
         margin: 0.375rem;
-        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.28);
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        border: 1px solid rgba(216, 180, 254, 0.4);
     }
     
     .badge-success {
-        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(100deg, rgba(99, 102, 241, 0.95) 0%, rgba(129, 140, 248, 0.95) 100%);
     }
     
     .badge-warning {
-        background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+        background: linear-gradient(100deg, rgba(192, 38, 211, 0.9) 0%, rgba(232, 121, 249, 0.95) 100%);
     }
     
     .badge-danger {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+        background: linear-gradient(100deg, rgba(236, 72, 153, 0.88) 0%, rgba(244, 114, 182, 0.92) 100%);
     }
     
     /* ==================== UTILITY CLASSES ==================== */
