@@ -4743,47 +4743,6 @@ GET  /api/v1/health
     📊 **Live Demo:** [Streamlit App](https://hedis-ma-top-12-w-hei-prep.streamlit.app/)
     """)
 
-    st.markdown("---")
-
-    st.markdown("""
-    🤝 For Healthcare Influencers & Talent Partners
-
-    Why this matters for you:
-
-    Translate technical delivery into executive-ready storylines
-    Showcase measurable financial impact within minutes
-    Demonstrate candidate readiness for Medicare Advantage innovation roles
-
-    This demo is a guided narrative you can share with leadership, hiring teams, or your professional audience. Every section is built to answer the top recruiter questions: What can they deliver? How fast? What business value?
-
-    Recruiter Snapshot
-
-    Time-to-Value: Launch in 60-90 days
-    Industry Proof: Humana & Centene scenarios included
-    Equity Ready: HEI dashboards aligned to 2027 CMS mandate
-
-    Executive Storytelling
-
-    Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
-
-    Hiring Confidence
-
-    Full SDLC ownership showcased: data, ML, UX, and deployment.
-
-    Shareable Assets
-
-    Streamlit demo, landing collateral, and recruiter one-pagers provided.
-
-    📅 Book a Live Walkthrough
-
-    🔗 Connect on LinkedIn
-
-    📧 Email the Candidate
-
-    Share these links directly in outreach messages or during interview debriefs.
-    """)
-
-
 # ============================================================================
 # MAIN APP ROUTING
 # ============================================================================
@@ -4822,6 +4781,45 @@ elif page == "👤 About Me":
         st.markdown("🔗 **[LinkedIn Profile](https://linkedin.com/in/rreichert-HEDIS-Data-Science-AI)**")
     
     st.markdown("---")
+
+    if page == "🏠 Executive Summary":
+        st.markdown("""
+        🤝 For Healthcare Influencers & Talent Partners
+
+        Why this matters for you:
+
+        Translate technical delivery into executive-ready storylines
+        Showcase measurable financial impact within minutes
+        Demonstrate candidate readiness for Medicare Advantage innovation roles
+
+        This demo is a guided narrative you can share with leadership, hiring teams, or your professional audience. Every section is built to answer the top recruiter questions: What can they deliver? How fast? What business value?
+
+        Recruiter Snapshot
+
+        Time-to-Value: Launch in 60-90 days
+        Industry Proof: Humana & Centene scenarios included
+        Equity Ready: HEI dashboards aligned to 2027 CMS mandate
+
+        Executive Storytelling
+
+        Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
+
+        Hiring Confidence
+
+        Full SDLC ownership showcased: data, ML, UX, and deployment.
+
+        Shareable Assets
+
+        Streamlit demo, landing collateral, and recruiter one-pagers provided.
+
+        📅 Book a Live Walkthrough
+
+        🔗 Connect on LinkedIn
+
+        📧 Email the Candidate
+
+        Share these links directly in outreach messages or during interview debriefs.
+        """)
     
     # Professional summary
     st.markdown("## 🎯 Professional Summary")
