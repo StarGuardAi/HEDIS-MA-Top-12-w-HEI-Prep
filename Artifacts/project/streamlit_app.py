@@ -80,9 +80,34 @@ st.markdown("""
     }
     
     /* Sidebar text color */
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] li,
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] span {
+        color: #f4f9ff !important;
+        font-weight: 550;
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+    }
+
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] .stMultiSelect label,
+    [data-testid="stSidebar"] .stSelectbox label {
+        color: #f0f7ff !important;
+        font-weight: 600;
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+    }
+
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
         color: #ffffff !important;
-        font-weight: 500;
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+        font-weight: 650;
+    }
+
+    [data-testid="stSidebar"] a {
+        color: #ffffff !important;
+        font-weight: 600;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
     }
     
     /* ==================== HEADERS ==================== */
