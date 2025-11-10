@@ -12,6 +12,8 @@ numpy==2.1.1
 
 # ===== Visualization =====
 plotly==5.18.0
+matplotlib==3.9.2
+seaborn==0.13.2
 
 # Note: This is the minimal set for dashboard deployment.
 # Full ML/API dependencies are in requirements-full.txt for local development.
