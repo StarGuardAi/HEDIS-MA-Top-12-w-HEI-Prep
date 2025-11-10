@@ -88,12 +88,23 @@ st.markdown("""
         text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
     }
 
+    [data-testid="stSidebar"] .stMarkdown,
+    [data-testid="stSidebar"] .stMarkdown div,
+    [data-testid="stSidebar"] .stMarkdown p,
+    [data-testid="stSidebar"] .stMarkdown li {
+        color: #f5f9ff !important;
+        font-weight: 560;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.38);
+    }
+
     [data-testid="stSidebar"] label,
     [data-testid="stSidebar"] .stMultiSelect label,
-    [data-testid="stSidebar"] .stSelectbox label {
+    [data-testid="stSidebar"] .stSelectbox label,
+    [data-testid="stSidebar"] .stRadio label,
+    [data-testid="stSidebar"] .stCheckbox label {
         color: #f0f7ff !important;
-        font-weight: 600;
-        text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+        font-weight: 620;
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.28);
     }
 
     [data-testid="stSidebar"] h1 {
@@ -105,10 +116,10 @@ st.markdown("""
 
     [data-testid="stSidebar"] h2,
     [data-testid="stSidebar"] h3 {
-        color: #f6faff !important;
-        text-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
-        font-weight: 700;
-        letter-spacing: 0.6px;
+        color: #f9fbff !important;
+        text-shadow: 0 0 16px rgba(255, 255, 255, 0.58);
+        font-weight: 720;
+        letter-spacing: 0.7px;
     }
 
     [data-testid="stSidebar"] a {
