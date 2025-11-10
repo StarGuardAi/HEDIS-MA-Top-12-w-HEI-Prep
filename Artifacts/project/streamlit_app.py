@@ -4745,42 +4745,36 @@ GET  /api/v1/health
 
     st.markdown("---")
 
-    st.markdown("### 🤝 For Healthcare Influencers & Talent Partners")
-
     st.markdown("""
+    🤝 **For Healthcare Influencers & Talent Partners**
+
     **Why this matters for you:**
+
     - Translate technical delivery into executive-ready storylines
     - Showcase measurable financial impact within minutes
     - Demonstrate candidate readiness for Medicare Advantage innovation roles
 
-    This demo is a guided narrative you can share with leadership, hiring teams, or your professional audience. Every section is built to answer the top recruiter questions: *What can they deliver? How fast? What business value?*
-    """)
+    This demo is a guided narrative you can share with leadership, hiring teams, or your professional audience. Every section is built to answer the top recruiter questions: What can they deliver? How fast? What business value?
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""
-        **Recruiter Snapshot**
-        - Time-to-Value: Launch in 60-90 days
-        - Industry Proof: Humana & Centene scenarios included
-        - Equity Ready: HEI dashboards aligned to 2027 CMS mandate
+    **Recruiter Snapshot**
+    - Time-to-Value: Launch in 60-90 days
+    - Industry Proof: Humana & Centene scenarios included
+    - Equity Ready: HEI dashboards aligned to 2027 CMS mandate
 
-        **Executive Storytelling**
-        - Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
-        """)
-    with col2:
-        st.markdown("""
-        **Hiring Confidence**
-        - Full SDLC ownership showcased: data, ML, UX, and deployment.
+    **Executive Storytelling**
+    Ready-made charts & scripts to brief leadership on ROI within 5 minutes.
 
-        **Shareable Assets**
-        - Streamlit demo, landing collateral, and recruiter one-pagers provided.
-        """)
+    **Hiring Confidence**
+    Full SDLC ownership showcased: data, ML, UX, and deployment.
 
-    st.markdown("""
-    **Next Actions**
-    - 📅 **Book a Live Walkthrough**
-    - 🔗 **Connect on LinkedIn**
-    - 📧 **Email the Candidate**
+    **Shareable Assets**
+    Streamlit demo, landing collateral, and recruiter one-pagers provided.
+
+    📅 **Book a Live Walkthrough**
+
+    🔗 **Connect on LinkedIn**
+
+    📧 **Email the Candidate**
 
     Share these links directly in outreach messages or during interview debriefs.
     """)
