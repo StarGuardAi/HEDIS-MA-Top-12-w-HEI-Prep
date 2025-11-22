@@ -205,7 +205,13 @@ def create_bar_chart(
                 legend=dict(
                     title_text=str(legend_label),
                     font=dict(size=11),
-                )
+                    orientation="h",  # Horizontal legend
+                    yanchor="bottom",
+                    y=-0.2,  # Position below chart
+                    xanchor="center",
+                    x=0.5
+                ),
+                height=500  # Preserve height
             )
         else:
             # Use continuous color scale for numeric data
@@ -249,7 +255,8 @@ def create_bar_chart(
             fig.update_layout(
                 coloraxis_colorbar_title=colorbar_label,
                 coloraxis_colorbar_title_side="right",
-                coloraxis_colorbar_title_font_size=11
+                coloraxis_colorbar_title_font_size=11,
+                height=500  # Preserve height
             )
             
             # Directly access and force set the colorbar title text
@@ -294,12 +301,16 @@ def create_bar_chart(
             text=str(title) if title else "",
             font=dict(size=18, color=MEDICAL_THEME["primary"]),
             x=0.5,
-            xanchor="center"
+            xanchor="center",
+            y=0.95,  # Position title higher to avoid legend overlap
+            yanchor="top"
         ),
         "xaxis": dict(gridcolor="#e0e0e0", title=x_axis_title),
         "yaxis": dict(gridcolor="#e0e0e0", title=y_axis_title),
         "hovermode": "x unified",
         "autosize": True,  # Make chart responsive for mobile
+        "height": 500,  # Increase height to give more room
+        "margin": dict(l=40, r=40, t=80, b=40),  # Increase top margin for title space
     }
     
     # Apply layout - don't override legend/colorbar titles that were already set in categorical/continuous sections
@@ -330,8 +341,8 @@ def create_bar_chart(
         
         # Force update to ensure it's set correctly - try multiple methods
         if is_categorical:
-            # Update legend title
-            fig.update_layout(legend_title_text=final_label)
+            # Update legend title - preserve height
+            fig.update_layout(legend_title_text=final_label, height=500)
             if hasattr(fig.layout, 'legend') and fig.layout.legend:
                 if hasattr(fig.layout.legend, 'title'):
                     if hasattr(fig.layout.legend.title, 'text'):
@@ -344,7 +355,7 @@ def create_bar_chart(
                 pass
             
             try:
-                fig.update_layout(coloraxis_colorbar_title=final_label)
+                fig.update_layout(coloraxis_colorbar_title=final_label, height=500)
             except:
                 pass
             
@@ -415,9 +426,9 @@ def create_bar_chart(
                 if not legend_title or legend_title.strip() == "Undefined" or legend_title.strip().lower() == "undefined":
                     if color_col:
                         replacement_label = labels_dict.get(color_col, format_column_label(color_col))
-                        if not replacement_label or replacement_label == "Undefined":
-                            replacement_label = format_column_label(color_col)
-                        fig.update_layout(legend_title_text=str(replacement_label))
+                    if not replacement_label or replacement_label == "Undefined":
+                        replacement_label = format_column_label(color_col)
+                        fig.update_layout(legend_title_text=str(replacement_label), height=500)
     
     # Final check on axis titles - ensure they're not "Undefined"
     if hasattr(fig.layout, 'xaxis') and fig.layout.xaxis:
@@ -457,6 +468,12 @@ def create_bar_chart(
                     # Create colorbar title if it doesn't exist
                     if not hasattr(fig.layout.coloraxis.colorbar, 'title'):
                         fig.layout.coloraxis.colorbar.title = dict(text=replacement_label, side="right", font=dict(size=11))
+    
+    # Final safety check: ensure height is always an integer, never None
+    if not hasattr(fig.layout, 'height') or fig.layout.height is None:
+        fig.update_layout(height=500)
+    elif not isinstance(fig.layout.height, int):
+        fig.update_layout(height=500)
     
     return fig
 
@@ -517,12 +534,16 @@ def create_scatter_plot(
             text=str(title) if title else "",
             font=dict(size=18, color=MEDICAL_THEME["primary"]),
             x=0.5,
-            xanchor="center"
+            xanchor="center",
+            y=0.95,  # Position title higher to avoid legend overlap
+            yanchor="top"
         ),
         xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
         yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
         hovermode="closest",
         autosize=True,  # Make chart responsive for mobile
+        height=500,  # Increase height to give more room
+        margin=dict(l=40, r=40, t=80, b=40),  # Increase top margin for title space
     )
     
     # Set colorbar title after layout update
@@ -536,7 +557,7 @@ def create_scatter_plot(
             fig.update_coloraxes(colorbar_title=colorbar_title)
         except:
             try:
-                fig.update_layout(coloraxis_colorbar_title=colorbar_title)
+                fig.update_layout(coloraxis_colorbar_title=colorbar_title, height=500)
             except:
                 # Last resort: try updating traces
                 try:
@@ -546,6 +567,12 @@ def create_scatter_plot(
     
     if text_col:
         fig.update_traces(textposition="top center")
+    
+    # Final safety check: ensure height is always an integer, never None
+    if not hasattr(fig.layout, 'height') or fig.layout.height is None:
+        fig.update_layout(height=500)
+    elif not isinstance(fig.layout.height, int):
+        fig.update_layout(height=500)
     
     return fig
 
@@ -611,7 +638,9 @@ def create_line_chart(
             text=str(title) if title else "",
             font=dict(size=18, color=MEDICAL_THEME["primary"]),
             x=0.5,
-            xanchor="center"
+            xanchor="center",
+            y=0.95,  # Position title higher to avoid legend overlap
+            yanchor="top"
         ),
         xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
         yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
@@ -619,13 +648,15 @@ def create_line_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=1.02, 
-            xanchor="right", 
-            x=1,
+            y=-0.2,  # Position below chart instead of above
+            xanchor="center", 
+            x=0.5,
             title_text="",
             font=dict(size=11),
         ),
         autosize=True,  # Make chart responsive for mobile
+        height=500,  # Increase height to give more room
+        margin=dict(l=40, r=40, t=80, b=60),  # Increase top and bottom margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -655,6 +686,12 @@ def create_line_chart(
     for trace in fig.data:
         if not trace.name or str(trace.name).strip() == "" or str(trace.name).strip() == "Undefined" or str(trace.name).strip().lower() == "undefined":
             trace.name = "Data Series"  # Safe fallback
+    
+    # Final safety check: ensure height is always an integer, never None
+    if not hasattr(fig.layout, 'height') or fig.layout.height is None:
+        fig.update_layout(height=500)
+    elif not isinstance(fig.layout.height, int):
+        fig.update_layout(height=500)
     
     return fig
 
@@ -720,15 +757,31 @@ def create_waterfall_chart(
             text=str(title) if title else "",
             font=dict(size=18, color=MEDICAL_THEME["primary"]),
             x=0.5,
-            xanchor="center"
+            xanchor="center",
+            y=0.95,  # Position title higher to avoid legend overlap
+            yanchor="top"
         ),
         xaxis=dict(gridcolor="#e0e0e0", title="Measure"),
         yaxis=dict(gridcolor="#e0e0e0", title="Amount ($)"),
         barmode="group",
         hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        legend=dict(
+            orientation="h", 
+            yanchor="bottom", 
+            y=-0.2,  # Position below chart instead of above
+            xanchor="center", 
+            x=0.5
+        ),
         autosize=True,  # Make chart responsive for mobile
+        height=500,  # Increase height to give more room
+        margin=dict(l=40, r=40, t=80, b=60),  # Increase top and bottom margins
     )
+    
+    # Final safety check: ensure height is always an integer, never None
+    if not hasattr(fig.layout, 'height') or fig.layout.height is None:
+        fig.update_layout(height=500)
+    elif not isinstance(fig.layout.height, int):
+        fig.update_layout(height=500)
     
     return fig
 
@@ -801,7 +854,9 @@ def create_grouped_bar_chart(
             text=str(title) if title else "",
             font=dict(size=18, color=MEDICAL_THEME["primary"]),
             x=0.5,
-            xanchor="center"
+            xanchor="center",
+            y=0.95,  # Position title higher to avoid legend overlap
+            yanchor="top"
         ),
         xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
         yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
@@ -810,13 +865,15 @@ def create_grouped_bar_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=1.02, 
-            xanchor="right", 
-            x=1,
+            y=-0.2,  # Position below chart instead of above
+            xanchor="center", 
+            x=0.5,
             title_text="",
             font=dict(size=11),
         ),
         autosize=True,  # Make chart responsive for mobile
+        height=500,  # Increase height to give more room
+        margin=dict(l=40, r=40, t=80, b=60),  # Increase top and bottom margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -846,6 +903,12 @@ def create_grouped_bar_chart(
     for trace in fig.data:
         if not trace.name or str(trace.name).strip() == "" or str(trace.name).strip() == "Undefined" or str(trace.name).strip().lower() == "undefined":
             trace.name = "Data Series"  # Safe fallback
+    
+    # Final safety check: ensure height is always an integer, never None
+    if not hasattr(fig.layout, 'height') or fig.layout.height is None:
+        fig.update_layout(height=500)
+    elif not isinstance(fig.layout.height, int):
+        fig.update_layout(height=500)
     
     return fig
 

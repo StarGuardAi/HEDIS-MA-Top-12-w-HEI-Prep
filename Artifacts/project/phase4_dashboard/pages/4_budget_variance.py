@@ -44,10 +44,10 @@ st.divider()
 # Date range filter
 col1, col2 = st.columns(2)
 with col1:
-    start_date = st.date_input("Start Date (MM/DD/YYYY)", value=datetime(2024, 10, 1), key="budget_start")
+    start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), key="budget_start", format="MM/DD/YYYY")
     st.markdown(f"**Selected:** {format_date_display(start_date)}")
 with col2:
-    end_date = st.date_input("End Date (MM/DD/YYYY)", value=datetime(2024, 12, 31), key="budget_end")
+    end_date = st.date_input("End Date", value=datetime(2024, 12, 31), key="budget_end", format="MM/DD/YYYY")
     st.markdown(f"**Selected:** {format_date_display(end_date)}")
 
 # Check data availability
@@ -205,5 +205,4 @@ try:
             
 except Exception as e:
     st.error(f"Error loading data: {e}")
-    st.info("Please check your database connection and ensure the Phase 3 data is loaded.")
 
