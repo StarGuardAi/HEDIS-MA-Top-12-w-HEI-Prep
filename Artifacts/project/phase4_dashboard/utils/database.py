@@ -174,10 +174,12 @@ def get_connection():
             _db_type = 'sqlite'
             _db_status_message = f"✅ Using SQLite Database ({count:,} interventions)"
             
-            # Update sidebar if Streamlit is available
-            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+            # Only show message once per session
+            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
                 try:
-                    st.sidebar.success(f"✅ Database Connected ({count:,} interventions)")
+                    if 'db_status_shown' not in st.session_state:
+                        st.sidebar.success(f"✅ Database Connected ({count:,} interventions)")
+                        st.session_state.db_status_shown = True
                 except:
                     pass
             return conn
@@ -196,9 +198,11 @@ def get_connection():
         conn = sqlite3.connect(str(sqlite_path))
         _db_type = 'sqlite'
         _db_status_message = "✅ Using SQLite Database (new file created)"
-        if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+        if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
             try:
-                st.sidebar.warning("⚠️ Database file not found - created new empty database")
+                if 'db_status_shown' not in st.session_state:
+                    st.sidebar.warning("⚠️ Database file not found - created new empty database")
+                    st.session_state.db_status_shown = True
             except:
                 pass
         return conn
@@ -210,9 +214,11 @@ def get_connection():
         # Set status message for display in app
         _db_type = 'postgres'
         _db_status_message = "✅ Using PostgreSQL Database"
-        if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+        if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
             try:
-                st.sidebar.success("✅ Using PostgreSQL Database")
+                if 'db_status_shown' not in st.session_state:
+                    st.sidebar.success("✅ Using PostgreSQL Database")
+                    st.session_state.db_status_shown = True
             except:
                 pass
         return conn
@@ -225,10 +231,12 @@ def get_connection():
             _db_status_message = "✅ Using SQLite Database"
             
             # Show warning in sidebar if Streamlit is available
-            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
                 try:
-                    st.sidebar.warning("PostgreSQL unavailable, using SQLite")
-                    st.sidebar.success("✅ Using SQLite Database")
+                    if 'db_status_shown' not in st.session_state:
+                        st.sidebar.warning("PostgreSQL unavailable, using SQLite")
+                        st.sidebar.success("✅ Using SQLite Database")
+                        st.session_state.db_status_shown = True
                 except:
                     pass
             

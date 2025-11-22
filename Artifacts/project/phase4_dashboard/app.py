@@ -553,8 +553,7 @@ try:
         st.dataframe(
             benchmark_df,
             use_container_width=True,
-            hide_index=True,
-            height=None  # Auto-height for mobile scrolling
+            hide_index=True
         )
         
         st.divider()
@@ -614,8 +613,7 @@ try:
         st.dataframe(
             plan_sizes_df.style.apply(highlight_selected_row, axis=1),
             use_container_width=True,
-            hide_index=True,
-            height=None  # Auto-height for mobile scrolling
+            hide_index=True
         )
         
         # Note about selected plan
