@@ -1,0 +1,9 @@
+# Phase 4 Dashboard Requirements
+# HEDIS Portfolio Optimizer - Streamlit Dashboard
+# For Streamlit Cloud deployment
+
+streamlit>=1.39.0
+pandas>=2.2.3
+plotly>=5.18.0
+psycopg2-binary>=2.9.11
+
