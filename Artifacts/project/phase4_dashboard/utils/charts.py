@@ -207,11 +207,14 @@ def create_bar_chart(
                     font=dict(size=11),
                     orientation="h",  # Horizontal legend
                     yanchor="bottom",
-                    y=-0.2,  # Position below chart
+                    y=-0.35,  # Further below chart to avoid overlap
                     xanchor="center",
-                    x=0.5
+                    x=0.5,
+                    bgcolor='rgba(255,255,255,0.9)',
+                    bordercolor='rgba(0,0,0,0.1)',
+                    borderwidth=1
                 ),
-                height=500  # Preserve height
+                height=650  # Preserve height
             )
         else:
             # Use continuous color scale for numeric data
@@ -256,7 +259,7 @@ def create_bar_chart(
                 coloraxis_colorbar_title=colorbar_label,
                 coloraxis_colorbar_title_side="right",
                 coloraxis_colorbar_title_font_size=11,
-                height=500  # Preserve height
+                height=650  # Preserve height
             )
             
             # Directly access and force set the colorbar title text
@@ -299,18 +302,28 @@ def create_bar_chart(
         "font": dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         "title": dict(
             text=str(title) if title else "",
-            font=dict(size=18, color=MEDICAL_THEME["primary"]),
+            font=dict(size=16, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
-            y=0.95,  # Position title higher to avoid legend overlap
-            yanchor="top"
+            y=0.98,  # Position title higher
+            yanchor="top",
+            wrap=True,  # Allow title wrapping
+            automargin=True
         ),
-        "xaxis": dict(gridcolor="#e0e0e0", title=x_axis_title),
-        "yaxis": dict(gridcolor="#e0e0e0", title=y_axis_title),
+        "xaxis": dict(
+            gridcolor="#e0e0e0", 
+            title=x_axis_title,
+            automargin=True  # Prevents overlap with legend
+        ),
+        "yaxis": dict(
+            gridcolor="#e0e0e0", 
+            title=y_axis_title,
+            automargin=True  # Prevents overlap with legend
+        ),
         "hovermode": "x unified",
         "autosize": True,  # Make chart responsive for mobile
-        "height": 500,  # Increase height to give more room
-        "margin": dict(l=40, r=40, t=80, b=40),  # Increase top margin for title space
+        "height": 650,  # Even taller for better spacing
+        "margin": dict(l=80, r=40, t=140, b=100),  # Much larger margins
     }
     
     # Apply layout - don't override legend/colorbar titles that were already set in categorical/continuous sections
@@ -342,7 +355,7 @@ def create_bar_chart(
         # Force update to ensure it's set correctly - try multiple methods
         if is_categorical:
             # Update legend title - preserve height
-            fig.update_layout(legend_title_text=final_label, height=500)
+            fig.update_layout(legend_title_text=final_label, height=650)
             if hasattr(fig.layout, 'legend') and fig.layout.legend:
                 if hasattr(fig.layout.legend, 'title'):
                     if hasattr(fig.layout.legend.title, 'text'):
@@ -355,7 +368,7 @@ def create_bar_chart(
                 pass
             
             try:
-                fig.update_layout(coloraxis_colorbar_title=final_label, height=500)
+                fig.update_layout(coloraxis_colorbar_title=final_label, height=650)
             except:
                 pass
             
@@ -428,7 +441,7 @@ def create_bar_chart(
                         replacement_label = labels_dict.get(color_col, format_column_label(color_col))
                     if not replacement_label or replacement_label == "Undefined":
                         replacement_label = format_column_label(color_col)
-                        fig.update_layout(legend_title_text=str(replacement_label), height=500)
+                        fig.update_layout(legend_title_text=str(replacement_label), height=650)
     
     # Final check on axis titles - ensure they're not "Undefined"
     if hasattr(fig.layout, 'xaxis') and fig.layout.xaxis:
@@ -471,9 +484,9 @@ def create_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     
     return fig
 
@@ -538,18 +551,28 @@ def create_scatter_plot(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=18, color=MEDICAL_THEME["primary"]),
+            font=dict(size=16, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
             y=0.98,  # Position title higher
-            yanchor="top"
+            yanchor="top",
+            wrap=True,  # Allow title wrapping
+            automargin=True
         ),
-        xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
-        yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
+        xaxis=dict(
+            gridcolor="#e0e0e0", 
+            title=x_axis_title,
+            automargin=True  # Prevents overlap
+        ),
+        yaxis=dict(
+            gridcolor="#e0e0e0", 
+            title=y_axis_title,
+            automargin=True  # Prevents overlap
+        ),
         hovermode="closest",
         autosize=True,  # Make chart responsive for mobile
-        height=600,  # Taller for better mobile view
-        margin=dict(l=60, r=60, t=100, b=80),  # Better spacing
+        height=650,  # Even taller for better spacing
+        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
     )
     
     # Set colorbar title after layout update
@@ -563,7 +586,7 @@ def create_scatter_plot(
             fig.update_coloraxes(colorbar_title=colorbar_title)
         except:
             try:
-                fig.update_layout(coloraxis_colorbar_title=colorbar_title, height=500)
+                fig.update_layout(coloraxis_colorbar_title=colorbar_title, height=650)
             except:
                 # Last resort: try updating traces
                 try:
@@ -601,9 +624,9 @@ def create_scatter_plot(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     
     return fig
 
@@ -667,27 +690,40 @@ def create_line_chart(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=18, color=MEDICAL_THEME["primary"]),
+            font=dict(size=16, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
-            y=0.95,  # Position title higher to avoid legend overlap
-            yanchor="top"
+            y=0.98,  # Position title higher
+            yanchor="top",
+            wrap=True,  # Allow title wrapping
+            automargin=True
         ),
-        xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
-        yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
+        xaxis=dict(
+            gridcolor="#e0e0e0", 
+            title=x_axis_title,
+            automargin=True  # Prevents overlap with legend
+        ),
+        yaxis=dict(
+            gridcolor="#e0e0e0", 
+            title=y_axis_title,
+            automargin=True  # Prevents overlap with legend
+        ),
         hovermode="x unified",
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.2,  # Position below chart instead of above
+            y=-0.35,  # Further below chart to avoid overlap
             xanchor="center", 
             x=0.5,
             title_text="",
             font=dict(size=11),
+            bgcolor='rgba(255,255,255,0.9)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=500,  # Increase height to give more room
-        margin=dict(l=40, r=40, t=80, b=60),  # Increase top and bottom margins
+        height=650,  # Even taller for better spacing
+        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -720,9 +756,9 @@ def create_line_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     
     return fig
 
@@ -786,33 +822,46 @@ def create_waterfall_chart(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=18, color=MEDICAL_THEME["primary"]),
+            font=dict(size=16, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
-            y=0.95,  # Position title higher to avoid legend overlap
-            yanchor="top"
+            y=0.98,  # Position title higher
+            yanchor="top",
+            wrap=True,  # Allow title wrapping
+            automargin=True
         ),
-        xaxis=dict(gridcolor="#e0e0e0", title="Measure"),
-        yaxis=dict(gridcolor="#e0e0e0", title="Amount ($)"),
+        xaxis=dict(
+            gridcolor="#e0e0e0", 
+            title="Measure",
+            automargin=True  # Prevents overlap with legend
+        ),
+        yaxis=dict(
+            gridcolor="#e0e0e0", 
+            title="Amount ($)",
+            automargin=True  # Prevents overlap with legend
+        ),
         barmode="group",
         hovermode="x unified",
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.2,  # Position below chart instead of above
+            y=-0.35,  # Further below chart to avoid overlap
             xanchor="center", 
-            x=0.5
+            x=0.5,
+            bgcolor='rgba(255,255,255,0.9)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=500,  # Increase height to give more room
-        margin=dict(l=40, r=40, t=80, b=60),  # Increase top and bottom margins
+        height=650,  # Even taller for better spacing
+        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
     )
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     
     return fig
 
@@ -883,28 +932,41 @@ def create_grouped_bar_chart(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=18, color=MEDICAL_THEME["primary"]),
+            font=dict(size=16, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
-            y=0.95,  # Position title higher to avoid legend overlap
-            yanchor="top"
+            y=0.98,  # Position title higher
+            yanchor="top",
+            wrap=True,  # Allow title wrapping
+            automargin=True
         ),
-        xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
-        yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
+        xaxis=dict(
+            gridcolor="#e0e0e0", 
+            title=x_axis_title,
+            automargin=True  # Prevents overlap with legend
+        ),
+        yaxis=dict(
+            gridcolor="#e0e0e0", 
+            title=y_axis_title,
+            automargin=True  # Prevents overlap with legend
+        ),
         barmode="group",
         hovermode="x unified",
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.2,  # Position below chart instead of above
+            y=-0.35,  # Further below chart to avoid overlap
             xanchor="center", 
             x=0.5,
             title_text="",
             font=dict(size=11),
+            bgcolor='rgba(255,255,255,0.9)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=500,  # Increase height to give more room
-        margin=dict(l=40, r=40, t=80, b=60),  # Increase top and bottom margins
+        height=650,  # Even taller for better spacing
+        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -937,9 +999,9 @@ def create_grouped_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=500)
+        fig.update_layout(height=650)
     
     return fig
 
