@@ -6,7 +6,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-from utils.database import execute_query, test_connection, get_db_status_message
+from utils.database import execute_query, show_db_status, get_connection
 from utils.queries import get_portfolio_summary_query
 from utils.plan_context import get_plan_context, get_plan_size_scenarios, get_industry_benchmarks
 
@@ -238,6 +238,9 @@ st.markdown("""
 
 # Sidebar navigation
 with st.sidebar:
+    # Database status - show once per session
+    show_db_status()
+    
     st.image("https://via.placeholder.com/200x60/4e2a84/ffffff?text=HEDIS+Optimizer", use_column_width=True)
     st.markdown("# 📊 Phase 4 Dashboard")
     st.markdown("---")
@@ -263,29 +266,6 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Database connection status - show once per session
-    if 'db_status_shown' not in st.session_state:
-        # Test connection and get count
-        if test_connection():
-            # Get connection to populate session_state with count
-            from utils.database import get_connection
-            conn = get_connection()
-            if conn:
-                count = st.session_state.get('db_connection_count', 0)
-                if count and count > 0:
-                    st.sidebar.success(f"✅ Database Connected ({count:,} interventions)")
-                else:
-                    st.sidebar.success("✅ Database Connected")
-                st.session_state.db_status_shown = True
-            else:
-                st.sidebar.error("❌ Database Connection Failed")
-                st.session_state.db_status_shown = True
-        else:
-            st.sidebar.error("❌ Database Connection Failed")
-            st.sidebar.info("Check your database credentials in environment variables")
-            st.session_state.db_status_shown = True
-    # If already shown, don't display again (prevents duplicates)
-    
     st.markdown("---")
     st.markdown("### 📅 Data Period")
     st.markdown("**Q4 2024**\n(October - December)")
@@ -304,29 +284,10 @@ st.markdown("### Case Study: Regional MA Plan Turnaround Initiative")
 
 st.divider()
 
-# Database connection check
-if not test_connection():
-    st.error("⚠️ **Database Connection Failed**")
-    status_message = get_db_status_message()
-    if 'SQLite' in status_message or 'sqlite' in status_message.lower():
-        st.info("""
-        Please ensure:
-        1. SQLite database file exists at: `data/hedis_portfolio.db`
-        2. The file has proper read permissions
-        3. If using PostgreSQL, ensure service is running and credentials are set
-        """)
-    else:
-        st.info("""
-        Please ensure:
-        1. SQLite database file exists at: `data/hedis_portfolio.db`, OR
-        2. PostgreSQL service is running and database `hedis_portfolio` exists
-        3. Environment variables are set (if using PostgreSQL):
-           - `DB_HOST` (default: localhost)
-           - `DB_PORT` (default: 5432)
-           - `DB_NAME` (default: hedis_portfolio)
-           - `DB_USER` (default: hedis_api)
-           - `DB_PASSWORD` (default: hedis_password)
-        """)
+# Check database connection
+conn, count = get_connection()
+if not conn:
+    st.error("⚠️ Database connection failed. Please check configuration.")
     st.stop()
 
 # Get plan context (after connection check)

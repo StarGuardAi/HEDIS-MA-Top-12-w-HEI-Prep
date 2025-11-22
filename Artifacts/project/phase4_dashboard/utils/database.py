@@ -150,108 +150,34 @@ def get_sqlite_path() -> str:
     return str(db_path)
 
 
+@st.cache_resource
 def get_connection():
-    """
-    Get database connection.
-    Priority: SQLite first (for cloud deployment), PostgreSQL second (for local dev)
-    """
-    global _db_type, _db_status_message
-    
-    # First: Try SQLite (default for cloud deployment)
+    """Get database connection - cached as singleton"""
     sqlite_path = Path(__file__).parent.parent / "data" / "hedis_portfolio.db"
     
     if sqlite_path.exists():
         try:
-            conn = sqlite3.connect(str(sqlite_path))
-            
-            # Test connection with a simple query
+            conn = sqlite3.connect(str(sqlite_path), check_same_thread=False)
+            # Test connection
             cursor = conn.cursor()
             cursor.execute("SELECT COUNT(*) FROM member_interventions")
             count = cursor.fetchone()[0]
-            cursor.close()
-            
-            # Set status message for display in app
-            _db_type = 'sqlite'
-            _db_status_message = f"✅ Using SQLite Database ({count:,} interventions)"
-            
-            # Store connection info in session state for app-level display
-            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
-                try:
-                    st.session_state.db_connection_count = count
-                    st.session_state.db_connected = True
-                except:
-                    pass
-            
-            return conn
+            return conn, count
         except Exception as e:
-            # SQLite file exists but connection failed, try PostgreSQL
-            # Store error in session_state for app-level handling
-            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
-                try:
-                    st.session_state.db_connection_error = str(e)
-                    st.session_state.db_connected = False
-                except:
-                    pass
-    
-    # Second: Try PostgreSQL (for local development)
-    if not POSTGRES_AVAILABLE:
-        # PostgreSQL driver not available, create SQLite file if needed
-        os.makedirs(sqlite_path.parent, exist_ok=True)
-        conn = sqlite3.connect(str(sqlite_path))
-        _db_type = 'sqlite'
-        _db_status_message = "✅ Using SQLite Database (new file created)"
-        # Store connection info in session state
-        if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
-            try:
-                st.session_state.db_connected = True
-                st.session_state.db_connection_count = 0  # New empty database
-            except:
-                pass
-        return conn
-    
-    try:
-        # Get PostgreSQL configuration
-        config = get_postgres_config()
-        conn = psycopg2.connect(**config)
-        # Set status message for display in app
-        _db_type = 'postgres'
-        _db_status_message = "✅ Using PostgreSQL Database"
-        # Store connection info in session state
-        if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
-            try:
-                st.session_state.db_connected = True
-                st.session_state.db_connection_count = None  # PostgreSQL - count not available
-            except:
-                pass
-        return conn
-    except Exception as e:
-        # PostgreSQL failed, fall back to SQLite (create if needed)
-        os.makedirs(sqlite_path.parent, exist_ok=True)
-        try:
-            conn = sqlite3.connect(str(sqlite_path))
-            _db_type = 'sqlite'
-            _db_status_message = "✅ Using SQLite Database"
-            
-            # Store connection info in session state
-            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
-                try:
-                    st.session_state.db_connected = True
-                    st.session_state.db_connection_count = None  # SQLite fallback - count not available
-                except:
-                    pass
-            
-            return conn
-        except Exception as sqlite_error:
-            # Both databases failed - this is a critical error
-            error_msg = f"Cannot connect to database. PostgreSQL error: {e}. SQLite error: {sqlite_error}"
-            # Store error in session_state for app-level handling
-            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
-                try:
-                    st.session_state.db_connected = False
-                    st.session_state.db_connection_error = error_msg
-                except:
-                    pass
-            raise Exception(error_msg)
+            st.error(f"Database Error: {e}")
+            return None, 0
+    else:
+        st.error("Database file not found")
+        return None, 0
+
+
+def show_db_status():
+    """Show database status in sidebar - only once"""
+    if 'db_status_shown' not in st.session_state:
+        conn, count = get_connection()
+        if conn:
+            st.sidebar.success(f"✅ Database Connected ({count:,} interventions)")
+        st.session_state.db_status_shown = True
 
 
 def execute_query(query: str, params: Optional[tuple] = None) -> pd.DataFrame:
@@ -267,7 +193,10 @@ def execute_query(query: str, params: Optional[tuple] = None) -> pd.DataFrame:
         DataFrame with query results
     """
     db_type = get_db_type()
-    conn = get_connection()
+    conn, _ = get_connection()  # Unpack connection and count
+    
+    if conn is None:
+        raise Exception("Database connection failed")
     
     try:
         # Convert query for SQLite if needed
@@ -294,7 +223,8 @@ def execute_query(query: str, params: Optional[tuple] = None) -> pd.DataFrame:
     except Exception as e:
         raise Exception(f"Database query error: {e}")
     finally:
-        conn.close()
+        # Don't close cached connection - it's managed by st.cache_resource
+        pass
 
 
 def convert_query_for_sqlite(query: str) -> str:
@@ -393,7 +323,10 @@ def test_connection() -> bool:
     Returns False if connection fails.
     """
     try:
-        conn = get_connection()
+        conn, _ = get_connection()  # Unpack connection and count
+        if conn is None:
+            return False
+        
         db_type = get_db_type()
         
         if db_type == 'postgres':
@@ -406,7 +339,7 @@ def test_connection() -> bool:
             cursor.execute("SELECT 1;")
             cursor.close()
         
-        conn.close()
+        # Don't close cached connection - it's managed by st.cache_resource
         return True
     except Exception as e:
         # Suppress error messages - connection failed

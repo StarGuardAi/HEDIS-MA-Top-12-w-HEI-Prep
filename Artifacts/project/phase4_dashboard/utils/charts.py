@@ -307,7 +307,6 @@ def create_bar_chart(
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            wrap=True,  # Allow title wrapping
             automargin=True
         ),
         "xaxis": dict(
@@ -556,7 +555,6 @@ def create_scatter_plot(
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            wrap=True,  # Allow title wrapping
             automargin=True
         ),
         xaxis=dict(
@@ -695,7 +693,6 @@ def create_line_chart(
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            wrap=True,  # Allow title wrapping
             automargin=True
         ),
         xaxis=dict(
@@ -827,7 +824,6 @@ def create_waterfall_chart(
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            wrap=True,  # Allow title wrapping
             automargin=True
         ),
         xaxis=dict(
@@ -937,7 +933,6 @@ def create_grouped_bar_chart(
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            wrap=True,  # Allow title wrapping
             automargin=True
         ),
         xaxis=dict(

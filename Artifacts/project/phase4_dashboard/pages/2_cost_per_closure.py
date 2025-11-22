@@ -147,8 +147,8 @@ try:
             paper_bgcolor='white',
         )
         
-        # Remove any text labels completely
-        fig.update_traces(textposition='none', text=None)
+        # Remove any text labels completely (text=None removes labels, no textposition needed)
+        fig.update_traces(text=None)
         
         st.plotly_chart(fig, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         

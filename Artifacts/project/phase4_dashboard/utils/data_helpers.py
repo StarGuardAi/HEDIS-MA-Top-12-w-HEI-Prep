@@ -59,12 +59,14 @@ def get_data_date_range() -> Optional[Tuple[datetime, datetime]]:
     Returns: (min_date, max_date) tuple or None if no data
     """
     try:
-        conn = get_connection()
+        conn, _ = get_connection()  # Unpack connection and count
+        if conn is None:
+            return None, None
         cursor = conn.cursor()
         cursor.execute("SELECT MIN(intervention_date) as min_date, MAX(intervention_date) as max_date FROM member_interventions")
         date_range = cursor.fetchone()
         cursor.close()
-        conn.close()
+        # Don't close cached connection - it's managed by st.cache_resource
         
         if date_range and date_range[0] and date_range[1]:
             return (date_range[0], date_range[1])
