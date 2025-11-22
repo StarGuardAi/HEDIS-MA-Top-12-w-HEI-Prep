@@ -1,0 +1,41 @@
+# Streamlit Cloud Deployment - Gitignore
+# Exclude sensitive files and cache
+
+# Streamlit secrets (DO NOT COMMIT)
+.streamlit/secrets.toml
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Streamlit cache
+.streamlit/cache/
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Data files (if large) - but allow SQLite database for deployment
+*.csv
+*.xlsx
+# Allow data/hedis_portfolio.db for Streamlit Cloud deployment
+!data/hedis_portfolio.db
+*.sqlite
+!data/*.db
+
