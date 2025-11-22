@@ -114,7 +114,7 @@ try:
             x_label="Average Cost per Intervention",
             y_label="Success Rate (%)",
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Data table (scaled)
         with st.expander("📋 View Detailed Data"):
@@ -134,7 +134,7 @@ try:
                 "Successful Closures",
                 "Cost per Closure ($)"
             ]
-            st.dataframe(display_df.sort_values("Cost per Closure ($)"), use_container_width=True, hide_index=True)
+            st.dataframe(display_df.sort_values("Cost per Closure ($)"), use_container_width=True, hide_index=True, height=None)
             
             # Export button
             csv = display_df.to_csv(index=False)

@@ -109,7 +109,7 @@ try:
             y_label="ROI Ratio",
             color_col="roi_ratio",
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Data table with details (scaled)
         with st.expander("📋 View Detailed Data"):
@@ -131,7 +131,7 @@ try:
                 "Successful Closures",
                 "Total Interventions"
             ]
-            st.dataframe(display_df, use_container_width=True, hide_index=True)
+            st.dataframe(display_df, use_container_width=True, hide_index=True, height=None)
             
             # Export button
             csv = display_df.to_csv(index=False)

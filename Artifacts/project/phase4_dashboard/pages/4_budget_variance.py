@@ -114,7 +114,7 @@ try:
                 variance_col="variance",
                 title=f"Budget Performance by HEDIS Measure{title_suffix}",
             )
-            st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(fig1, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
             
             # Variance percentage chart (variance_pct is constant, no scaling needed)
             fig2 = create_bar_chart(
@@ -126,7 +126,7 @@ try:
                 y_label="Variance (%)",
                 color_col="budget_status",
             )
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
             
             # Data table
             with st.expander("📋 View Detailed Data"):
@@ -148,7 +148,7 @@ try:
                     "Variance (%)",
                     "Status"
                 ]
-                st.dataframe(display_df, use_container_width=True, hide_index=True)
+                st.dataframe(display_df, use_container_width=True, hide_index=True, height=None)
                 
                 # Export button
             csv = display_df.to_csv(index=False)

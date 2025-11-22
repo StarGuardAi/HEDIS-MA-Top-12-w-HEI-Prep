@@ -15,7 +15,7 @@ st.set_page_config(
     page_title="HEDIS Star Rating Portfolio Optimizer",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",  # Hide sidebar on mobile by default
     menu_items={
         'Get Help': 'mailto:reichert.starguardai@gmail.com',
         'Report a bug': 'mailto:reichert.starguardai@gmail.com',
@@ -169,7 +169,7 @@ st.markdown("""
             padding: 1rem;
         }
         .kpi-main-value {
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
         .comparison-table {
             font-size: 0.9rem;
@@ -177,6 +177,44 @@ st.markdown("""
         .comparison-table th,
         .comparison-table td {
             padding: 0.5rem;
+        }
+        
+        /* Mobile-specific styles */
+        [data-testid="stMetricValue"] {
+            font-size: 1.2rem !important;
+        }
+        
+        h1 {
+            font-size: 1.5rem !important;
+        }
+        
+        h2 {
+            font-size: 1.2rem !important;
+        }
+        
+        h3 {
+            font-size: 1rem !important;
+        }
+        
+        .dataframe {
+            font-size: 0.8rem;
+        }
+        
+        /* Improve table scrolling on mobile */
+        .stDataFrame {
+            overflow-x: auto;
+        }
+        
+        /* Larger touch targets for buttons */
+        .stButton > button {
+            min-height: 44px;
+            padding: 0.75rem 1rem;
+        }
+        
+        /* Slider improvements for mobile */
+        .stSlider > div > div > div > div {
+            width: 28px !important;
+            height: 28px !important;
         }
     }
     
@@ -240,6 +278,10 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("**Built by:** Robert Reichert")
     st.markdown("**Phase:** 4 - Interactive Dashboard")
+    
+    # Mobile navigation indicator
+    st.markdown("---")
+    st.sidebar.caption("📱 Mobile: Use ☰ menu to navigate")
 
 # Main content - Home Page
 st.title("📊 HEDIS Star Rating Portfolio Optimizer")
@@ -511,7 +553,8 @@ try:
         st.dataframe(
             benchmark_df,
             use_container_width=True,
-            hide_index=True
+            hide_index=True,
+            height=None  # Auto-height for mobile scrolling
         )
         
         st.divider()
@@ -571,7 +614,8 @@ try:
         st.dataframe(
             plan_sizes_df.style.apply(highlight_selected_row, axis=1),
             use_container_width=True,
-            hide_index=True
+            hide_index=True,
+            height=None  # Auto-height for mobile scrolling
         )
         
         # Note about selected plan
