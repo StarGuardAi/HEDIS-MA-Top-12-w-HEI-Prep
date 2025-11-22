@@ -415,7 +415,7 @@ try:
     summary_df = execute_query(query)
     
     if summary_df.empty:
-        st.warning("⚠️ No data found in database. Please ensure Phase 3 data is loaded.")
+        st.warning("⚠️ No data found in database.")
     else:
         summary = summary_df.iloc[0]
         
@@ -670,7 +670,6 @@ try:
         
 except Exception as e:
     st.error(f"❌ Error loading portfolio summary: {e}")
-    st.info("Please check your database connection and ensure Phase 3 data is loaded.")
 
 # Footer
 st.divider()
