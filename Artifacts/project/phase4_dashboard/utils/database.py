@@ -160,16 +160,50 @@ def get_connection():
     # First: Try SQLite (default for cloud deployment)
     sqlite_path = Path(__file__).parent.parent / "data" / "hedis_portfolio.db"
     
+    # Debug logging
+    if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+        try:
+            import os as os_module
+            cwd = os_module.getcwd()
+            abs_path = sqlite_path.resolve()
+            st.sidebar.write(f"🔍 Current directory: `{cwd}`")
+            st.sidebar.write(f"🔍 Looking for SQLite at: `{sqlite_path}`")
+            st.sidebar.write(f"🔍 Absolute path: `{abs_path}`")
+            st.sidebar.write(f"📁 File exists: {sqlite_path.exists()}")
+            st.sidebar.write(f"📁 Parent dir exists: {sqlite_path.parent.exists()}")
+        except Exception as debug_error:
+            try:
+                st.sidebar.write(f"Debug error: {debug_error}")
+            except:
+                pass
+    
     if sqlite_path.exists():
         try:
+            # Get file size for debugging
+            file_size_mb = sqlite_path.stat().st_size / (1024 * 1024)
+            
+            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+                try:
+                    st.sidebar.write(f"📊 File size: {file_size_mb:.2f} MB")
+                except:
+                    pass
+            
             conn = sqlite3.connect(str(sqlite_path))
+            
+            # Test connection with a simple query
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM member_interventions")
+            count = cursor.fetchone()[0]
+            cursor.close()
+            
             # Set status message for display in app
             _db_type = 'sqlite'
-            _db_status_message = "✅ Using SQLite Database"
+            _db_status_message = f"✅ Using SQLite Database ({count:,} interventions)"
+            
             # Update sidebar if Streamlit is available
             if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
                 try:
-                    st.sidebar.success("✅ Using SQLite Database")
+                    st.sidebar.success(f"✅ SQLite Connected - {count:,} interventions")
                 except:
                     pass
             return conn
@@ -177,20 +211,25 @@ def get_connection():
             # SQLite file exists but connection failed, try PostgreSQL
             if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
                 try:
-                    st.sidebar.warning(f"SQLite connection failed: {e}")
+                    st.sidebar.error(f"❌ SQLite error: {str(e)}")
                 except:
                     pass
     
     # Second: Try PostgreSQL (for local development)
     if not POSTGRES_AVAILABLE:
         # PostgreSQL driver not available, create SQLite file if needed
+        if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+            try:
+                st.sidebar.warning(f"⚠️ PostgreSQL not available. SQLite file not found at: `{sqlite_path}`")
+            except:
+                pass
         os.makedirs(sqlite_path.parent, exist_ok=True)
         conn = sqlite3.connect(str(sqlite_path))
         _db_type = 'sqlite'
-        _db_status_message = "✅ Using SQLite Database"
+        _db_status_message = "✅ Using SQLite Database (new file created)"
         if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
             try:
-                st.sidebar.success("✅ Using SQLite Database")
+                st.sidebar.warning("⚠️ SQLite file not found - created new empty database")
             except:
                 pass
         return conn
@@ -231,6 +270,10 @@ def get_connection():
             if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
                 try:
                     st.sidebar.error("❌ No database connection available")
+                    st.sidebar.error(f"SQLite path: `{sqlite_path}`")
+                    st.sidebar.error(f"SQLite exists: {sqlite_path.exists()}")
+                    if sqlite_path.exists():
+                        st.sidebar.error(f"SQLite size: {sqlite_path.stat().st_size / (1024*1024):.2f} MB")
                 except:
                     pass
             raise Exception(error_msg)

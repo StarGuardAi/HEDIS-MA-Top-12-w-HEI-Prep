@@ -299,8 +299,7 @@ def create_bar_chart(
         "xaxis": dict(gridcolor="#e0e0e0", title=x_axis_title),
         "yaxis": dict(gridcolor="#e0e0e0", title=y_axis_title),
         "hovermode": "x unified",
-        "autosize": True,
-        "responsive": True,  # Make chart responsive for mobile
+        "autosize": True,  # Make chart responsive for mobile
     }
     
     # Apply layout - don't override legend/colorbar titles that were already set in categorical/continuous sections
@@ -523,8 +522,7 @@ def create_scatter_plot(
         xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
         yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
         hovermode="closest",
-        autosize=True,
-        responsive=True,  # Make chart responsive for mobile
+        autosize=True,  # Make chart responsive for mobile
     )
     
     # Set colorbar title after layout update
@@ -627,8 +625,7 @@ def create_line_chart(
             title_text="",
             font=dict(size=11),
         ),
-        autosize=True,
-        responsive=True,  # Make chart responsive for mobile
+        autosize=True,  # Make chart responsive for mobile
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -730,8 +727,7 @@ def create_waterfall_chart(
         barmode="group",
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        autosize=True,
-        responsive=True,  # Make chart responsive for mobile
+        autosize=True,  # Make chart responsive for mobile
     )
     
     return fig
@@ -820,8 +816,7 @@ def create_grouped_bar_chart(
             title_text="",
             font=dict(size=11),
         ),
-        autosize=True,
-        responsive=True,  # Make chart responsive for mobile
+        autosize=True,  # Make chart responsive for mobile
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
