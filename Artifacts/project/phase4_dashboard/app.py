@@ -263,13 +263,28 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Database connection status
-    if test_connection():
-        status_message = get_db_status_message()
-        st.success(status_message)
-    else:
-        st.error("❌ Database Connection Failed")
-        st.info("Check your database credentials in environment variables")
+    # Database connection status - show once per session
+    if 'db_status_shown' not in st.session_state:
+        # Test connection and get count
+        if test_connection():
+            # Get connection to populate session_state with count
+            from utils.database import get_connection
+            conn = get_connection()
+            if conn:
+                count = st.session_state.get('db_connection_count', 0)
+                if count and count > 0:
+                    st.sidebar.success(f"✅ Database Connected ({count:,} interventions)")
+                else:
+                    st.sidebar.success("✅ Database Connected")
+                st.session_state.db_status_shown = True
+            else:
+                st.sidebar.error("❌ Database Connection Failed")
+                st.session_state.db_status_shown = True
+        else:
+            st.sidebar.error("❌ Database Connection Failed")
+            st.sidebar.info("Check your database credentials in environment variables")
+            st.session_state.db_status_shown = True
+    # If already shown, don't display again (prevents duplicates)
     
     st.markdown("---")
     st.markdown("### 📅 Data Period")

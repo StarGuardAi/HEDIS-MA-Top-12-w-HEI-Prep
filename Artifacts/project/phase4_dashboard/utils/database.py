@@ -174,20 +174,22 @@ def get_connection():
             _db_type = 'sqlite'
             _db_status_message = f"✅ Using SQLite Database ({count:,} interventions)"
             
-            # Only show message once per session
-            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
+            # Store connection info in session state for app-level display
+            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
                 try:
-                    if 'db_status_shown' not in st.session_state:
-                        st.sidebar.success(f"✅ Database Connected ({count:,} interventions)")
-                        st.session_state.db_status_shown = True
+                    st.session_state.db_connection_count = count
+                    st.session_state.db_connected = True
                 except:
                     pass
+            
             return conn
         except Exception as e:
             # SQLite file exists but connection failed, try PostgreSQL
-            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+            # Store error in session_state for app-level handling
+            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
                 try:
-                    st.sidebar.error(f"❌ Database Error: {str(e)}")
+                    st.session_state.db_connection_error = str(e)
+                    st.session_state.db_connected = False
                 except:
                     pass
     
@@ -198,11 +200,11 @@ def get_connection():
         conn = sqlite3.connect(str(sqlite_path))
         _db_type = 'sqlite'
         _db_status_message = "✅ Using SQLite Database (new file created)"
-        if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
+        # Store connection info in session state
+        if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
             try:
-                if 'db_status_shown' not in st.session_state:
-                    st.sidebar.warning("⚠️ Database file not found - created new empty database")
-                    st.session_state.db_status_shown = True
+                st.session_state.db_connected = True
+                st.session_state.db_connection_count = 0  # New empty database
             except:
                 pass
         return conn
@@ -214,11 +216,11 @@ def get_connection():
         # Set status message for display in app
         _db_type = 'postgres'
         _db_status_message = "✅ Using PostgreSQL Database"
-        if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
+        # Store connection info in session state
+        if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
             try:
-                if 'db_status_shown' not in st.session_state:
-                    st.sidebar.success("✅ Using PostgreSQL Database")
-                    st.session_state.db_status_shown = True
+                st.session_state.db_connected = True
+                st.session_state.db_connection_count = None  # PostgreSQL - count not available
             except:
                 pass
         return conn
@@ -230,13 +232,11 @@ def get_connection():
             _db_type = 'sqlite'
             _db_status_message = "✅ Using SQLite Database"
             
-            # Show warning in sidebar if Streamlit is available
-            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar') and hasattr(st, 'session_state'):
+            # Store connection info in session state
+            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
                 try:
-                    if 'db_status_shown' not in st.session_state:
-                        st.sidebar.warning("PostgreSQL unavailable, using SQLite")
-                        st.sidebar.success("✅ Using SQLite Database")
-                        st.session_state.db_status_shown = True
+                    st.session_state.db_connected = True
+                    st.session_state.db_connection_count = None  # SQLite fallback - count not available
                 except:
                     pass
             
@@ -244,9 +244,11 @@ def get_connection():
         except Exception as sqlite_error:
             # Both databases failed - this is a critical error
             error_msg = f"Cannot connect to database. PostgreSQL error: {e}. SQLite error: {sqlite_error}"
-            if STREAMLIT_AVAILABLE and hasattr(st, 'sidebar'):
+            # Store error in session_state for app-level handling
+            if STREAMLIT_AVAILABLE and hasattr(st, 'session_state'):
                 try:
-                    st.sidebar.error("❌ No database connection available")
+                    st.session_state.db_connected = False
+                    st.session_state.db_connection_error = error_msg
                 except:
                     pass
             raise Exception(error_msg)

@@ -8,9 +8,9 @@ from datetime import datetime
 
 from utils.database import execute_query
 from utils.queries import get_cost_per_closure_by_activity_query
-from utils.charts import create_scatter_plot
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
+import plotly.express as px
 
 st.set_page_config(page_title="Cost per Closure by Activity", layout="wide")
 
@@ -99,21 +99,57 @@ try:
         
         st.divider()
         
-        # Scatter plot (scaled)
+        # Scatter plot (scaled) - Simple version without text labels
         chart_title = "Cost Efficiency Analysis by Intervention Type"
         if membership_size != BASELINE_MEMBERS:
             chart_title += f" ({membership_size:,} member plan)"
         
-        fig = create_scatter_plot(
+        # Create simple scatter plot WITHOUT text labels - show names on hover only
+        fig = px.scatter(
             df_scaled,
-            x_col="avg_cost",
-            y_col="success_rate",
-            size_col="times_used",
-            text_col="activity_name",
+            x='avg_cost',
+            y='success_rate',
+            size='times_used',
             title=chart_title,
-            x_label="Average Cost per Intervention",
-            y_label="Success Rate (%)",
+            labels={
+                'avg_cost': 'Average Cost per Intervention ($)',
+                'success_rate': 'Success Rate (%)',
+                'times_used': 'Volume',
+            },
+            hover_name='activity_name',  # Show name on hover
+            hover_data={
+                'avg_cost': ':.2f',
+                'success_rate': ':.1f',
+                'times_used': ':,.0f',
+                'cost_per_closure': ':.2f',
+            },
+            color_discrete_sequence=['#4e2a84'],  # Use theme color
         )
+        
+        # Update layout for mobile - no text labels
+        fig.update_layout(
+            height=600,
+            autosize=True,
+            margin=dict(l=80, r=40, t=120, b=80),
+            title={
+                'text': chart_title + '<br><sub>Hover over points for details</sub>',
+                'y': 0.98,
+                'x': 0.5,
+                'xanchor': 'center',
+                'yanchor': 'top',
+                'font': {'size': 18, 'color': '#4e2a84'}
+            },
+            xaxis_title='Average Cost per Intervention ($)',
+            yaxis_title='Success Rate (%)',
+            showlegend=False,  # No legend needed for single color
+            template='plotly_white',
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+        )
+        
+        # Remove any text labels completely
+        fig.update_traces(textposition='none', text=None)
+        
         st.plotly_chart(fig, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Data table (scaled)
