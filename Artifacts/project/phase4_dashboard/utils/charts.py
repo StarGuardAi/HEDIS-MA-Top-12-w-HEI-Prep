@@ -503,17 +503,23 @@ def create_scatter_plot(
             else:
                 labels_dict[col] = format_column_label(col)
     
+    # Create scatter plot WITHOUT text labels to avoid overlap
+    # All information will be shown in hover tooltips instead
+    hover_data_dict = {}
+    if text_col:
+        hover_data_dict[text_col] = True  # Include text in hover but not as visible label
+    
     fig = px.scatter(
         df,
         x=x_col,
         y=y_col,
         size=size_col,
         color=color_col,
-        text=text_col,
         title=title,
         labels=labels_dict,
         color_continuous_scale=[MEDICAL_THEME["primary"], MEDICAL_THEME["secondary"], MEDICAL_THEME["accent"]],
         size_max=30,
+        hover_data=hover_data_dict if hover_data_dict else None,
     )
     
     # Format axis labels
@@ -535,15 +541,15 @@ def create_scatter_plot(
             font=dict(size=18, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
-            y=0.95,  # Position title higher to avoid legend overlap
+            y=0.98,  # Position title higher
             yanchor="top"
         ),
         xaxis=dict(gridcolor="#e0e0e0", title=x_axis_title),
         yaxis=dict(gridcolor="#e0e0e0", title=y_axis_title),
         hovermode="closest",
         autosize=True,  # Make chart responsive for mobile
-        height=500,  # Increase height to give more room
-        margin=dict(l=40, r=40, t=80, b=40),  # Increase top margin for title space
+        height=600,  # Taller for better mobile view
+        margin=dict(l=60, r=60, t=100, b=80),  # Better spacing
     )
     
     # Set colorbar title after layout update
@@ -565,8 +571,33 @@ def create_scatter_plot(
                 except:
                     pass
     
+    # Update hover template to show all information clearly
+    # Remove text labels from points - show everything in hover tooltips instead
     if text_col:
-        fig.update_traces(textposition="top center")
+        # Build hover template with activity name from hover_data
+        # Plotly Express puts hover_data columns in customdata array
+        # customdata[0] contains the text_col values when hover_data is used
+        hover_template = (
+            f'<b>%{{customdata[0]}}</b><br>' +
+            f'{x_axis_title}: $%{{x:.2f}}<br>' +
+            f'{y_axis_title}: %{{y:.1f}}%<br>'
+        )
+        if size_col:
+            hover_template += f'{format_column_label(size_col)}: %{{marker.size}}<br>'
+        hover_template += '<extra></extra>'
+        
+        fig.update_traces(hovertemplate=hover_template)
+    else:
+        # Standard hover template without text column
+        hover_template = (
+            f'<b>{x_axis_title}:</b> $%{{x:.2f}}<br>' +
+            f'<b>{y_axis_title}:</b> %{{y:.1f}}%<br>'
+        )
+        if size_col:
+            hover_template += f'<b>{format_column_label(size_col)}:</b> %{{marker.size}}<br>'
+        hover_template += '<extra></extra>'
+        
+        fig.update_traces(hovertemplate=hover_template)
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:

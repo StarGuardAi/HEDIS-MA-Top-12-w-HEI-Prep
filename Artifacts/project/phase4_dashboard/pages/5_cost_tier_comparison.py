@@ -182,7 +182,7 @@ try:
                 "Total Investment ($)",
                 "Cost per Closure ($)"
             ]
-            st.dataframe(display_df, use_container_width=True, hide_index=True, height=None)
+            st.dataframe(display_df, use_container_width=True, hide_index=True)
             
             # Export button
             csv = display_df.to_csv(index=False)
