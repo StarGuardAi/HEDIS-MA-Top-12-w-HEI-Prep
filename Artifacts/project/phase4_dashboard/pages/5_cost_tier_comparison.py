@@ -125,7 +125,7 @@ try:
                 x_label="Cost Tier",
                 y_label="Amount ($)",
             )
-            st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(fig1, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         with col2:
             fig2 = create_bar_chart(
@@ -137,7 +137,7 @@ try:
                 y_label="Success Rate (%)",
                 color_col="success_rate",
             )
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Volume and investment (scaled)
         fig3 = create_grouped_bar_chart(
@@ -148,7 +148,7 @@ try:
             x_label="Cost Tier",
             y_label="Count",
         )
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Investment comparison (scaled)
         fig4 = create_bar_chart(
@@ -160,7 +160,7 @@ try:
             y_label="Total Investment ($)",
             color_col="total_investment",
         )
-        st.plotly_chart(fig4, use_container_width=True)
+        st.plotly_chart(fig4, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Data table (scaled)
         with st.expander("📋 View Detailed Data"):
@@ -182,7 +182,7 @@ try:
                 "Total Investment ($)",
                 "Cost per Closure ($)"
             ]
-            st.dataframe(display_df, use_container_width=True, hide_index=True)
+            st.dataframe(display_df, use_container_width=True, hide_index=True, height=None)
             
             # Export button
             csv = display_df.to_csv(index=False)

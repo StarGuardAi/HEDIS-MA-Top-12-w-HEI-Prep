@@ -107,7 +107,7 @@ try:
                 x_label="Month",
                 y_label="Count",
             )
-            st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(fig1, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         with col2:
             fig2 = create_line_chart(
@@ -118,7 +118,7 @@ try:
                 x_label="Month",
                 y_label="Success Rate (%)",
             )
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Full width chart - investment and cost
         fig3 = create_line_chart(
@@ -129,7 +129,7 @@ try:
             x_label="Month",
             y_label="Amount ($)",
         )
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, use_container_width=True, config={'responsive': True, 'displayModeBar': False})
         
         # Data table (scaled)
         with st.expander("📋 View Detailed Data"):
@@ -151,7 +151,7 @@ try:
                 "Average Cost ($)",
                 "Total Investment ($)"
             ]
-            st.dataframe(display_df, use_container_width=True, hide_index=True)
+            st.dataframe(display_df, use_container_width=True, hide_index=True, height=None)
             
             # Export button
             csv = display_df.to_csv(index=False)
