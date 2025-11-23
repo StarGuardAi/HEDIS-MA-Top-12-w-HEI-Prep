@@ -312,19 +312,19 @@ def create_bar_chart(
         ),
         "xaxis": dict(
             gridcolor="#e0e0e0", 
-            title=dict(text=x_axis_title, standoff=10),
-            automargin=True,  # Prevents overlap with legend
-            showticklabels=False,  # Hide x-axis labels for better mobile display
-            tickmode='linear',
-            tick0=0,
-            dtick=1,
-            showgrid=True,
-            zeroline=False
+            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
+            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         "yaxis": dict(
             gridcolor="#e0e0e0", 
-            title=y_axis_title,
-            automargin=True  # Prevents overlap with legend
+            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
+            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         "hovermode": "x unified",
         "autosize": True,  # Make chart responsive for mobile
@@ -567,19 +567,19 @@ def create_scatter_plot(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=dict(text=x_axis_title, standoff=10),
-            automargin=True,  # Prevents overlap
-            showticklabels=False,  # Hide x-axis labels for better mobile display
-            tickmode='linear',
-            tick0=0,
-            dtick=1,
-            showgrid=True,
-            zeroline=False
+            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
+            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title=y_axis_title,
-            automargin=True  # Prevents overlap
+            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
+            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         hovermode="closest",
         autosize=True,  # Make chart responsive for mobile
@@ -712,19 +712,19 @@ def create_line_chart(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=dict(text=x_axis_title, standoff=10),
-            automargin=True,  # Prevents overlap with legend
-            showticklabels=False,  # Hide x-axis labels for better mobile display
-            tickmode='linear',
-            tick0=0,
-            dtick=1,
-            showgrid=True,
-            zeroline=False
+            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
+            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title=y_axis_title,
-            automargin=True  # Prevents overlap with legend
+            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
+            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         hovermode="x unified",
         legend=dict(
@@ -850,19 +850,19 @@ def create_waterfall_chart(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=dict(text="Measure", standoff=10),
-            automargin=True,  # Prevents overlap with legend
-            showticklabels=False,  # Hide x-axis labels for better mobile display
-            tickmode='linear',
-            tick0=0,
-            dtick=1,
-            showgrid=True,
-            zeroline=False
+            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
+            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title="Amount ($)",
-            automargin=True  # Prevents overlap with legend
+            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
+            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         barmode="group",
         hovermode="x unified",
@@ -966,19 +966,19 @@ def create_grouped_bar_chart(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=dict(text=x_axis_title, standoff=10),
-            automargin=True,  # Prevents overlap with legend
-            showticklabels=False,  # Hide x-axis labels for better mobile display
-            tickmode='linear',
-            tick0=0,
-            dtick=1,
-            showgrid=True,
-            zeroline=False
+            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
+            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title=y_axis_title,
-            automargin=True  # Prevents overlap with legend
+            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
+            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            showline=True,  # Show the axis line
+            showgrid=True,  # Show grid lines
+            automargin=True
         ),
         barmode="group",
         hovermode="x unified",
