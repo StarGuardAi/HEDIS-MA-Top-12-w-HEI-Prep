@@ -312,7 +312,8 @@ def create_bar_chart(
         "xaxis": dict(
             gridcolor="#e0e0e0", 
             title=x_axis_title,
-            automargin=True  # Prevents overlap with legend
+            automargin=True,  # Prevents overlap with legend
+            showticklabels=False  # Hide x-axis labels for better mobile display
         ),
         "yaxis": dict(
             gridcolor="#e0e0e0", 
@@ -560,7 +561,8 @@ def create_scatter_plot(
         xaxis=dict(
             gridcolor="#e0e0e0", 
             title=x_axis_title,
-            automargin=True  # Prevents overlap
+            automargin=True,  # Prevents overlap
+            showticklabels=False  # Hide x-axis labels for better mobile display
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
@@ -698,7 +700,8 @@ def create_line_chart(
         xaxis=dict(
             gridcolor="#e0e0e0", 
             title=x_axis_title,
-            automargin=True  # Prevents overlap with legend
+            automargin=True,  # Prevents overlap with legend
+            showticklabels=False  # Hide x-axis labels for better mobile display
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
@@ -829,7 +832,8 @@ def create_waterfall_chart(
         xaxis=dict(
             gridcolor="#e0e0e0", 
             title="Measure",
-            automargin=True  # Prevents overlap with legend
+            automargin=True,  # Prevents overlap with legend
+            showticklabels=False  # Hide x-axis labels for better mobile display
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
@@ -938,7 +942,8 @@ def create_grouped_bar_chart(
         xaxis=dict(
             gridcolor="#e0e0e0", 
             title=x_axis_title,
-            automargin=True  # Prevents overlap with legend
+            automargin=True,  # Prevents overlap with legend
+            showticklabels=False  # Hide x-axis labels for better mobile display
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
