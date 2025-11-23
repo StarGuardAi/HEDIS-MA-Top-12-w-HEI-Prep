@@ -150,9 +150,8 @@ def get_sqlite_path() -> str:
     return str(db_path)
 
 
-@st.cache_resource
-def get_connection():
-    """Get database connection - cached as singleton"""
+def _get_connection_impl():
+    """Get database connection implementation - cached as singleton"""
     sqlite_path = Path(__file__).parent.parent / "data" / "hedis_portfolio.db"
     
     if sqlite_path.exists():
@@ -164,11 +163,29 @@ def get_connection():
             count = cursor.fetchone()[0]
             return conn, count
         except Exception as e:
-            st.error(f"Database Error: {e}")
+            if STREAMLIT_AVAILABLE and st is not None:
+                st.error(f"Database Error: {e}")
             return None, 0
     else:
-        st.error("Database file not found")
+        if STREAMLIT_AVAILABLE and st is not None:
+            st.error("Database file not found")
         return None, 0
+
+
+# Create cached version if Streamlit is available
+if STREAMLIT_AVAILABLE and st is not None:
+    _cached_get_connection = st.cache_resource(_get_connection_impl)
+else:
+    _cached_get_connection = None
+
+def get_connection():
+    """Get database connection - cached resource"""
+    if STREAMLIT_AVAILABLE and st is not None and _cached_get_connection is not None:
+        # Use cached version if Streamlit is available
+        return _cached_get_connection()
+    else:
+        # Direct call if Streamlit is not available
+        return _get_connection_impl()
 
 
 def show_db_status():

@@ -41,12 +41,19 @@ def get_cost_per_closure_by_activity_query(start_date: str = "2024-10-01", end_d
     return f"""
         SELECT 
             ia.activity_name,
-            ROUND(AVG(mi.cost_per_intervention) FILTER (WHERE mi.status = 'completed'), 2) as avg_cost,
-            ROUND(CAST(COUNT(*) FILTER (WHERE mi.status = 'completed') AS FLOAT) / NULLIF(COUNT(*), 0) * 100.0, 1) as success_rate,
+            ROUND(AVG(CASE WHEN mi.status = 'completed' THEN mi.cost_per_intervention ELSE NULL END), 2) as avg_cost,
             COUNT(*) as times_used,
-            COUNT(*) FILTER (WHERE mi.status = 'completed') as successful_closures,
-            ROUND(SUM(mi.cost_per_intervention) FILTER (WHERE mi.status = 'completed') / 
-                  NULLIF(COUNT(*) FILTER (WHERE mi.status = 'completed'), 0), 2) as cost_per_closure
+            SUM(CASE WHEN mi.status = 'completed' THEN 1 ELSE 0 END) as successful_closures,
+            ROUND(
+                CAST(SUM(CASE WHEN mi.status = 'completed' THEN 1 ELSE 0 END) AS REAL) * 100.0 / 
+                NULLIF(COUNT(*), 0),
+                1
+            ) as success_rate,
+            ROUND(
+                SUM(CASE WHEN mi.status = 'completed' THEN mi.cost_per_intervention ELSE 0 END) / 
+                NULLIF(SUM(CASE WHEN mi.status = 'completed' THEN 1 ELSE 0 END), 0),
+                2
+            ) as cost_per_closure
         FROM member_interventions mi
         INNER JOIN intervention_activities ia ON mi.activity_id = ia.activity_id
         WHERE mi.intervention_date >= '{start_date}'
@@ -64,17 +71,21 @@ def get_monthly_intervention_trend_query(start_date: str = "2024-10-01", end_dat
     """
     return f"""
         SELECT 
-            TO_CHAR(mi.intervention_date, 'YYYY-MM') as month,
-            DATE_TRUNC('month', mi.intervention_date)::DATE as month_start,
+            strftime('%Y-%m', mi.intervention_date) as month,
+            date(mi.intervention_date, 'start of month') as month_start,
             COUNT(*) as total_interventions,
-            COUNT(*) FILTER (WHERE mi.status = 'completed') as successful_closures,
+            SUM(CASE WHEN mi.status = 'completed' THEN 1 ELSE 0 END) as successful_closures,
             ROUND(AVG(mi.cost_per_intervention), 2) as avg_cost,
-            ROUND(CAST(COUNT(*) FILTER (WHERE mi.status = 'completed') AS FLOAT) / NULLIF(COUNT(*), 0) * 100.0, 1) as success_rate,
-            ROUND(SUM(mi.cost_per_intervention) FILTER (WHERE mi.status = 'completed'), 2) as total_investment
+            ROUND(
+                CAST(SUM(CASE WHEN mi.status = 'completed' THEN 1 ELSE 0 END) AS REAL) * 100.0 / 
+                NULLIF(COUNT(*), 0),
+                1
+            ) as success_rate,
+            ROUND(SUM(CASE WHEN mi.status = 'completed' THEN mi.cost_per_intervention ELSE 0 END), 2) as total_investment
         FROM member_interventions mi
         WHERE mi.intervention_date >= '{start_date}'
         AND mi.intervention_date <= '{end_date}'
-        GROUP BY DATE_TRUNC('month', mi.intervention_date), TO_CHAR(mi.intervention_date, 'YYYY-MM')
+        GROUP BY date(mi.intervention_date, 'start of month'), strftime('%Y-%m', mi.intervention_date)
         ORDER BY month_start ASC;
     """
 
@@ -140,17 +151,17 @@ def get_cost_tier_comparison_query(start_date: str = "2024-10-01", end_date: str
         SELECT 
             cost_tier,
             COUNT(intervention_id) as interventions_count,
-            COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_closures,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as successful_closures,
             ROUND(AVG(cost_per_intervention), 2) as avg_cost,
             ROUND(
-                CAST(COUNT(CASE WHEN status = 'completed' THEN 1 END) AS FLOAT) / 
-                NULLIF(COUNT(intervention_id), 0) * 100,
+                CAST(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS REAL) * 100.0 / 
+                NULLIF(COUNT(intervention_id), 0),
                 1
             ) as success_rate,
-            ROUND(SUM(cost_per_intervention) FILTER (WHERE status = 'completed'), 2) as total_investment,
+            ROUND(SUM(CASE WHEN status = 'completed' THEN cost_per_intervention ELSE 0 END), 2) as total_investment,
             ROUND(
-                SUM(cost_per_intervention) FILTER (WHERE status = 'completed') / 
-                NULLIF(COUNT(CASE WHEN status = 'completed' THEN 1 END), 0),
+                SUM(CASE WHEN status = 'completed' THEN cost_per_intervention ELSE 0 END) / 
+                NULLIF(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END), 0),
                 2
             ) as cost_per_closure
         FROM tiered_interventions
@@ -183,7 +194,11 @@ def get_portfolio_summary_query(start_date: str = "2024-10-01", end_date: str = 
             (COUNT(*) FILTER (WHERE mi.status = 'completed') * 100.0) - 
             SUM(mi.cost_per_intervention) FILTER (WHERE mi.status = 'completed') as net_benefit,
             COUNT(*) as total_interventions,
-            ROUND(COUNT(*) FILTER (WHERE mi.status = 'completed')::DECIMAL / COUNT(*) * 100, 1) as overall_success_rate
+            ROUND(
+                CAST(SUM(CASE WHEN mi.status = 'completed' THEN 1 ELSE 0 END) AS REAL) * 100.0 / 
+                NULLIF(COUNT(*), 0),
+                1
+            ) as overall_success_rate
         FROM member_interventions mi
         WHERE mi.intervention_date >= '{start_date}'
         AND mi.intervention_date <= '{end_date}';
