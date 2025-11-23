@@ -1,5 +1,5 @@
 """Phase 4 Dashboard Utilities"""
-from .database import execute_query, get_connection, get_postgres_config, test_connection, get_db_type, get_db_status_message
+from .database import execute_query, get_connection, show_db_status, get_postgres_config, test_connection, get_db_type, get_db_status_message
 from .queries import (
     get_budget_variance_by_measure_query,
     get_cost_per_closure_by_activity_query,
@@ -18,6 +18,7 @@ from .data_helpers import (
 __all__ = [
     "execute_query",
     "get_connection",
+    "show_db_status",
     "get_db_config",
     "test_connection",
     "get_db_type",
