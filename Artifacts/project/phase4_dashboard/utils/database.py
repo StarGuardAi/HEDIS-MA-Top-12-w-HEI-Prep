@@ -190,6 +190,9 @@ def get_connection():
 
 def show_db_status():
     """Show database status in sidebar - only once"""
+    if not STREAMLIT_AVAILABLE or st is None:
+        return  # Skip if streamlit not available
+    
     if 'db_status_shown' not in st.session_state:
         conn, count = get_connection()
         if conn:

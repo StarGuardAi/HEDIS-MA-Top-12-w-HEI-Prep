@@ -1,5 +1,9 @@
 """Phase 4 Dashboard Utilities"""
-from .database import execute_query, get_connection, show_db_status, get_postgres_config, test_connection, get_db_type, get_db_status_message
+# Import only essential functions - direct imports for reliability
+# These are imported directly by app.py and pages, so they must work
+from .database import execute_query, get_connection, show_db_status
+
+# Import query functions
 from .queries import (
     get_budget_variance_by_measure_query,
     get_cost_per_closure_by_activity_query,
@@ -8,6 +12,8 @@ from .queries import (
     get_portfolio_summary_query,
     get_roi_by_measure_query,
 )
+
+# Import data helper functions
 from .data_helpers import (
     format_date_display,
     format_month_display,
@@ -19,10 +25,6 @@ __all__ = [
     "execute_query",
     "get_connection",
     "show_db_status",
-    "get_db_config",
-    "test_connection",
-    "get_db_type",
-    "get_db_status_message",
     "get_roi_by_measure_query",
     "get_cost_per_closure_by_activity_query",
     "get_monthly_intervention_trend_query",
