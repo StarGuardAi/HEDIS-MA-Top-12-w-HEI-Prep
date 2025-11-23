@@ -210,3 +210,13 @@ try:
 except Exception as e:
     st.error(f"Error loading data: {e}")
 
+# Disclaimer footer
+st.markdown("---")
+st.info("""
+**⚠️ Demonstration Portfolio Project**
+
+This dashboard contains synthetic data for demonstration purposes only.
+Data, metrics, and analyses are not production data and do not represent any actual healthcare organization.
+Built to showcase healthcare analytics capabilities and technical proficiency.
+""")
+
