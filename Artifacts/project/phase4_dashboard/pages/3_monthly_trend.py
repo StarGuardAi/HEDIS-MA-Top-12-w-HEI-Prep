@@ -70,6 +70,8 @@ try:
         df_scaled['total_interventions'] = df_scaled['total_interventions'].astype(float) * scale_factor
         df_scaled['successful_closures'] = df_scaled['successful_closures'].astype(float) * scale_factor
         df_scaled['total_investment'] = df_scaled['total_investment'].astype(float) * scale_factor
+        # Ensure success_rate is float (not Decimal or string)
+        df_scaled['success_rate'] = df_scaled['success_rate'].astype(float)
         
         # Summary metrics (scaled)
         col1, col2, col3, col4 = st.columns(4)

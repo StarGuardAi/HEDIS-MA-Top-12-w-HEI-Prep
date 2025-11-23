@@ -73,6 +73,8 @@ try:
         df_scaled = df.copy()
         df_scaled['times_used'] = df_scaled['times_used'].astype(float) * scale_factor
         df_scaled['successful_closures'] = df_scaled['successful_closures'].astype(float) * scale_factor
+        # Ensure success_rate is float (not Decimal or string)
+        df_scaled['success_rate'] = df_scaled['success_rate'].astype(float)
         
         # Summary metrics (cost_per_closure and success_rate are constants)
         col1, col2, col3, col4 = st.columns(4)

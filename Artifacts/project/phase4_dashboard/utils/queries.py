@@ -42,7 +42,7 @@ def get_cost_per_closure_by_activity_query(start_date: str = "2024-10-01", end_d
         SELECT 
             ia.activity_name,
             ROUND(AVG(mi.cost_per_intervention) FILTER (WHERE mi.status = 'completed'), 2) as avg_cost,
-            ROUND(COUNT(*) FILTER (WHERE mi.status = 'completed')::DECIMAL / COUNT(*) * 100, 1) as success_rate,
+            ROUND(CAST(COUNT(*) FILTER (WHERE mi.status = 'completed') AS FLOAT) / NULLIF(COUNT(*), 0) * 100.0, 1) as success_rate,
             COUNT(*) as times_used,
             COUNT(*) FILTER (WHERE mi.status = 'completed') as successful_closures,
             ROUND(SUM(mi.cost_per_intervention) FILTER (WHERE mi.status = 'completed') / 
@@ -69,7 +69,7 @@ def get_monthly_intervention_trend_query(start_date: str = "2024-10-01", end_dat
             COUNT(*) as total_interventions,
             COUNT(*) FILTER (WHERE mi.status = 'completed') as successful_closures,
             ROUND(AVG(mi.cost_per_intervention), 2) as avg_cost,
-            ROUND(COUNT(*) FILTER (WHERE mi.status = 'completed')::DECIMAL / COUNT(*) * 100, 1) as success_rate,
+            ROUND(CAST(COUNT(*) FILTER (WHERE mi.status = 'completed') AS FLOAT) / NULLIF(COUNT(*), 0) * 100.0, 1) as success_rate,
             ROUND(SUM(mi.cost_per_intervention) FILTER (WHERE mi.status = 'completed'), 2) as total_investment
         FROM member_interventions mi
         WHERE mi.intervention_date >= '{start_date}'
@@ -125,30 +125,35 @@ def get_cost_tier_comparison_query(start_date: str = "2024-10-01", end_date: str
     Returns: cost_tier, avg_cost, success_rate, interventions_count, successful_closures, total_investment, cost_per_closure
     """
     return f"""
-        WITH intervention_tiers AS (
+        WITH tiered_interventions AS (
             SELECT 
                 mi.*,
-                ia.activity_name,
                 CASE 
-                    WHEN mi.cost_per_intervention <= 25 THEN 'Low Touch'
-                    WHEN mi.cost_per_intervention <= 75 THEN 'Medium Touch'
+                    WHEN mi.cost_per_intervention < 20 THEN 'Low Touch'
+                    WHEN mi.cost_per_intervention < 90 THEN 'Medium Touch'
                     ELSE 'High Touch'
                 END as cost_tier
             FROM member_interventions mi
-            INNER JOIN intervention_activities ia ON mi.activity_id = ia.activity_id
             WHERE mi.intervention_date >= '{start_date}'
             AND mi.intervention_date <= '{end_date}'
         )
         SELECT 
             cost_tier,
+            COUNT(intervention_id) as interventions_count,
+            COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_closures,
             ROUND(AVG(cost_per_intervention), 2) as avg_cost,
-            ROUND(COUNT(*) FILTER (WHERE status = 'completed')::DECIMAL / COUNT(*) * 100, 1) as success_rate,
-            COUNT(*) as interventions_count,
-            COUNT(*) FILTER (WHERE status = 'completed') as successful_closures,
+            ROUND(
+                CAST(COUNT(CASE WHEN status = 'completed' THEN 1 END) AS FLOAT) / 
+                NULLIF(COUNT(intervention_id), 0) * 100,
+                1
+            ) as success_rate,
             ROUND(SUM(cost_per_intervention) FILTER (WHERE status = 'completed'), 2) as total_investment,
-            ROUND(SUM(cost_per_intervention) FILTER (WHERE status = 'completed') / 
-                  NULLIF(COUNT(*) FILTER (WHERE status = 'completed'), 0), 2) as cost_per_closure
-        FROM intervention_tiers
+            ROUND(
+                SUM(cost_per_intervention) FILTER (WHERE status = 'completed') / 
+                NULLIF(COUNT(CASE WHEN status = 'completed' THEN 1 END), 0),
+                2
+            ) as cost_per_closure
+        FROM tiered_interventions
         GROUP BY cost_tier
         ORDER BY 
             CASE cost_tier

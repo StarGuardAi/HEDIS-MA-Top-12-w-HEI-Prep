@@ -292,6 +292,14 @@ def convert_query_for_sqlite(query: str) -> str:
     # Replace ::DECIMAL, ::DATE, ::INTEGER type casts (but keep them for DATE_TRUNC above)
     query = re.sub(r'::\s*\w+', '', query)
     
+    # Replace CAST(...AS FLOAT) with CAST(...AS REAL) for SQLite compatibility
+    query = re.sub(
+        r'CAST\s*\(\s*([^)]+)\s*AS\s+FLOAT\s*\)',
+        r'CAST(\1 AS REAL)',
+        query,
+        flags=re.IGNORECASE
+    )
+    
     # Replace NULLIF(a, b) with CASE WHEN a = b THEN NULL ELSE a END
     query = re.sub(
         r'NULLIF\s*\(\s*([^,]+)\s*,\s*([^)]+)\s*\)',
