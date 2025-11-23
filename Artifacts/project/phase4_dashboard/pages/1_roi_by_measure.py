@@ -46,10 +46,8 @@ st.divider()
 col1, col2, col3 = st.columns([1, 1, 2])
 with col1:
     start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), format="MM/DD/YYYY")
-    st.markdown(f"**Selected:** {format_date_display(start_date)}")
 with col2:
     end_date = st.date_input("End Date", value=datetime(2024, 12, 31), format="MM/DD/YYYY")
-    st.markdown(f"**Selected:** {format_date_display(end_date)}")
 with col3:
     st.info("💰 Revenue Impact = Successful Closures × $100 per closure")
     st.markdown(f"**Date Range:** {format_date_display(start_date)} to {format_date_display(end_date)}")
