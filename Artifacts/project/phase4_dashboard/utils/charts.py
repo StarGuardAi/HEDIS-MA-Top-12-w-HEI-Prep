@@ -214,7 +214,7 @@ def create_bar_chart(
                     bordercolor='rgba(0,0,0,0.1)',
                     borderwidth=1
                 ),
-                height=650  # Preserve height
+                height=550  # Preserve height
             )
         else:
             # Use continuous color scale for numeric data
@@ -259,7 +259,7 @@ def create_bar_chart(
                 coloraxis_colorbar_title=colorbar_label,
                 coloraxis_colorbar_title_side="right",
                 coloraxis_colorbar_title_font_size=11,
-                height=650  # Preserve height
+                height=550  # Preserve height
             )
             
             # Directly access and force set the colorbar title text
@@ -302,18 +302,24 @@ def create_bar_chart(
         "font": dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         "title": dict(
             text=str(title) if title else "",
-            font=dict(size=16, color=MEDICAL_THEME["primary"]),
+            font=dict(size=14, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            automargin=True
+            automargin=True,
+            pad=dict(t=0, b=10)  # Minimal padding
         ),
         "xaxis": dict(
             gridcolor="#e0e0e0", 
-            title=x_axis_title,
+            title=dict(text=x_axis_title, standoff=10),
             automargin=True,  # Prevents overlap with legend
-            showticklabels=False  # Hide x-axis labels for better mobile display
+            showticklabels=False,  # Hide x-axis labels for better mobile display
+            tickmode='linear',
+            tick0=0,
+            dtick=1,
+            showgrid=True,
+            zeroline=False
         ),
         "yaxis": dict(
             gridcolor="#e0e0e0", 
@@ -322,8 +328,8 @@ def create_bar_chart(
         ),
         "hovermode": "x unified",
         "autosize": True,  # Make chart responsive for mobile
-        "height": 650,  # Even taller for better spacing
-        "margin": dict(l=80, r=40, t=140, b=100),  # Much larger margins
+        "height": 550,  # Reduced height for better mobile display
+        "margin": dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
     }
     
     # Apply layout - don't override legend/colorbar titles that were already set in categorical/continuous sections
@@ -355,7 +361,7 @@ def create_bar_chart(
         # Force update to ensure it's set correctly - try multiple methods
         if is_categorical:
             # Update legend title - preserve height
-            fig.update_layout(legend_title_text=final_label, height=650)
+            fig.update_layout(legend_title_text=final_label, height=550)
             if hasattr(fig.layout, 'legend') and fig.layout.legend:
                 if hasattr(fig.layout.legend, 'title'):
                     if hasattr(fig.layout.legend.title, 'text'):
@@ -368,7 +374,7 @@ def create_bar_chart(
                 pass
             
             try:
-                fig.update_layout(coloraxis_colorbar_title=final_label, height=650)
+                fig.update_layout(coloraxis_colorbar_title=final_label, height=550)
             except:
                 pass
             
@@ -441,7 +447,7 @@ def create_bar_chart(
                         replacement_label = labels_dict.get(color_col, format_column_label(color_col))
                     if not replacement_label or replacement_label == "Undefined":
                         replacement_label = format_column_label(color_col)
-                        fig.update_layout(legend_title_text=str(replacement_label), height=650)
+                        fig.update_layout(legend_title_text=str(replacement_label), height=550)
     
     # Final check on axis titles - ensure they're not "Undefined"
     if hasattr(fig.layout, 'xaxis') and fig.layout.xaxis:
@@ -484,9 +490,9 @@ def create_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     
     return fig
 
@@ -551,18 +557,24 @@ def create_scatter_plot(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=16, color=MEDICAL_THEME["primary"]),
+            font=dict(size=14, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            automargin=True
+            automargin=True,
+            pad=dict(t=0, b=10)  # Minimal padding
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=x_axis_title,
+            title=dict(text=x_axis_title, standoff=10),
             automargin=True,  # Prevents overlap
-            showticklabels=False  # Hide x-axis labels for better mobile display
+            showticklabels=False,  # Hide x-axis labels for better mobile display
+            tickmode='linear',
+            tick0=0,
+            dtick=1,
+            showgrid=True,
+            zeroline=False
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
@@ -571,8 +583,8 @@ def create_scatter_plot(
         ),
         hovermode="closest",
         autosize=True,  # Make chart responsive for mobile
-        height=650,  # Even taller for better spacing
-        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
+        height=550,  # Reduced height for better mobile display
+        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
     )
     
     # Set colorbar title after layout update
@@ -586,7 +598,7 @@ def create_scatter_plot(
             fig.update_coloraxes(colorbar_title=colorbar_title)
         except:
             try:
-                fig.update_layout(coloraxis_colorbar_title=colorbar_title, height=650)
+                fig.update_layout(coloraxis_colorbar_title=colorbar_title, height=550)
             except:
                 # Last resort: try updating traces
                 try:
@@ -624,9 +636,9 @@ def create_scatter_plot(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     
     return fig
 
@@ -690,18 +702,24 @@ def create_line_chart(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=16, color=MEDICAL_THEME["primary"]),
+            font=dict(size=14, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            automargin=True
+            automargin=True,
+            pad=dict(t=0, b=10)  # Minimal padding
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=x_axis_title,
+            title=dict(text=x_axis_title, standoff=10),
             automargin=True,  # Prevents overlap with legend
-            showticklabels=False  # Hide x-axis labels for better mobile display
+            showticklabels=False,  # Hide x-axis labels for better mobile display
+            tickmode='linear',
+            tick0=0,
+            dtick=1,
+            showgrid=True,
+            zeroline=False
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
@@ -712,7 +730,7 @@ def create_line_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.35,  # Further below chart to avoid overlap
+            y=-0.3,  # Below chart
             xanchor="center", 
             x=0.5,
             title_text="",
@@ -722,8 +740,8 @@ def create_line_chart(
             borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=650,  # Even taller for better spacing
-        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
+        height=550,  # Reduced height for better mobile display
+        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -756,9 +774,9 @@ def create_line_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     
     return fig
 
@@ -822,18 +840,24 @@ def create_waterfall_chart(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=16, color=MEDICAL_THEME["primary"]),
+            font=dict(size=14, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            automargin=True
+            automargin=True,
+            pad=dict(t=0, b=10)  # Minimal padding
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title="Measure",
+            title=dict(text="Measure", standoff=10),
             automargin=True,  # Prevents overlap with legend
-            showticklabels=False  # Hide x-axis labels for better mobile display
+            showticklabels=False,  # Hide x-axis labels for better mobile display
+            tickmode='linear',
+            tick0=0,
+            dtick=1,
+            showgrid=True,
+            zeroline=False
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
@@ -845,7 +869,7 @@ def create_waterfall_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.35,  # Further below chart to avoid overlap
+            y=-0.3,  # Below chart
             xanchor="center", 
             x=0.5,
             bgcolor='rgba(255,255,255,0.9)',
@@ -853,15 +877,15 @@ def create_waterfall_chart(
             borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=650,  # Even taller for better spacing
-        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
+        height=550,  # Reduced height for better mobile display
+        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
     )
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     
     return fig
 
@@ -932,18 +956,24 @@ def create_grouped_bar_chart(
         font=dict(family="Arial, sans-serif", size=12, color=MEDICAL_THEME["text"]),
         title=dict(
             text=str(title) if title else "",
-            font=dict(size=16, color=MEDICAL_THEME["primary"]),
+            font=dict(size=14, color=MEDICAL_THEME["primary"]),
             x=0.5,
             xanchor="center",
             y=0.98,  # Position title higher
             yanchor="top",
-            automargin=True
+            automargin=True,
+            pad=dict(t=0, b=10)  # Minimal padding
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=x_axis_title,
+            title=dict(text=x_axis_title, standoff=10),
             automargin=True,  # Prevents overlap with legend
-            showticklabels=False  # Hide x-axis labels for better mobile display
+            showticklabels=False,  # Hide x-axis labels for better mobile display
+            tickmode='linear',
+            tick0=0,
+            dtick=1,
+            showgrid=True,
+            zeroline=False
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
@@ -955,7 +985,7 @@ def create_grouped_bar_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.35,  # Further below chart to avoid overlap
+            y=-0.3,  # Below chart
             xanchor="center", 
             x=0.5,
             title_text="",
@@ -965,8 +995,8 @@ def create_grouped_bar_chart(
             borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=650,  # Even taller for better spacing
-        margin=dict(l=80, r=40, t=140, b=100),  # Much larger margins
+        height=550,  # Reduced height for better mobile display
+        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -999,9 +1029,9 @@ def create_grouped_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=650)
+        fig.update_layout(height=550)
     
     return fig
 
