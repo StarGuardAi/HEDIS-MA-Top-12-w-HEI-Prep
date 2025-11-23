@@ -12,7 +12,7 @@ from utils.charts import create_waterfall_chart, create_bar_chart
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
 
-st.set_page_config(page_title="Budget Variance by Measure", layout="wide")
+st.set_page_config(page_title="Budget Variance", page_icon="💵", layout="wide")
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:

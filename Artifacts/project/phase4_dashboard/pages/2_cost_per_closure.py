@@ -12,7 +12,7 @@ from utils.data_helpers import show_data_availability_warning, format_date_displ
 from utils.plan_context import get_plan_size_scenarios
 import plotly.express as px
 
-st.set_page_config(page_title="Cost per Closure by Activity", layout="wide")
+st.set_page_config(page_title="Cost Per Closure", page_icon="💰", layout="wide")
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:
