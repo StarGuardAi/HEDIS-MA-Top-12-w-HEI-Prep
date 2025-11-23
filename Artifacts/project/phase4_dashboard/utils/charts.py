@@ -450,21 +450,8 @@ def create_bar_chart(
                         fig.update_layout(legend_title_text=str(replacement_label), height=550)
     
     # Final check on axis titles - ensure they're not "Undefined"
-    if hasattr(fig.layout, 'xaxis') and fig.layout.xaxis:
-        if hasattr(fig.layout.xaxis, 'title') and fig.layout.xaxis.title:
-            if hasattr(fig.layout.xaxis.title, 'text'):
-                x_title = str(fig.layout.xaxis.title.text) if fig.layout.xaxis.title.text else ""
-                if not x_title or x_title.strip() == "Undefined" or x_title.strip().lower() == "undefined":
-                    replacement_label = labels_dict.get(x_col, format_column_label(x_col))
-                    fig.update_xaxes(title_text=str(replacement_label))
-    
-    if hasattr(fig.layout, 'yaxis') and fig.layout.yaxis:
-        if hasattr(fig.layout.yaxis, 'title') and fig.layout.yaxis.title:
-            if hasattr(fig.layout.yaxis.title, 'text'):
-                y_title = str(fig.layout.yaxis.title.text) if fig.layout.yaxis.title.text else ""
-                if not y_title or y_title.strip() == "Undefined" or y_title.strip().lower() == "undefined":
-                    replacement_label = labels_dict.get(y_col, format_column_label(y_col))
-                    fig.update_yaxes(title_text=str(replacement_label))
+    # Axis titles are intentionally set to None in layout to save space
+    # No need to update axis titles - they should remain None
     
     # Final check on layout-level colorbar (for continuous color scales)
     if color_col:
