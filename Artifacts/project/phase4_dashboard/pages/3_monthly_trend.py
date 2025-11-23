@@ -45,10 +45,8 @@ st.divider()
 col1, col2 = st.columns(2)
 with col1:
     start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), key="trend_start", format="MM/DD/YYYY")
-    st.markdown(f"**Selected:** {format_date_display(start_date)}")
 with col2:
     end_date = st.date_input("End Date", value=datetime(2024, 12, 31), key="trend_end", format="MM/DD/YYYY")
-    st.markdown(f"**Selected:** {format_date_display(end_date)}")
 
 # Check data availability
 show_data_availability_warning(start_date, end_date)

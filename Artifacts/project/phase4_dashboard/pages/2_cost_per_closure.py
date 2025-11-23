@@ -45,10 +45,8 @@ st.divider()
 col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
     start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), key="scatter_start", format="MM/DD/YYYY")
-    st.markdown(f"**Selected:** {format_date_display(start_date)}")
 with col2:
     end_date = st.date_input("End Date", value=datetime(2024, 12, 31), key="scatter_end", format="MM/DD/YYYY")
-    st.markdown(f"**Selected:** {format_date_display(end_date)}")
 with col3:
     min_uses = st.number_input("Minimum Uses", min_value=1, value=10, help="Filter activities with at least this many uses")
     st.markdown(f"**Range:** {format_date_display(start_date)} to {format_date_display(end_date)}")
