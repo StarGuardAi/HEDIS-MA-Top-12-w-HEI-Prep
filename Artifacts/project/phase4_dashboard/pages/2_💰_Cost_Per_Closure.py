@@ -3,6 +3,11 @@ Page 2: Cost per Closure by Activity
 Scatter plot showing cost-effectiveness of intervention activities
 """
 import streamlit as st
+
+st.set_page_config(page_title="Cost Per Closure", page_icon="💰", layout="wide")
+
+st.sidebar.success("📱 Mobile Optimized")
+
 import pandas as pd
 from datetime import datetime
 
@@ -11,8 +16,6 @@ from utils.queries import get_cost_per_closure_by_activity_query
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
 import plotly.express as px
-
-st.set_page_config(page_title="Cost Per Closure", page_icon="💰", layout="wide")
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:

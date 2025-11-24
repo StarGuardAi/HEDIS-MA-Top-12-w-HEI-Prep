@@ -3,6 +3,11 @@ Page 5: Cost Tier Comparison
 Grouped bar chart comparing Low/Medium/High touch interventions
 """
 import streamlit as st
+
+st.set_page_config(page_title="Cost Tier Comparison", page_icon="🎯", layout="wide")
+
+st.sidebar.success("📱 Mobile Optimized")
+
 import pandas as pd
 from datetime import datetime
 
@@ -11,8 +16,6 @@ from utils.queries import get_cost_tier_comparison_query
 from utils.charts import create_grouped_bar_chart, create_bar_chart
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
-
-st.set_page_config(page_title="Cost Tier Comparison", page_icon="🎯", layout="wide")
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:

@@ -3,6 +3,11 @@ Page 4: Budget Variance by Measure
 Waterfall chart showing budget variance across measures
 """
 import streamlit as st
+
+st.set_page_config(page_title="Budget Variance", page_icon="💵", layout="wide")
+
+st.sidebar.success("📱 Mobile Optimized")
+
 import pandas as pd
 from datetime import datetime
 
@@ -11,8 +16,6 @@ from utils.queries import get_budget_variance_by_measure_query
 from utils.charts import create_waterfall_chart, create_bar_chart
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
-
-st.set_page_config(page_title="Budget Variance", page_icon="💵", layout="wide")
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:
