@@ -12,10 +12,10 @@ from utils.plan_context import get_plan_context, get_plan_size_scenarios, get_in
 
 # Page configuration
 st.set_page_config(
-    page_title="HEDIS Star Rating Portfolio Optimizer",
+    page_title="HEDIS Portfolio Optimizer",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="collapsed",  # Hide sidebar on mobile by default
+    initial_sidebar_state="expanded",  # Expanded on desktop, auto-collapses on mobile
     menu_items={
         'Get Help': 'mailto:reichert.starguardai@gmail.com',
         'Report a bug': 'mailto:reichert.starguardai@gmail.com',
@@ -238,6 +238,8 @@ st.markdown("""
 
 # Sidebar navigation
 with st.sidebar:
+    st.success("📱 Mobile Optimized")
+    
     # Database status - show once per session
     show_db_status()
     
@@ -254,15 +256,15 @@ with st.sidebar:
     st.markdown("**Q4 2024 Turnaround Results for 10K Member Plan**")
     st.markdown("Scaled projections for your plan size")
     st.markdown("### 📈 Visualizations")
-    st.markdown("- [💰 ROI Analysis](1_roi_by_measure)")
+    st.markdown("- [💰 ROI Analysis](1_📊_ROI_by_Measure)")
     st.markdown("  _Investment efficiency - Proof of concept at 10K scale_")
-    st.markdown("- [📈 Intervention Performance](2_cost_per_closure)")
+    st.markdown("- [📈 Intervention Performance](2_💰_Cost_Per_Closure)")
     st.markdown("  _Low-touch digital outperforms traditional - Scalable strategy_")
-    st.markdown("- [💵 Budget Management](4_budget_variance)")
+    st.markdown("- [💵 Budget Management](4_💵_Budget_Variance)")
     st.markdown("  _Fiscal discipline during turnaround_")
-    st.markdown("- [🎯 Cost Efficiency](5_cost_tier_comparison)")
+    st.markdown("- [🎯 Cost Efficiency](5_🎯_Cost_Tier_Comparison)")
     st.markdown("  _Cost-effective strategies - Replicable across populations_")
-    st.markdown("- [📊 Monthly Trends](3_monthly_trend)")
+    st.markdown("- [📊 Monthly Trends](3_📈_Monthly_Trend)")
     
     st.markdown("---")
     
@@ -279,6 +281,36 @@ with st.sidebar:
     st.sidebar.caption("📱 Mobile: Use ☰ menu to navigate")
 
 # Main content - Home Page
+# Navigation callout - responsive for desktop and mobile
+st.markdown("""
+<style>
+.navigation-callout {
+    background-color: #d4edff;
+    border-left: 4px solid #1f77b4;
+    padding: 12px 20px;
+    margin: 0 0 20px 0;
+    border-radius: 4px;
+}
+
+/* Mobile-specific positioning - align with sidebar button */
+@media (max-width: 768px) {
+    .navigation-callout {
+        margin: -60px 0 20px 0;  /* Pull up to align with > button */
+        font-size: 0.85rem;
+    }
+}
+</style>
+
+<div class="navigation-callout">
+    <strong>👈 Click Sidebar Links to Explore Analytics</strong> | 📱 Mobile Optimized<br>
+    <span style="font-size: 0.9rem;">Access detailed views: <strong>ROI by Measure</strong> • <strong>Cost Per Closure</strong> • <strong>Monthly Trend</strong> • <strong>Budget Variance</strong> • <strong>Cost Tier Comparison</strong></span>
+</div>
+""", unsafe_allow_html=True)
+
+# Add small spacing
+st.markdown("")
+
+# NOW the title starts
 st.title("📊 HEDIS Star Rating Portfolio Optimizer")
 st.markdown("### Case Study: Regional MA Plan Turnaround Initiative")
 
@@ -622,25 +654,6 @@ try:
             """)
         
         st.divider()
-        
-        # NAVIGATION CALLOUT
-        st.markdown("""
-        ---
-        
-        ### 🚀 Q4 2024 Turnaround Results
-        
-        **👉 Explore detailed analysis using the sidebar navigation**
-        
-        • **ROI Analysis:** Investment efficiency and proof of concept at 10K scale, ready to expand
-        
-        • **Intervention Performance:** Breakthrough insights - Low-touch digital outperforms traditional, scalable strategy for plans of any size
-        
-        • **Budget Management:** Fiscal discipline during turnaround, budget model adaptable to plan size
-        
-        • **Cost Efficiency:** Cost-effective strategies identified, replicable across larger member populations
-        
-        All charts and tables automatically scale to your selected plan size
-        """)
         
 except Exception as e:
     st.error(f"❌ Error loading portfolio summary: {e}")
