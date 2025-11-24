@@ -275,10 +275,6 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("**Built by:** Robert Reichert")
     st.markdown("**Phase:** 4 - Interactive Dashboard")
-    
-    # Mobile navigation indicator
-    st.markdown("---")
-    st.sidebar.caption("📱 Mobile: Use ☰ menu to navigate")
 
 # Main content - Home Page
 # Navigation callout - responsive for desktop and mobile
@@ -287,16 +283,25 @@ st.markdown("""
 .navigation-callout {
     background-color: #d4edff;
     border-left: 4px solid #1f77b4;
-    padding: 12px 20px;
+    padding: 10px 15px;
     margin: 0 0 20px 0;
     border-radius: 4px;
+    display: block !important;
+    visibility: visible !important;
 }
 
-/* Mobile-specific positioning - align with sidebar button */
+/* Mobile alignment */
 @media (max-width: 768px) {
     .navigation-callout {
-        margin: -60px 0 20px 0;  /* Pull up to align with > button */
+        margin: -55px 0 15px 0;
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    .navigation-callout strong {
         font-size: 0.85rem;
+    }
+    .navigation-callout span {
+        font-size: 0.75rem !important;
     }
 }
 </style>
