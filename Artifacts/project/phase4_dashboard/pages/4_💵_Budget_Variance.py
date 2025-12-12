@@ -6,8 +6,6 @@ import streamlit as st
 
 st.set_page_config(page_title="Budget Variance", page_icon="💵", layout="wide")
 
-st.sidebar.success("📱 Mobile Optimized")
-
 import pandas as pd
 from datetime import datetime
 
@@ -16,6 +14,18 @@ from utils.queries import get_budget_variance_by_measure_query
 from utils.charts import create_waterfall_chart, create_bar_chart
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
+from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, apply_compact_css
+
+# Apply ultra-compact CSS
+apply_compact_css()
+
+st.sidebar.success("📱 Mobile Optimized")
+
+# Sidebar footer
+render_sidebar_footer()
+
+# Page header
+render_header()
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:
@@ -45,7 +55,7 @@ else:
 st.divider()
 
 # Date range filter
-col1, col2 = st.columns(2)
+col1, col2 = st.columns(2, gap="small")
 with col1:
     start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), key="budget_start", format="MM/DD/YYYY")
 with col2:
@@ -73,7 +83,7 @@ try:
         df_scaled['variance'] = df_scaled['variance'].astype(float) * scale_factor
         
         # Summary metrics (scaled)
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4, gap="small")
         
         total_budget = df_scaled['budget_allocated'].sum()
         total_spent = df_scaled['actual_spent'].sum()
@@ -164,7 +174,7 @@ try:
             st.divider()
             st.subheader("💡 Budget Insights")
             
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3 = st.columns(3, gap="small")
             
             # Note: budget_status is based on variance_pct which is constant, so filtering works the same
             over_budget = filtered_df[filtered_df['budget_status'] == 'Over Budget']
@@ -207,13 +217,6 @@ try:
 except Exception as e:
     st.error(f"Error loading data: {e}")
 
-# Disclaimer footer
-st.markdown("---")
-st.info("""
-**⚠️ Demonstration Portfolio Project**
-
-This dashboard contains synthetic data for demonstration purposes only.
-Data, metrics, and analyses are not production data and do not represent any actual healthcare organization.
-Built to showcase healthcare analytics capabilities and technical proficiency.
-""")
+# Footer sections - desktop full text, mobile abbreviated
+render_page_footer()  # Main content footer
 

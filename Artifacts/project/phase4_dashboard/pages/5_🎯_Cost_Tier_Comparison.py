@@ -6,8 +6,6 @@ import streamlit as st
 
 st.set_page_config(page_title="Cost Tier Comparison", page_icon="🎯", layout="wide")
 
-st.sidebar.success("📱 Mobile Optimized")
-
 import pandas as pd
 from datetime import datetime
 
@@ -16,6 +14,18 @@ from utils.queries import get_cost_tier_comparison_query
 from utils.charts import create_grouped_bar_chart, create_bar_chart
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
+from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, apply_compact_css
+
+# Apply ultra-compact CSS
+apply_compact_css()
+
+st.sidebar.success("📱 Mobile Optimized")
+
+# Sidebar footer
+render_sidebar_footer()
+
+# Page header
+render_header()
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:
@@ -45,7 +55,7 @@ else:
 st.divider()
 
 # Date range filter
-col1, col2 = st.columns(2)
+col1, col2 = st.columns(2, gap="small")
 with col1:
     start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), key="tier_start", format="MM/DD/YYYY")
 with col2:
@@ -73,7 +83,7 @@ try:
         df_scaled['total_investment'] = df_scaled['total_investment'].astype(float) * scale_factor
         
         # Summary metrics
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4, gap="small")
         
         low_touch = df_scaled[df_scaled['cost_tier'] == 'Low Touch'].iloc[0] if 'Low Touch' in df_scaled['cost_tier'].values else None
         medium_touch = df_scaled[df_scaled['cost_tier'] == 'Medium Touch'].iloc[0] if 'Medium Touch' in df_scaled['cost_tier'].values else None
@@ -115,7 +125,7 @@ try:
         title_suffix = f" ({membership_size:,} member plan)" if membership_size != BASELINE_MEMBERS else ""
         
         # Cost vs Success Rate comparison
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="small")
         
         with col1:
             fig1 = create_grouped_bar_chart(
@@ -199,7 +209,7 @@ try:
         st.subheader("💡 Key Insights")
         
         if len(df_scaled) >= 2:
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns(2, gap="small")
             
             # Best value analysis (using scaled data)
             df_with_value = df_scaled.copy()
@@ -231,7 +241,7 @@ try:
             
             # Cost efficiency analysis
             st.markdown("### 📊 Cost Efficiency Analysis")
-            col3, col4, col5 = st.columns(3)
+            col3, col4, col5 = st.columns(3, gap="small")
             
             with col3:
                 if low_touch is not None:
@@ -275,13 +285,6 @@ try:
 except Exception as e:
     st.error(f"Error loading data: {e}")
 
-# Disclaimer footer
-st.markdown("---")
-st.info("""
-**⚠️ Demonstration Portfolio Project**
-
-This dashboard contains synthetic data for demonstration purposes only.
-Data, metrics, and analyses are not production data and do not represent any actual healthcare organization.
-Built to showcase healthcare analytics capabilities and technical proficiency.
-""")
+# Footer sections - desktop full text, mobile abbreviated
+render_page_footer()  # Main content footer
 

@@ -6,8 +6,6 @@ import streamlit as st
 
 st.set_page_config(page_title="Monthly Trend", page_icon="📈", layout="wide")
 
-st.sidebar.success("📱 Mobile Optimized")
-
 import pandas as pd
 from datetime import datetime
 
@@ -16,6 +14,18 @@ from utils.queries import get_monthly_intervention_trend_query
 from utils.charts import create_line_chart
 from utils.data_helpers import show_data_availability_warning, format_date_display, format_month_display
 from utils.plan_context import get_plan_size_scenarios
+from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, apply_compact_css
+
+# Apply ultra-compact CSS
+apply_compact_css()
+
+st.sidebar.success("📱 Mobile Optimized")
+
+# Sidebar footer
+render_sidebar_footer()
+
+# Page header
+render_header()
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:
@@ -45,7 +55,7 @@ else:
 st.divider()
 
 # Date range filter
-col1, col2 = st.columns(2)
+col1, col2 = st.columns(2, gap="small")
 with col1:
     start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), key="trend_start", format="MM/DD/YYYY")
 with col2:
@@ -75,7 +85,7 @@ try:
         df_scaled['success_rate'] = df_scaled['success_rate'].astype(float)
         
         # Summary metrics (scaled)
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4, gap="small")
         with col1:
             total_interventions = df_scaled['total_interventions'].sum()
             st.metric("Total Interventions", f"{int(total_interventions):,}")
@@ -99,7 +109,7 @@ try:
         title_suffix = f" ({membership_size:,} member plan)" if membership_size != BASELINE_MEMBERS else ""
         
         # Line chart - interventions and closures
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="small")
         
         with col1:
             fig1 = create_line_chart(
@@ -169,7 +179,7 @@ try:
         st.divider()
         st.subheader("💡 Trend Insights")
         
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="small")
         
         # Calculate trend direction (using scaled data)
         if len(df_scaled) >= 2:
@@ -198,7 +208,7 @@ try:
                     st.info("➡️ Intervention volume remained **stable**")
         
         # Best and worst months (using scaled data)
-        col3, col4 = st.columns(2)
+        col3, col4 = st.columns(2, gap="small")
         best_month = df_scaled.loc[df_scaled['success_rate'].idxmax()]
         worst_month = df_scaled.loc[df_scaled['success_rate'].idxmin()]
         
@@ -221,13 +231,6 @@ try:
 except Exception as e:
     st.error(f"Error loading data: {e}")
 
-# Disclaimer footer
-st.markdown("---")
-st.info("""
-**⚠️ Demonstration Portfolio Project**
-
-This dashboard contains synthetic data for demonstration purposes only.
-Data, metrics, and analyses are not production data and do not represent any actual healthcare organization.
-Built to showcase healthcare analytics capabilities and technical proficiency.
-""")
+# Footer sections - desktop full text, mobile abbreviated
+render_page_footer()  # Main content footer
 

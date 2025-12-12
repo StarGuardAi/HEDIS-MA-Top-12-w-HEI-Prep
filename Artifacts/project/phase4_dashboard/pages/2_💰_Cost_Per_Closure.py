@@ -6,8 +6,6 @@ import streamlit as st
 
 st.set_page_config(page_title="Cost Per Closure", page_icon="💰", layout="wide")
 
-st.sidebar.success("📱 Mobile Optimized")
-
 import pandas as pd
 from datetime import datetime
 
@@ -15,7 +13,19 @@ from utils.database import execute_query
 from utils.queries import get_cost_per_closure_by_activity_query
 from utils.data_helpers import show_data_availability_warning, format_date_display
 from utils.plan_context import get_plan_size_scenarios
+from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, apply_compact_css
+
+# Apply ultra-compact CSS
+apply_compact_css()
+
+st.sidebar.success("📱 Mobile Optimized")
+
+# Sidebar footer
+render_sidebar_footer()
 import plotly.express as px
+
+# Page header
+render_header()
 
 # Initialize session state if not exists
 if 'membership_size' not in st.session_state:
@@ -45,7 +55,7 @@ else:
 st.divider()
 
 # Filters
-col1, col2, col3 = st.columns([1, 1, 1])
+col1, col2, col3 = st.columns([1, 1, 1], gap="small")
 with col1:
     start_date = st.date_input("Start Date", value=datetime(2024, 10, 1), key="scatter_start", format="MM/DD/YYYY")
 with col2:
@@ -78,7 +88,7 @@ try:
         df_scaled['success_rate'] = df_scaled['success_rate'].astype(float)
         
         # Summary metrics (cost_per_closure and success_rate are constants)
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4, gap="small")
         with col1:
             most_cost_effective = df_scaled.loc[df_scaled['cost_per_closure'].idxmin()]
             st.metric(
@@ -131,7 +141,7 @@ try:
         
         # Update layout for mobile - no text labels
         fig.update_layout(
-            height=600,
+            height=350,
             autosize=True,
             margin=dict(l=80, r=40, t=120, b=80),
             title={
@@ -189,7 +199,7 @@ try:
         st.subheader("💡 Key Insights")
         
         # Best performers
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2, gap="small")
         
         with col1:
             best_combo = df_scaled.loc[(df_scaled['success_rate'] - df_scaled['avg_cost']/10).idxmax()]
@@ -211,13 +221,6 @@ try:
 except Exception as e:
     st.error(f"Error loading data: {e}")
 
-# Disclaimer footer
-st.markdown("---")
-st.info("""
-**⚠️ Demonstration Portfolio Project**
-
-This dashboard contains synthetic data for demonstration purposes only.
-Data, metrics, and analyses are not production data and do not represent any actual healthcare organization.
-Built to showcase healthcare analytics capabilities and technical proficiency.
-""")
+# Footer sections - desktop full text, mobile abbreviated
+render_page_footer()  # Main content footer
 
