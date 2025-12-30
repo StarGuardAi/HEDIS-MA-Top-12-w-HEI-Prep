@@ -486,6 +486,43 @@ This portfolio project demonstrates skills relevant to:
 
 ---
 
+## Context Engineering & LLM Integration
+
+StarGuard AI incorporates modern context engineering practices for secure AI deployment:
+
+- **Prompt Design**: Structured prompts for healthcare analytics tasks with compliance constraints
+- **Context Management**: Efficient context window utilization for complex healthcare queries
+- **RAG Architecture**: Retrieval Augmented Generation for HEDIS guideline interpretation
+- **Safety Guardrails**: Multi-layer validation to prevent PHI exposure in LLM responses
+- **Token Optimization**: Cost-efficient context strategies for production deployment
+
+### Why Context Engineering Matters for Healthcare AI
+
+Healthcare AI requires specialized context engineering to:
+- Maintain HIPAA compliance in LLM interactions
+- Prevent hallucinations in clinical decision support
+- Ensure accurate interpretation of regulatory guidelines (HEDIS, CMS)
+- Optimize token usage for cost-effective deployment
+- Implement audit trails for AI-assisted decisions
+```
+## **📄 RESUME UPDATES**
+
+### **Skills Section - Add new category:**
+```
+AI & LLM ENGINEERING
+- Context Engineering & Prompt Optimization
+- Large Language Models (GPT, Claude, Llama)
+- Retrieval Augmented Generation (RAG)
+- LLM Safety & Compliance Guardrails
+- Token Management & Cost Optimization
+```
+
+### **StarGuard AI Project Description - Add:**
+```
+- Architected context engineering pipeline for secure LLM integration with HIPAA-compliant guardrails
+- Implemented RAG system for healthcare knowledge retrieval with zero PHI exposure
+- Designed prompt strategies and safety constraints for production AI deployment
+---
 ## 🌟 Why This Portfolio Matters
 
 This isn't just a technical project—it's a **solution to real healthcare crises**:
