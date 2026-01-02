@@ -1,24 +1,9 @@
-# Streamlit Configuration for Phase 4 Dashboard
-[server]
-port = 8501
-baseUrlPath = ""
-enableCORS = false
-enableXsrfProtection = true
-
-[browser]
-gatherUsageStats = false
-serverAddress = "localhost"
-
 [theme]
-primaryColor = "#4e2a84"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f8f9fa"
-textColor = "#212529"
+primaryColor = "#8B7AB8"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#262730"
 font = "sans serif"
 
-[client]
-showErrorDetails = false
-
-[logger]
-level = "error"
-
+[server]
+headless = true

@@ -8,6 +8,14 @@ import pandas as pd
 from typing import Optional
 import pandas.api.types as pd_types
 
+# Import desktop-optimized visualizations
+from .desktop_visualizations import (
+    create_priority_matrix,
+    create_star_gauge,
+    create_measure_comparison,
+    create_trend_chart
+)
+
 
 # Professional medical theme colors
 MEDICAL_THEME = {
@@ -207,14 +215,15 @@ def create_bar_chart(
                     font=dict(size=11),
                     orientation="h",  # Horizontal legend
                     yanchor="bottom",
-                    y=-0.35,  # Further below chart to avoid overlap
+                    y=-0.15,  # Closer to chart now that x-axis labels are gone
                     xanchor="center",
                     x=0.5,
                     bgcolor='rgba(255,255,255,0.9)',
                     bordercolor='rgba(0,0,0,0.1)',
                     borderwidth=1
                 ),
-                height=550  # Preserve height
+                height=350,  # Compact height for vertical compression
+                autosize=True
             )
         else:
             # Use continuous color scale for numeric data
@@ -259,7 +268,8 @@ def create_bar_chart(
                 coloraxis_colorbar_title=colorbar_label,
                 coloraxis_colorbar_title_side="right",
                 coloraxis_colorbar_title_font_size=11,
-                height=550  # Preserve height
+                height=350,  # Compact height for vertical compression
+                autosize=True
             )
             
             # Directly access and force set the colorbar title text
@@ -312,16 +322,16 @@ def create_bar_chart(
         ),
         "xaxis": dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
-            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            title=None,  # Remove axis title text completely
+            showticklabels=False,  # Hide tick labels (prevents overlap on mobile)
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
         ),
         "yaxis": dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
-            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            title=None,  # Remove y-axis title text
+            showticklabels=True,  # Keep y-axis numbers visible
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
@@ -329,7 +339,7 @@ def create_bar_chart(
         "hovermode": "x unified",
         "autosize": True,  # Make chart responsive for mobile
         "height": 550,  # Reduced height for better mobile display
-        "margin": dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
+        "margin": dict(l=60, r=30, t=80, b=60),  # Reduced bottom margin since no x-axis labels
     }
     
     # Apply layout - don't override legend/colorbar titles that were already set in categorical/continuous sections
@@ -361,7 +371,7 @@ def create_bar_chart(
         # Force update to ensure it's set correctly - try multiple methods
         if is_categorical:
             # Update legend title - preserve height
-            fig.update_layout(legend_title_text=final_label, height=550)
+            fig.update_layout(legend_title_text=final_label, height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
             if hasattr(fig.layout, 'legend') and fig.layout.legend:
                 if hasattr(fig.layout.legend, 'title'):
                     if hasattr(fig.layout.legend.title, 'text'):
@@ -374,7 +384,7 @@ def create_bar_chart(
                 pass
             
             try:
-                fig.update_layout(coloraxis_colorbar_title=final_label, height=550)
+                fig.update_layout(coloraxis_colorbar_title=final_label, height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
             except:
                 pass
             
@@ -447,7 +457,7 @@ def create_bar_chart(
                         replacement_label = labels_dict.get(color_col, format_column_label(color_col))
                     if not replacement_label or replacement_label == "Undefined":
                         replacement_label = format_column_label(color_col)
-                        fig.update_layout(legend_title_text=str(replacement_label), height=550)
+                        fig.update_layout(legend_title_text=str(replacement_label), height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     
     # Final check on axis titles - ensure they're not "Undefined"
     # Axis titles are intentionally set to None in layout to save space
@@ -477,9 +487,9 @@ def create_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     
     return fig
 
@@ -554,24 +564,24 @@ def create_scatter_plot(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
-            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            title=None,  # Remove axis title text completely
+            showticklabels=False,  # Hide tick labels (prevents overlap on mobile)
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
-            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            title=None,  # Remove y-axis title text
+            showticklabels=True,  # Keep y-axis numbers visible
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
         ),
         hovermode="closest",
         autosize=True,  # Make chart responsive for mobile
-        height=550,  # Reduced height for better mobile display
-        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
+        height=350,  # Compact height for vertical compression
+        margin=dict(l=50, r=30, t=60, b=50),  # Optimized margins
     )
     
     # Set colorbar title after layout update
@@ -585,7 +595,7 @@ def create_scatter_plot(
             fig.update_coloraxes(colorbar_title=colorbar_title)
         except:
             try:
-                fig.update_layout(coloraxis_colorbar_title=colorbar_title, height=550)
+                fig.update_layout(coloraxis_colorbar_title=colorbar_title, height=450, autosize=True, margin=dict(l=50, r=30, t=60, b=50))
             except:
                 # Last resort: try updating traces
                 try:
@@ -623,9 +633,9 @@ def create_scatter_plot(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     
     return fig
 
@@ -699,16 +709,16 @@ def create_line_chart(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
-            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            title=None,  # Remove axis title text completely
+            showticklabels=False,  # Hide tick labels (prevents overlap on mobile)
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
-            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            title=None,  # Remove y-axis title text
+            showticklabels=True,  # Keep y-axis numbers visible
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
@@ -717,7 +727,7 @@ def create_line_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.3,  # Below chart
+            y=-0.15,  # Closer to chart now that x-axis labels are gone
             xanchor="center", 
             x=0.5,
             title_text="",
@@ -727,8 +737,8 @@ def create_line_chart(
             borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=550,  # Reduced height for better mobile display
-        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
+        height=350,  # Compact height for vertical compression
+        margin=dict(l=50, r=30, t=60, b=50),  # Optimized margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -761,9 +771,9 @@ def create_line_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     
     return fig
 
@@ -837,16 +847,16 @@ def create_waterfall_chart(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
-            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            title=None,  # Remove axis title text completely
+            showticklabels=False,  # Hide tick labels (prevents overlap on mobile)
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
-            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            title=None,  # Remove y-axis title text
+            showticklabels=True,  # Keep y-axis numbers visible
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
@@ -856,7 +866,7 @@ def create_waterfall_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.3,  # Below chart
+            y=-0.15,  # Closer to chart now that x-axis labels are gone
             xanchor="center", 
             x=0.5,
             bgcolor='rgba(255,255,255,0.9)',
@@ -864,15 +874,15 @@ def create_waterfall_chart(
             borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=550,  # Reduced height for better mobile display
-        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
+        height=350,  # Compact height for vertical compression
+        margin=dict(l=50, r=30, t=60, b=50),  # Optimized margins
     )
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     
     return fig
 
@@ -953,16 +963,16 @@ def create_grouped_bar_chart(
         ),
         xaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("HEDIS Measure", "Month", etc.)
-            showticklabels=True,  # Show data labels (BPD, BCS, dates, etc.)
+            title=None,  # Remove axis title text completely
+            showticklabels=False,  # Hide tick labels (prevents overlap on mobile)
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
         ),
         yaxis=dict(
             gridcolor="#e0e0e0", 
-            title=None,  # Remove axis title text ("ROI", "Success Rate", etc.)
-            showticklabels=True,  # Show numbers (1.0, 1.2, etc.)
+            title=None,  # Remove y-axis title text
+            showticklabels=True,  # Keep y-axis numbers visible
             showline=True,  # Show the axis line
             showgrid=True,  # Show grid lines
             automargin=True
@@ -972,7 +982,7 @@ def create_grouped_bar_chart(
         legend=dict(
             orientation="h", 
             yanchor="bottom", 
-            y=-0.3,  # Below chart
+            y=-0.15,  # Closer to chart now that x-axis labels are gone
             xanchor="center", 
             x=0.5,
             title_text="",
@@ -982,8 +992,8 @@ def create_grouped_bar_chart(
             borderwidth=1
         ),
         autosize=True,  # Make chart responsive for mobile
-        height=550,  # Reduced height for better mobile display
-        margin=dict(l=60, r=30, t=80, b=80),  # Reduced margins for tighter spacing
+        height=350,  # Compact height for vertical compression
+        margin=dict(l=50, r=30, t=60, b=50),  # Optimized margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -1016,9 +1026,9 @@ def create_grouped_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=550)
+        fig.update_layout(height=350, autosize=True, margin=dict(l=30, r=30, t=30, b=30))
     
     return fig
 

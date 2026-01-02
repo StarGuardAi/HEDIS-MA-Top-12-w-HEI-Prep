@@ -31,6 +31,7 @@ from src.utils.portfolio_calculator import PortfolioCalculator
 from streamlit_pages.financial_overview import render_financial_overview
 from streamlit_pages.operations_command import render_operations_command
 from streamlit_pages.predictive_priority import render_predictive_priority
+from streamlit_pages.phase1_dashboard import render_phase1_dashboard
 
 # Configure Seaborn style
 sns.set_theme(style="whitegrid")
@@ -830,6 +831,7 @@ page = st.sidebar.selectbox(
         "⚠️ Problem Statement",
         "📊 Portfolio Overview",
         "💰 Financial Impact",
+        "📊 Phase 1 Database",
         "⭐ Star Rating Simulator",
         "🤖 AI/ML Models",
         "🔮 Predictive Priority",
@@ -4831,6 +4833,8 @@ elif page == "📊 Portfolio Overview":
     show_portfolio_overview()
 elif page == "💰 Financial Impact":
     show_financial_impact()
+elif page == "📊 Phase 1 Database":
+    render_phase1_dashboard()
 elif page == "⭐ Star Rating Simulator":
     show_star_rating_simulator()
 elif page == "🤖 AI/ML Models":

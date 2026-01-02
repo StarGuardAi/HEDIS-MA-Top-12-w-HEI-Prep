@@ -198,7 +198,7 @@ def create_cbp_dashboard():
     st.markdown("## 📊 Performance Trends")
     
     # Simulated historical data
-    months = pd.date_range(start='2024-01-01', end='2025-10-01', freq='M')
+    months = pd.date_range(start='2024-01-01', end='2025-10-01', freq='ME')
     trend_data = []
     
     base_rate = control_rate

@@ -67,6 +67,14 @@ All pages connect to your Phase 3 PostgreSQL database (`hedis_portfolio`) and di
 - **Portfolio App**: `Artifacts/project/streamlit_app.py` (port 8501)
 - **Phase 4 Dashboard**: `Artifacts/project/phase4_dashboard/app.py` (port 8502)
 
+## Support
+
+For questions or issues:
+- 📧 **Email**: reichert.starguardai@gmail.com
+- 🔗 **LinkedIn**: [sentinel-analytics](https://www.linkedin.com/in/sentinel-analytics/)
+- 💻 **GitHub**: [HEDIS-MA-Top-12-w-HEI-Prep](https://github.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/blob/main/README.md)
+- 🎨 **Portfolio**: [Canva Portfolio](https://www.canva.com/design/DAG2WzhiLwM/N_iXUe3eEKL3dzQ2M_0PgQ/edit)
+
 ---
 
 **Quick Start**: Run `start_phase4.bat` from the `phase4_dashboard` directory, then visit http://localhost:8502
