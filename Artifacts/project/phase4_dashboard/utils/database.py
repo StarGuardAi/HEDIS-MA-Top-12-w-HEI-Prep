@@ -188,6 +188,15 @@ def get_connection():
         return _get_connection_impl()
 
 
+def get_db_connection():
+    """
+    Get database connection object (alias for get_connection that returns just the connection).
+    Returns only the connection object, not the tuple (conn, count).
+    """
+    conn, _ = get_connection()
+    return conn
+
+
 def show_db_status():
     """Show database status in sidebar - only once"""
     if not STREAMLIT_AVAILABLE or st is None:

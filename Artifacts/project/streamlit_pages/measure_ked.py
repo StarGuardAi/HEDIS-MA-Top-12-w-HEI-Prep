@@ -503,7 +503,7 @@ def create_ked_dashboard():
     """)
     
     # Simulated YTD data
-    months = pd.date_range(start='2025-01-01', end='2025-10-01', freq='M')
+    months = pd.date_range(start='2025-01-01', end='2025-10-01', freq='ME')
     trend_data = []
     
     base_rate = completion_rate

@@ -1,9 +1,66 @@
 # Phase 4 Dashboard Requirements
 # HEDIS Portfolio Optimizer - Streamlit Dashboard
-# For Streamlit Cloud deployment
+# Python 3.10+ required
 
-streamlit>=1.39.0
-pandas>=2.2.3
-plotly>=5.18.0
-psycopg2-binary>=2.9.11
+# Core Framework
+streamlit>=1.39.0,<2.0.0
+pandas>=2.2.3,<3.0.0
+numpy>=1.26.0,<2.0.0
+
+# Data Visualization
+plotly>=5.18.0,<6.0.0
+altair>=5.0.0,<6.0.0
+
+# Database
+psycopg2-binary>=2.9.11,<3.0.0
+
+# Streamlit Extensions
+streamlit-extras>=0.3.0,<1.0.0
+streamlit-aggrid>=0.3.4,<1.0.0
+
+# AI Insights Generator Dependencies
+openai>=1.0.0,<2.0.0
+anthropic>=0.18.0,<1.0.0
+
+# Scenario Modeler Dependencies
+openpyxl>=3.1.0,<4.0.0
+
+# Historical Tracking Dependencies (optional - for advanced forecasting)
+# prophet>=1.1.0  # Uncomment if using Prophet for forecasting
+# statsmodels>=0.14.0  # Uncomment if using ARIMA for forecasting
+
+# ROI Calculator Dependencies
+scipy>=1.11.0,<2.0.0
+
+# Testing Dependencies
+pytest>=7.4.0,<8.0.0
+pytest-cov>=4.1.0,<5.0.0
+pytest-playwright>=0.4.0,<1.0.0
+playwright>=1.40.0,<2.0.0
+
+# ML Dependencies
+xgboost>=2.0.0,<3.0.0
+scikit-learn>=1.3.0,<2.0.0
+imbalanced-learn>=0.11.0,<1.0.0
+
+# Architecture Dependencies
+pydantic>=2.0.0,<3.0.0
+pydantic-settings>=2.0.0,<3.0.0
+
+# Secure Chatbot Dependencies (Local AI Processing)
+chromadb>=0.4.0,<1.0.0
+sentence-transformers>=2.2.0,<3.0.0
+ollama>=0.1.0,<1.0.0  # Optional - for local LLM
+
+# Type Checking (optional, for development)
+# mypy>=1.5.0
+# types-requests>=2.31.0
+
+# Code Quality (optional, for development)
+# pylint>=3.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+
+# File Watching (for auto-restart)
+watchdog>=3.0.0,<4.0.0
 
