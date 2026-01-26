@@ -323,19 +323,50 @@ def render_page_footer():
         date_range_str = "10/01/2025 - 12/31/2025"
     
     st.markdown("""
-<div style="background:#f8f9fa;padding:0.8rem;margin-top:1.5rem;border-top:2px solid #e0e0e0;font-size:0.75rem;line-height:1.3;border-radius:4px;">
-    <div style="font-size:0.95rem;font-weight:600;margin-bottom:0.2rem;color:#333;">HEDIS Portfolio Optimizer | StarGuard AI</div>
-    <div style="color:#666;font-size:0.7rem;margin-bottom:0.4rem;">Built with Streamlit, Plotly, PostgreSQL | {}</div>
-    <div style="background:#e8f4f8;padding:0.4rem;border-radius:3px;margin:0.3rem 0;border-left:3px solid #0066cc;">
+<div style="background:#f8f9fa;padding:0.8rem;margin-top:1.5rem;border-top:2px solid #e0e0e0;font-size:0.75rem;line-height:1.3;border-radius:4px;text-align:center;">
+    <div style="font-size:0.95rem;font-weight:600;margin-bottom:0.2rem;color:#333;text-align:center;">HEDIS Portfolio Optimizer | StarGuard AI</div>
+    <div style="color:#666;font-size:0.7rem;margin-bottom:0.4rem;text-align:center;">Built with Streamlit, Plotly, PostgreSQL | {}</div>
+    <div style="background:#e8f4f8;padding:0.4rem;border-radius:3px;margin:0.3rem auto;border-left:3px solid #0066cc;text-align:center;max-width:100%;">
         <strong>🔒 Secure AI Architect</strong> | Enabling LLM insights from PHI without API exposure. On-premises HIPAA-compliant AI: 2.8-4.1x ROI, $148M+ impact. <strong>Zero PHI Transmission | On-Premises | Compliance-First</strong>
     </div>
-    <div style="background:#fff3cd;border-left:3px solid #ffa726;padding:0.3rem 0.5rem;margin:0.3rem 0;font-size:0.7rem;border-radius:3px;">
+    <div style="background:#fff3cd;border-left:3px solid #ffa726;padding:0.3rem 0.5rem;margin:0.3rem auto;font-size:0.7rem;border-radius:3px;text-align:center;max-width:100%;">
         ⚠️ <strong>Demo Project:</strong> Synthetic data only. Not production data.
     </div>
     <div style="text-align:center;color:#666;font-size:0.65rem;margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid #e0e0e0;">
         © {} Robert Reichert | StarGuard AI™
     </div>
 </div>
+<style>
+@media (max-width: 768px) {
+    /* Ensure footer is centered on mobile */
+    div[style*="HEDIS Portfolio Optimizer"] {
+        text-align: center !important;
+    }
+    
+    div[style*="HEDIS Portfolio Optimizer"] > div {
+        text-align: center !important;
+        font-size: 0.85rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    div[style*="Built with Streamlit"] {
+        text-align: center !important;
+        font-size: 0.7rem !important;
+    }
+    
+    div[style*="Secure AI Architect"],
+    div[style*="Demo Project"] {
+        text-align: center !important;
+        font-size: 0.7rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    div[style*="©"] {
+        text-align: center !important;
+        font-size: 0.65rem !important;
+    }
+}
+</style>
 """.format(date_range_str, year_display), unsafe_allow_html=True)
 
 

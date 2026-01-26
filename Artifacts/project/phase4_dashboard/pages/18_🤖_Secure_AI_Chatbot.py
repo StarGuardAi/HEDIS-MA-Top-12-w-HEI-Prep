@@ -8,6 +8,50 @@ import plotly.graph_objects as go
 import plotly.express as px
 import sys
 import os
+from pathlib import Path
+import numpy as np
+from datetime import datetime
+
+# Fix Python path for Streamlit pages - ensure utils can be imported
+current_dir = Path(__file__).parent
+parent_dir = current_dir.parent
+if str(parent_dir) not in sys.path:
+    sys.path.insert(0, str(parent_dir))
+
+# Core imports
+from utils.database import execute_query
+from utils.data_helpers import show_data_availability_warning, get_data_date_range, format_date_display
+from utils.plan_context import get_plan_context, get_plan_size_scenarios
+from utils.standard_sidebar import render_standard_sidebar, get_sidebar_date_range, get_sidebar_membership_size
+from utils.queries import get_roi_by_measure_query
+from utils.enhanced_charts import create_wow_bar_chart, create_wow_scatter, create_wow_pie_chart, create_wow_radar_chart
+
+# UI component imports with error handling
+try:
+    from src.ui.compact_components import compact_metric_card, compact_insight_box
+except ImportError:
+    # Define fallback functions
+    def compact_metric_card(*args, **kwargs):
+        return ""
+    def compact_insight_box(*args, **kwargs):
+        return ""
+
+try:
+    from utils.sidebar_styling import apply_sidebar_styling
+except ImportError:
+    def apply_sidebar_styling():
+        pass
+
+try:
+    from utils.page_components_FIXED import add_page_footer
+    # add_mobile_ready_badge removed - badge no longer needed
+except ImportError:
+    def add_page_footer():
+        st.markdown("---")
+        st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
+    # def add_mobile_ready_badge():
+    #     st.markdown("---")
+    #     st.markdown("📱 Mobile Version Ready")
 
 # Page config MUST be first Streamlit command
 st.set_page_config(
@@ -16,48 +60,1026 @@ st.set_page_config(
     layout="wide"
 )
 
-# Rename "app" to "Home" in sidebar navigation
+# Aggressive spacing reduction
 st.markdown("""
 <style>
-/* Method 1: Replace text content with CSS */
-[data-testid="stSidebarNav"] ul li:first-child a {
-    font-size: 0 !important;  /* Hide original "app" text */
-    background: linear-gradient(135deg, rgba(139,122,184,0.3), rgba(111,95,150,0.3)) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
+/* Aggressive spacing reduction */
+.main .block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-top: 0 !important;
+}
+
+.element-container {
+    margin: 0.2rem 0 !important;
+    padding: 0 !important;
+}
+
+h1, h2, h3, h4 {
+    margin: 0.3rem 0 !important;
+    padding: 0.2rem 0 !important;
+}
+
+p {
+    margin: 0.2rem 0 !important;
+}
+
+.stMarkdown {
+    margin: 0.2rem 0 !important;
+}
+
+.stPlotlyChart {
+    margin: 0.3rem 0 !important;
+}
+
+hr {
+    margin: 0.3rem 0 !important;
+}
+
+/* Sidebar spacing */
+[data-testid="stSidebar"] .element-container {
+    margin: 0.2rem 0 !important;
+    padding: 0.1rem 0 !important;
+}
+
+/* Ensure header is at very top */
+.starguard-header {
+    margin-top: 0 !important;
     margin-bottom: 0.5rem !important;
 }
 
-[data-testid="stSidebarNav"] ul li:first-child a::before {
-    content: "🏠 Home";  /* Replace with "Home" */
-    font-size: 1.1rem !important;
+/* StarGuard Header Container - NO BOTTOM BORDER HERE */
+.starguard-header-container {
+    background: linear-gradient(135deg, #4A3D6F 0%, #6F5F96 100%);
+    padding: 1rem 1.5rem 0.5rem 1.5rem !important;
+    border-radius: 10px;
+    margin-top: 0 !important;
+    margin-bottom: 0rem !important;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
+    border-bottom: none !important;
+}
+
+/* Title - GREEN LINE HERE (between title and subtitle) */
+.starguard-title {
     color: white !important;
+    font-size: 1.8rem !important;
     font-weight: 700 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin: 0 0 0.5rem 0 !important;
+    padding: 0 0 0.5rem 0 !important;
+    line-height: 1.2 !important;
+    border-bottom: 3px solid #4ade80 !important;
 }
 
-[data-testid="stSidebarNav"] ul li:first-child a:hover {
-    background: linear-gradient(135deg, rgba(139,122,184,0.5), rgba(111,95,150,0.5)) !important;
+/* Subtitle - NO BORDER HERE */
+.starguard-subtitle {
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-size: 0.85rem !important;
+    margin: 0.5rem 0 0 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border-bottom: none !important;
 }
 
-/* Method 2: Also target by href */
-[data-testid="stSidebarNav"] a[href="/"],
-[data-testid="stSidebarNav"] a[href="./"] {
-    font-size: 0 !important;
-    background: linear-gradient(135deg, rgba(139,122,184,0.3), rgba(111,95,150,0.3)) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
+/* Mobile */
+@media (max-width: 768px) {
+    .starguard-header-container {
+        padding: 0.8rem 1rem !important;
+        margin-bottom: 0rem !important;
+    }
+    
+    .starguard-title {
+        font-size: 1.2rem !important;
+        margin-bottom: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+    }
+    
+    .starguard-subtitle {
+        font-size: 0.7rem !important;
+        margin-top: 0.4rem !important;
+    }
 }
 
-[data-testid="stSidebarNav"] a[href="/"]::before,
-[data-testid="stSidebarNav"] a[href="./"]::before {
-    content: "🏠 Home";
-    font-size: 1.1rem !important;
+/* Sidebar button */
+[data-testid="stSidebar"] button[kind="header"] {
     color: white !important;
-    font-weight: 700 !important;
+}
+[data-testid="stSidebar"] button svg {
+    fill: white !important;
+    stroke: white !important;
 }
 
-/* ========== PURPLE SIDEBAR THEME (Match Home Page) ========== */
+/* ========== SIDEBAR SEPARATOR STYLING - SUBTLE GREEN GRADIENT ========== */
+/* Sidebar separator styling - subtle green gradient (thicker for visibility) */
+[data-testid="stSidebar"] hr {
+    border: none !important;
+    height: 4px !important;
+    margin: 1rem 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(74, 222, 128, 0.8) 50%,
+        transparent 100%
+    ) !important;
+}
+
+/* Reduce spacing after header - AGGRESSIVE */
+.starguard-header-container + *,
+.starguard-header-container ~ * {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce spacing for first content element after header */
+.starguard-header-container ~ .element-container:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"]:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"] {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Target markdown containers immediately after header */
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"],
+.starguard-header-container ~ .stMarkdown {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+    margin-bottom: 0rem !important;
+}
+
+/* Target headings immediately after header */
+.starguard-header-container ~ h1,
+.starguard-header-container ~ h2,
+.starguard-header-container ~ h3,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h1,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h2,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h3 {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce padding on header subtitle */
+.starguard-subtitle {
+    margin-bottom: 0rem !important;
+    padding-bottom: 0rem !important;
+}
+
+
+    .mobile-optimized-badge {
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: fit-content !important;
+    }
+
+/* ========== CENTER-ALIGN METRICS AND TABLES FOR CLEAN VIEWING ========== */
+
+/* Center metric cards - values and labels */
+[data-testid="stMetricValue"],
+[data-testid="stMetricLabel"],
+[data-testid="stMetricDelta"] {
+    text-align: center !important;
+    justify-content: center !important;
+}
+
+/* Center metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+}
+
+/* Center metric value text */
+[data-testid="stMetricValue"] > div {
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Center metric labels */
+[data-testid="stMetricLabel"] > div {
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+
+/* ========== NUCLEAR OPTION: FORCE CENTER ALL METRIC TEXT ========== */
+/* Target every possible element inside metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+div[data-testid="stMetricContainer"] * {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for label text specifically */
+div[data-testid="stMetricContainer"] > div:first-child,
+div[data-testid="stMetricContainer"] > div:first-child * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for value text */
+div[data-testid="stMetricContainer"] > div:nth-child(2),
+div[data-testid="stMetricContainer"] > div:nth-child(2) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for delta text */
+div[data-testid="stMetricContainer"] > div:nth-child(3),
+div[data-testid="stMetricContainer"] > div:nth-child(3) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Center data tables - cell content */
+.stDataFrame,
+.stDataFrame table,
+.stDataFrame td,
+.stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center table headers */
+.stDataFrame thead th {
+    text-align: center !important;
+    font-weight: 600 !important;
+}
+
+/* Center table cells */
+.stDataFrame tbody td {
+    text-align: center !important;
+}
+
+/* Center sidebar metrics */
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    text-align: center !important;
+}
+
+[data-testid="stSidebar"] div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+}
+
+/* Center summary tables in sidebars */
+[data-testid="stSidebar"] .stDataFrame,
+[data-testid="stSidebar"] .stDataFrame table,
+[data-testid="stSidebar"] .stDataFrame td,
+[data-testid="stSidebar"] .stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center caption text */
+.stCaption {
+    text-align: center !important;
+}
+
+/* Center info boxes - selective (only for summary/metric displays) */
+.stAlert[data-baseweb="notification"],
+.stInfo[data-baseweb="notification"],
+.stSuccess[data-baseweb="notification"],
+.stWarning[data-baseweb="notification"],
+.stError[data-baseweb="notification"] {
+    text-align: center !important;
+}
+
+/* Keep expander headers left-aligned for readability */
+.streamlit-expanderHeader {
+    text-align: left !important;
+}
+
+/* Center column headers in tables */
+.stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center numeric values in tables */
+.stDataFrame td {
+    text-align: center !important;
+}
+
+/* Keep text content left-aligned (headings, paragraphs) for readability */
+/* Exception: h2 and h3 are centered */
+h1,   h4, h5, h6 {
+    text-align: left !important;
+}
+
+p, li {
+    text-align: left !important;
+}
+
+/* Exception: Center specific summary/metric section headers */
+{
+    text-align: center !important;
+}
+
+
+/* ========== CENTER SUMMARY HEADERS AND NOTES ========== */
+
+/* Center all h2 and h3 headers (section headers) */
+h2, h3 {
+    text-align: center !important;
+}
+
+/* Center markdown headers - comprehensive targeting */
+.stMarkdown h2,
+.stMarkdown h3,
+div[data-testid="stMarkdownContainer"] h2,
+div[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+.element-container h2,
+.element-container h3,
+div[data-testid="stVerticalBlock"] h2,
+div[data-testid="stVerticalBlock"] h3 {
+    text-align: center !important;
+}
+
+/* Center all markdown content headers */
+.stMarkdown:has(h2),
+.stMarkdown:has(h3) {
+    text-align: center !important;
+}
+
+/* Center captions and notes */
+.stCaption,
+[data-testid="stCaption"],
+p.stCaption,
+div.stCaption {
+    text-align: center !important;
+}
+
+/* Center headers that come after dividers (section headers) */
+hr + h2,
+hr + h3 {
+    text-align: center !important;
+}
+
+/* Center notes/details below metrics */
+[data-testid="stMetricContainer"] + .stMarkdown,
+[data-testid="stMetricContainer"] ~ .stMarkdown,
+.stMetric + .stMarkdown {
+    text-align: center !important;
+}
+
+/* Center all section headers in main content */
+.main h2,
+.main h3,
+section.main h2,
+section.main h3 {
+    text-align: center !important;
+}
+
+
+/* Center all h2 and h3 headers that are section headers */
+h2, h3 {
+    text-align: center !important;
+}
+
+/* Center captions and notes */
+.stCaption,
+[data-testid="stCaption"],
+.stMarkdown:has-text("📊"),
+.stMarkdown:has-text("💰"),
+.stMarkdown:has-text("📈"),
+.stMarkdown:has-text("💵"),
+.stMarkdown:has-text("🎯"),
+.stMarkdown:has-text("🤖"),
+.stMarkdown:has-text("📋"),
+.stMarkdown:has-text("⭐"),
+.stMarkdown:has-text("🔄"),
+.stMarkdown:has-text("📊"),
+.stMarkdown:has-text("⚖️"),
+.stMarkdown:has-text("⚡") {
+    text-align: center !important;
+}
+
+/* Center markdown headers that are summary sections */
+.stMarkdown h2,
+.stMarkdown h3 {
+    text-align: center !important;
+}
+
+/* Center section dividers text */
+hr + h2,
+hr + h3,
+.stMarkdown:has(hr) + h2,
+.stMarkdown:has(hr) + h3 {
+    text-align: center !important;
+}
+
+
+
+/* Center all markdown content that follows metrics */
+div[data-testid="stVerticalBlock"]:has([data-testid="stMetricContainer"]) + .stMarkdown,
+div[data-testid="stVerticalBlock"]:has([data-testid="stMetricContainer"]) ~ .stMarkdown {
+    text-align: center !important;
+}
+
+/* Center summary statistics headers */
+{
+    text-align: center !important;
+}
+
+
+
+
+/* ========== CENTER KPI/METRIC HEADERS ========== */
+/* Center metric labels (Potential ROI, Star Rating Impact, etc.) */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Center metric values */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Center metric delta (the +/- change indicators) */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+/* Center content in metric containers */
+[data-testid="metric-container"] {
+    text-align: center !important;
+}
+
+/* Center column content for KPI cards */
+[data-testid="column"] {
+    text-align: center !important;
+}
+
+
+/* ========== RULE: CENTER ALL METRIC HEADERS OVER DATA ========== */
+/* This is a site-wide standard - metric labels center over values */
+
+/* Center the metric label text (header above the number) */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+[data-testid="stMetricLabel"] label,
+[data-testid="stMetricLabel"] p,
+[data-testid="stMetricLabel"] span {
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+/* Center the metric value (the big number) */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Center the delta indicator (+$1,264,020 annually, etc.) */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+}
+
+/* Center the entire metric container */
+[data-testid="metric-container"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Center metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Ensure columns containing metrics are centered */
+[data-testid="column"] > div > div > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Center any custom metric-style headers (non-st.metric) */
+.metric-header, .kpi-header, .summary-header {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Center st.caption used as metric labels */
+[data-testid="stCaptionContainer"] {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stCaptionContainer"] p {
+    text-align: center !important;
+}
+
+/* Fix for columns - ensure flex centering */
+.row-widget.stHorizontalBlock > div {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.row-widget.stHorizontalBlock [data-testid="column"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+
+/* ========== CENTER SIDEBAR CONTENT ========== */
+/* Center sidebar text and labels */
+[data-testid="stSidebar"] [data-testid="stMarkdown"] {
+    text-align: center !important;
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] p {
+    text-align: center !important;
+}
+
+/* Center sidebar metric cards */
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Center expander headers in sidebar */
+[data-testid="stSidebar"] .streamlit-expanderHeader {
+    justify-content: center !important;
+}
+
+
+/* ========== SIDEBAR FILTER STYLING ========== */
+/* Filter section header */
+[data-testid="stSidebar"] h3 {
+    color: white !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+    border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* Compact filter widgets */
+[data-testid="stSidebar"] .stSelectbox,
+[data-testid="stSidebar"] .stMultiSelect,
+[data-testid="stSidebar"] .stSlider,
+[data-testid="stSidebar"] .stRadio {
+    margin-bottom: 0.75rem !important;
+}
+
+/* Filter labels */
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stMultiSelect label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stRadio label {
+    color: white !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* Dropdown styling on purple background */
+[data-testid="stSidebar"] .stSelectbox > div > div,
+[data-testid="stSidebar"] .stMultiSelect > div > div {
+    background-color: rgba(255,255,255,0.95) !important;
+    border-radius: 5px !important;
+}
+
+
+/* ========== AGGRESSIVE METRIC CENTERING - TARGET COLUMN STRUCTURE ========== */
+/* Force center alignment for metrics inside columns */
+[data-testid="column"] [data-testid="stMetricContainer"],
+[data-testid="column"] [data-testid="metric-container"],
+[data-testid="column"] > div > div > div[data-testid="stMetricContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* Force center for metric labels inside columns */
+[data-testid="column"] [data-testid="stMetricLabel"],
+[data-testid="column"] [data-testid="stMetricLabel"] > div,
+[data-testid="column"] [data-testid="stMetricLabel"] label,
+[data-testid="column"] [data-testid="stMetricLabel"] p,
+[data-testid="column"] [data-testid="stMetricLabel"] span {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric values inside columns */
+[data-testid="column"] [data-testid="stMetricValue"],
+[data-testid="column"] [data-testid="stMetricValue"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric deltas inside columns */
+[data-testid="column"] [data-testid="stMetricDelta"],
+[data-testid="column"] [data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Target the actual Streamlit metric structure */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+}
+
+div[data-testid="stMetricContainer"] > div {
+    text-align: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* Override any inline styles or conflicting rules */
+[data-testid="stMetricLabel"] * {
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] * {
+    text-align: center !important;
+}
+
+[data-testid="stMetricDelta"] * {
+    text-align: center !important;
+}
+
+/* ========== PAGE TITLE STYLING - MATCH ROI CALCULATOR ========== */
+/* Large bold h1 titles matching ROI Calculator */
+h1 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-top: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* Style first h3 on page as page title (if not using h1) */
+.main h3:first-of-type,
+div[data-testid="stVerticalBlock"] h3:first-of-type,
+.stMarkdown h3:first-of-type {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-top: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* Center page title containers */
+.page-title-container,
+.roi-calculator-title-container {
+    margin-top: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    text-align: center !important;
+}
+
+/* Center subtitle text immediately after h1 or first h3 */
+h1 + p,
+h1 ~ p:first-of-type,
+h3:first-of-type + p,
+h3:first-of-type ~ p:first-of-type,
+.page-title-container + p,
+.page-title-container ~ p:first-of-type {
+    text-align: center !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem !important;
+    font-size: 1rem !important;
+}
+
+/* Center content columns below page title */
+h1 ~ div[data-testid="column"],
+h3:first-of-type ~ div[data-testid="column"],
+.page-title-container ~ div[data-testid="column"],
+h1 + div[data-testid="stVerticalBlock"] div[data-testid="column"],
+h3:first-of-type + div[data-testid="stVerticalBlock"] div[data-testid="column"] {
+    text-align: center !important;
+}
+
+/* Center info boxes and date range displays below title */
+h1 ~ div[data-testid="stInfo"],
+h1 ~ div[data-testid="stAlert"],
+h3:first-of-type ~ div[data-testid="stInfo"],
+h3:first-of-type ~ div[data-testid="stAlert"],
+.page-title-container ~ div[data-testid="stInfo"],
+.page-title-container ~ div[data-testid="stAlert"] {
+    text-align: center !important;
+}
+
+/* Center markdown content immediately after h1 or first h3 */
+h1 + div[data-testid="stMarkdownContainer"],
+h1 ~ div[data-testid="stMarkdownContainer"]:first-of-type,
+h3:first-of-type + div[data-testid="stMarkdownContainer"],
+h3:first-of-type ~ div[data-testid="stMarkdownContainer"]:first-of-type {
+    text-align: center !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.4rem !important;
+    }
+    
+    .main h3:first-of-type {
+        font-size: 1.5rem !important;
+    }
+    
+    h1 + p,
+    h3:first-of-type + p {
+        font-size: 0.9rem !important;
+    }
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# StarGuard Header HTML (CSS already defined above)
+st.markdown("""
+<div class='starguard-header-container'>
+    <div class='starguard-title'>⭐ StarGuard AI | Turning Data Into Stars</div>
+    <div class='starguard-subtitle'>Healthcare AI Architect • $148M+ Documented Savings • HEDIS & Star Rating Expert<br>🔒 Zero PHI Exposure • Context Engineering + Agentic RAG • Production-Grade Analytics</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ============================================================================
+# ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
+# ============================================================================
+st.markdown("""
+<script>
+// Fix Performance Dashboard emoji rendering - Enhanced version
+(function() {
+    'use strict';
+    
+    function fixPerformanceDashboardEmoji() {
+        // Find all sidebar links
+        const sidebarLinks = document.querySelectorAll('[data-testid="stSidebarNav"] a');
+        
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            const text = (link.textContent || link.innerText || '').trim();
+            
+            // Check if this is the Performance Dashboard link (by href - most reliable)
+            const isPerformanceDashboard = (
+                href.includes('Performance_Dashboard') ||
+                href.includes('Performance-Dashboard') ||
+                href.toLowerCase().includes('performance') && href.toLowerCase().includes('dashboard')
+            );
+            
+            // Also check by text as backup
+            const textMatches = (
+                text === 'Performance Dashboard' ||
+                text.includes('Performance Dashboard') ||
+                text.match(/Performance\s*Dashboard/i)
+            );
+            
+            const hasEmoji = text.includes('⚡') || text.includes('\u26A1') || link.innerHTML.includes('⚡');
+            
+            // If it's Performance Dashboard but missing emoji, add it
+            if ((isPerformanceDashboard || textMatches) && !hasEmoji) {
+                // Method 1: Clear and rebuild the entire link content
+                const originalHTML = link.innerHTML;
+                
+                // Try to preserve any icons/spans but update text
+                if (link.querySelector('span, div')) {
+                    // Has child elements - update them
+                    const children = link.querySelectorAll('span, div, p');
+                    children.forEach(child => {
+                        const childText = (child.textContent || child.innerText || '').trim();
+                        if (childText === 'Performance Dashboard' || childText.includes('Performance Dashboard')) {
+                            child.textContent = '⚡ Performance Dashboard';
+                            child.innerText = '⚡ Performance Dashboard';
+                        }
+                    });
+                } else {
+                    // No children - replace entire content
+                    link.textContent = '⚡ Performance Dashboard';
+                    link.innerText = '⚡ Performance Dashboard';
+                }
+                
+                // Method 2: Use innerHTML as backup
+                if (!link.textContent.includes('⚡')) {
+                    link.innerHTML = '⚡ Performance Dashboard';
+                }
+                
+                // Method 3: Create a new text node
+                const newText = document.createTextNode('⚡ Performance Dashboard');
+                if (link.childNodes.length === 0 || !link.textContent.includes('⚡')) {
+                    link.innerHTML = '';
+                    link.appendChild(newText);
+                }
+                
+                // Force proper font rendering
+                link.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Segoe UI", sans-serif';
+                link.style.whiteSpace = 'normal';
+                
+                // Add data attribute to mark as fixed
+                link.setAttribute('data-emoji-fixed', 'true');
+            }
+        });
+    }
+    
+    // Run immediately
+    fixPerformanceDashboardEmoji();
+    
+    // Run on DOM changes (Streamlit reruns)
+    const observer = new MutationObserver(function() {
+        fixPerformanceDashboardEmoji();
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+    
+    // Also run after delays to catch late-rendering elements
+    setTimeout(fixPerformanceDashboardEmoji, 50);
+    setTimeout(fixPerformanceDashboardEmoji, 100);
+    setTimeout(fixPerformanceDashboardEmoji, 300);
+    setTimeout(fixPerformanceDashboardEmoji, 500);
+    setTimeout(fixPerformanceDashboardEmoji, 1000);
+    setTimeout(fixPerformanceDashboardEmoji, 2000);
+    setTimeout(fixPerformanceDashboardEmoji, 3000);
+    
+    // Periodic check as backup (every 2 seconds)
+    setInterval(fixPerformanceDashboardEmoji, 2000);
+    
+    // Also run when page becomes visible (user switches tabs back)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            setTimeout(fixPerformanceDashboardEmoji, 100);
+        }
+    });
+})();
+
+    // ====================================================================
+    // FORCE CENTER ALL METRIC LABELS AND VALUES
+    // ====================================================================
+    function forceCenterMetrics() {
+        // Find all metric containers
+        const metricContainers = document.querySelectorAll('[data-testid="stMetricContainer"]');
+        
+        metricContainers.forEach(container => {
+            // Force center alignment on container
+            container.style.textAlign = 'center';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+            
+            // Find and center label
+            const label = container.querySelector('[data-testid="stMetricLabel"]');
+            if (label) {
+                label.style.textAlign = 'center';
+                label.style.width = '100%';
+                label.style.display = 'block';
+                label.style.marginLeft = 'auto';
+                label.style.marginRight = 'auto';
+                
+                // Center all children
+                const labelChildren = label.querySelectorAll('*');
+                labelChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+            
+            // Find and center value
+            const value = container.querySelector('[data-testid="stMetricValue"]');
+            if (value) {
+                value.style.textAlign = 'center';
+                value.style.width = '100%';
+                value.style.display = 'block';
+                value.style.marginLeft = 'auto';
+                value.style.marginRight = 'auto';
+                
+                // Center all children
+                const valueChildren = value.querySelectorAll('*');
+                valueChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+            
+            // Find and center delta
+            const delta = container.querySelector('[data-testid="stMetricDelta"]');
+            if (delta) {
+                delta.style.textAlign = 'center';
+                delta.style.width = '100%';
+                delta.style.display = 'block';
+                delta.style.marginLeft = 'auto';
+                delta.style.marginRight = 'auto';
+                
+                // Center all children
+                const deltaChildren = delta.querySelectorAll('*');
+                deltaChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+        });
+    }
+    
+    // Run immediately and on delays
+    forceCenterMetrics();
+    setTimeout(forceCenterMetrics, 100);
+    setTimeout(forceCenterMetrics, 500);
+    setTimeout(forceCenterMetrics, 1000);
+    setTimeout(forceCenterMetrics, 2000);
+    
+    // Watch for new metrics being added
+    const metricObserver = new MutationObserver(function() {
+        forceCenterMetrics();
+    });
+    
+    metricObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+</script>
+""", unsafe_allow_html=True)
+
+# Purple Sidebar Theme + White Text Everywhere
+st.markdown("""
+<style>
+/* ========== PURPLE SIDEBAR THEME ========== */
 /* Match the StarGuard AI header purple gradient */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
@@ -89,7 +1111,7 @@ st.markdown("""
     padding: 0.75rem 1rem !important;
     border-radius: 8px !important;
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0rem !important;
 }
 
 [data-testid="stSidebarNav"] ul li:first-child a::before {
@@ -113,9 +1135,11 @@ st.markdown("""
     color: #FFFFFF !important;
 }
 
-/* "Mobile Optimized" badge - white text */
-[data-testid="stSidebar"] .element-container div[data-testid="stMarkdownContainer"] p {
-    color: #FFFFFF !important;
+/* CSS Backup: Add emoji via ::before for Performance Dashboard links */
+[data-testid="stSidebarNav"] a[href*="Performance_Dashboard"]::before {
+    content: "⚡ " !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", sans-serif !important;
+    display: inline !important;
 }
 
 /* Success/Info boxes in sidebar - white text */
@@ -145,707 +1169,414 @@ st.markdown("""
     [data-testid="stSidebar"] * {
         color: #FFFFFF !important;
     }
+    
 }
 
-/* ========== HEADER CONTAINER STYLES (Match Home Page) ========== */
-.header-container {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%);
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    margin-top: 1.5rem;
-    margin-bottom: 0.3rem;
-    text-align: center;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
-    max-width: 100%;
+/* ========== SIDEBAR SEPARATOR STYLING - SUBTLE GREEN GRADIENT ========== */
+/* Sidebar separator styling - subtle green gradient (thicker for visibility) */
+[data-testid="stSidebar"] hr {
+    border: none !important;
+    height: 4px !important;
+    margin: 1rem 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(74, 222, 128, 0.8) 50%,
+        transparent 100%
+    ) !important;
 }
 
-.header-title {
-    color: white !important;
-    font-weight: 700;
-    font-size: 1.25rem;
-    margin-bottom: 0.4rem;
-    display: block !important;
-    line-height: 1.5;
-    letter-spacing: 0.3px;
-}
-
-.header-subtitle {
-    color: #E8D4FF !important;
-    font-size: 0.9rem;
-    font-style: italic;
-    display: block !important;
-    line-height: 1.4;
-    opacity: 0.95;
-}
 </style>
 """, unsafe_allow_html=True)
 
+# Apply sidebar styling FIRST (purple gradient matching StarGuard AI header)
+apply_sidebar_styling()
 
-# Responsive Header - Adapts to Desktop/Mobile (Match Home Page)
-st.markdown("""
-<div class="header-container">
-    <div class="header-title">⭐ StarGuard AI | Turning Data Into Stars</div>
-    <div class="header-subtitle">Powered by Predictive Analytics & Machine Learning</div>
-</div>
-""", unsafe_allow_html=True)
-
-# Spacing fix
-st.markdown('<style>div.block-container{padding-top:1rem!important}h1{margin-top:0.5rem!important}</style>', unsafe_allow_html=True)
-
-# Improved compact CSS - READABLE fonts, reduced spacing only
-st.markdown("""
-<style>
-.main .block-container { 
-    padding-top: 1rem !important; 
-    padding-bottom: 1rem !important; 
-    padding-left: 1rem !important; 
-    padding-right: 1rem !important; 
-    max-width: 100% !important; 
-}
-
-/* Section spacing - REDUCE GAPS between sections */
-h1 { 
-    font-size: 1.8rem !important; 
-    margin-top: 0.8rem !important; 
-    margin-bottom: 0.5rem !important; 
-    line-height: 1.2 !important; 
-}
-
-h2 { 
-    font-size: 1.4rem !important; 
-    margin-top: 0.6rem !important; 
-    margin-bottom: 0.4rem !important; 
-    line-height: 1.2 !important; 
-}
-
-h3 { 
-    font-size: 1.1rem !important; 
-    margin-top: 0.5rem !important; 
-    margin-bottom: 0.3rem !important; 
-    line-height: 1.2 !important; 
-}
-
-/* Reduce spacing between elements */
-.element-container { margin-bottom: 0.4rem !important; }
-.stMarkdown { margin-bottom: 0.4rem !important; }
-
-/* Readable metric fonts */
-[data-testid="stMetricValue"] { font-size: 1.6rem !important; }
-[data-testid="stMetricLabel"] { font-size: 0.95rem !important; padding-bottom: 0.3rem !important; }
-[data-testid="metric-container"] { padding: 0.7rem !important; }
-
-/* Chart and data spacing */
-.stPlotlyChart { margin-bottom: 0.6rem !important; }
-.stDataFrame { margin-bottom: 0.6rem !important; }
-
-/* Column spacing */
-[data-testid="column"] { padding: 0.3rem !important; }
-
-/* Interactive elements */
-[data-testid="stExpander"] { margin-bottom: 0.5rem !important; }
-[data-testid="stTabs"] { margin-bottom: 0.6rem !important; }
-.stTabs [data-baseweb="tab-list"] { gap: 0.3rem !important; }
-.stTabs [data-baseweb="tab"] { 
-    padding: 0.5rem 1rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Buttons - keep readable */
-.stButton > button { 
-    padding: 0.6rem 1.2rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Form inputs */
-.stSelectbox, .stTextInput, .stNumberInput { margin-bottom: 0.4rem !important; }
-
-/* Alerts - keep readable */
-.stAlert { 
-    padding: 0.7rem !important; 
-    margin-bottom: 0.5rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Reduce gaps between blocks */
-div[data-testid="stVerticalBlock"] > div { gap: 0.4rem !important; }
-
-/* Horizontal rules */
-hr { margin: 0.6rem 0 !important; }
-
-/* Mobile adjustments - Match Home page formatting */
-@media (max-width: 768px) {
-    .header-container {
-        padding: 0.6rem 0.8rem;
-        border-radius: 6px;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 2px 4px rgba(74, 61, 111, 0.15);
-    }
+# Custom filters for Secure AI Chatbot
+def render_chatbot_filters():
+    st.markdown("### 🤖 Chatbot Settings")
     
-    .header-title {
-        font-size: 0.9rem;
-        margin-bottom: 0.25rem;
-        line-height: 1.3;
-        font-weight: 600;
-    }
+    # Model selection - visible radio buttons instead of dropdown
+    st.markdown("**AI Model**")
+    st.markdown("Select AI model for chat responses:")
     
-    .header-subtitle {
-        font-size: 0.65rem;
-        line-height: 1.2;
-    }
+    model_options = ["Local LLM (Ollama)", "On-Premises GPT", "Secure RAG"]
+    default_model = st.session_state.get('chatbot_model_type', "Local LLM (Ollama)")
     
-    /* Mobile spacing - tighter */
-    div.block-container {
-        padding-top: 2rem !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
+    model_type = st.radio(
+        "AI Model Selection",
+        options=model_options,
+        index=model_options.index(default_model) if default_model in model_options else 0,
+        key="chatbot_model_type",
+        help="Select AI model for chat responses. All options visible."
+    )
     
-    h1 {
-        margin-top: 0.5rem !important;
-        font-size: 1.5rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
+    st.markdown("---")
     
-    h2 {
-        margin-top: 0.75rem !important;
-        font-size: 1.25rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
+    # Response style - visible multiselect instead of dropdown
+    st.markdown("**Response Style**")
+    st.markdown("Select response styles (multiple allowed):")
     
-    h3 {
-        font-size: 1.1rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
+    style_options = ["Detailed", "Concise", "Technical", "Executive Summary"]
+    default_styles = st.session_state.get('chatbot_response_style', ["Detailed"])
     
-    h4, h5, h6 {
-        text-align: center !important;
-    }
+    # Handle both single string and list formats
+    if isinstance(default_styles, str):
+        default_styles = [default_styles]
     
-    /* Center align markdown headers on mobile */
-    div[data-testid="stMarkdownContainer"] h1,
-    div[data-testid="stMarkdownContainer"] h2,
-    div[data-testid="stMarkdownContainer"] h3,
-    div[data-testid="stMarkdownContainer"] h4,
-    div[data-testid="stMarkdownContainer"] h5,
-    div[data-testid="stMarkdownContainer"] h6 {
-        text-align: center !important;
-    }
+    selected_styles = st.multiselect(
+        "Response Styles",
+        options=style_options,
+        default=default_styles if all(s in style_options for s in default_styles) else ["Detailed"],
+        key="chatbot_response_style",
+        help="Select response styles. Multiple selections allowed."
+    )
     
-    /* Center align metrics on mobile */
-    [data-testid="stMetric"],
-    [data-testid="stMetricValue"],
-    [data-testid="stMetricLabel"],
-    [data-testid="stMetricDelta"],
-    [data-testid="metric-container"],
-    .compact-metric-card,
-    .kpi-card {
-        text-align: center !important;
-    }
+    # Ensure at least one is selected
+    if not selected_styles:
+        st.session_state.chatbot_response_style = ["Detailed"]
+        selected_styles = ["Detailed"]
     
-    /* Mobile columns - stack vertically */
-    [data-testid="column"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-        padding: 0.2rem !important;
-    }
+    # Display selected styles prominently
+    if selected_styles:
+        styles_display = " | ".join(selected_styles)
+        st.markdown(f"**✅ Active Styles:** {styles_display}")
     
-    /* Mobile buttons - full width */
-    button[kind="primary"],
-    button[kind="secondary"] {
-        width: 100% !important;
-        margin-bottom: 0.5rem !important;
-    }
+    # For backward compatibility, use first selection
+    response_style = selected_styles[0] if selected_styles else "Detailed"
     
-    /* Mobile metrics - smaller */
-    [data-testid="stMetricValue"] {
-        font-size: 1.5rem !important;
-    }
+    st.markdown("---")
     
-    [data-testid="stMetricLabel"] {
-        font-size: 0.85rem !important;
-    }
+    # Show visualizations
+    show_viz = st.checkbox(
+        "Auto-generate Visualizations",
+        value=True,
+        key="chatbot_show_viz",
+        help="Automatically create charts for data queries"
+    )
     
-    /* Mobile tables - horizontal scroll */
-    .stDataFrame {
-        overflow-x: auto !important;
-    }
-    
-    /* Mobile tabs - stack vertically to eliminate horizontal scrolling */
-    [data-testid="stTabs"] {
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab-list"] {
-        flex-direction: column !important;
-        width: 100% !important;
-        gap: 0.5rem !important;
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-    
-    /* Wrap Plotly chart titles on mobile */
-    .js-plotly-plot .gtitle,
-    .plotly .gtitle,
-    .js-plotly-plot .xtitle,
-    .plotly .xtitle {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-        max-width: 100% !important;
-        overflow-wrap: break-word !important;
-        hyphens: auto !important;
-    }
-    
-    /* Ensure chart titles wrap - target SVG text elements */
-    .js-plotly-plot .gtitle text,
-    .plotly .gtitle text {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-    }
-}
-</style>
-""", unsafe_allow_html=True)
-
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Try to import secure chatbot service
-try:
-    from src.services.secure_chatbot_service import SecureChatbotService
-    HAS_SERVICE = True
-except ImportError:
-    HAS_SERVICE = False
-
-# Import footer functions
-from src.ui.layout import render_page_footer, render_sidebar_footer, render_header
-
-# Page header (already rendered above)
-
-# Sidebar value proposition - at bottom
-from utils.value_proposition import render_sidebar_value_proposition
-render_sidebar_value_proposition()
-
-# Sidebar footer
-render_sidebar_footer()
-
-st.title("🤖 Secure Healthcare Data Chatbot")
-st.markdown("### Zero External API Exposure | On-Premises Processing")
-
-# Demo mode banner (if service not available)
-if not HAS_SERVICE:
-    st.info("""
-    🎯 **Demo Mode Active**: The secure chatbot service is not available. This page demonstrates the interface and capabilities using pattern-matching responses. 
-    In production, this would use local LLM (Ollama) and ChromaDB for secure, on-premises processing with zero external API exposure.
-    """)
-
-# Security badge - Prominent display
-st.markdown("""
-<div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 6px solid #2d7d32; margin-bottom: 20px; text-align: center;">
-    <h2 style="color: #2d7d32; margin: 0; font-size: 1.8rem;">🔒 ZERO PHI TRANSMITTED TO EXTERNAL APIS</h2>
-    <p style="margin: 10px 0 0 0; color: #1b5e20; font-size: 1.1rem;">All processing occurs on-premises using local models (Ollama/ChromaDB)</p>
-</div>
-""", unsafe_allow_html=True)
-
-# Enhanced Data Flow Architecture Diagram
-st.markdown("---")
-st.markdown("### 📊 Data Flow Architecture: User → Local Model → Internal DB")
-
-# Create interactive data flow diagram using Plotly
-fig_flow = go.Figure()
-
-# Define flow steps
-flow_steps = [
-    {"name": "User Question", "x": 0, "y": 0, "color": "#4CAF50"},
-    {"name": "Local Embedding\n(Ollama)", "x": 1, "y": 0, "color": "#2196F3"},
-    {"name": "Vector Search\n(ChromaDB)", "x": 2, "y": 0, "color": "#FF9800"},
-    {"name": "SQL Generation\n(Local LLM)", "x": 3, "y": 0, "color": "#9C27B0"},
-    {"name": "Database Query\n(Internal)", "x": 4, "y": 0, "color": "#F44336"},
-    {"name": "Response\n(De-identified)", "x": 5, "y": 0, "color": "#00BCD4"}
-]
-
-# Add nodes
-for step in flow_steps:
-    fig_flow.add_trace(go.Scatter(
-        x=[step["x"]],
-        y=[step["y"]],
-        mode='markers+text',
-        marker=dict(
-            size=80,
-            color=step["color"],
-            line=dict(width=2, color='white')
-        ),
-        text=[step["name"]],
-        textposition="middle center",
-        textfont=dict(size=10, color='white', family='Arial Black'),
-        name=step["name"],
-        showlegend=False,
-        hovertemplate=f"<b>{step['name']}</b><extra></extra>"
-    ))
-
-# Add arrows (connections)
-for i in range(len(flow_steps) - 1):
-    fig_flow.add_annotation(
-        x=flow_steps[i+1]["x"],
-        y=flow_steps[i+1]["y"],
-        ax=flow_steps[i]["x"],
-        ay=flow_steps[i]["y"],
-        xref="x",
-        yref="y",
-        axref="x",
-        ayref="y",
-        showarrow=True,
-        arrowhead=2,
-        arrowsize=1.5,
-        arrowwidth=2,
-        arrowcolor="#666"
+    # Max tokens
+    max_tokens = st.slider(
+        "Max Response Length",
+        min_value=100,
+        max_value=2000,
+        value=500,
+        step=100,
+        key="chatbot_max_tokens",
+        help="Maximum response length"
     )
 
-# Update layout
-fig_flow.update_layout(
-    title=dict(
-        text="<b>Secure Data Flow: Zero External API Calls</b>",
-        x=0.5,
-        font=dict(size=16, color="#2d7d32")
-    ),
-    xaxis=dict(showgrid=False, showticklabels=False, range=[-0.5, 5.5]),
-    yaxis=dict(showgrid=False, showticklabels=False, range=[-0.5, 0.5]),
-    height=200,
-    plot_bgcolor='white',
-    paper_bgcolor='white',
-    margin=dict(l=20, r=20, t=60, b=20)
+render_standard_sidebar(
+    membership_slider_key="membership_slider_chatbot",
+    start_date_key="sidebar_start_date_chatbot",
+    end_date_key="sidebar_end_date_chatbot",
+    show_membership_slider=False,  # Chatbot doesn't need membership slider
+    show_date_range=False,  # Chatbot doesn't need date range
+    custom_filters=[render_chatbot_filters]
 )
 
-st.plotly_chart(fig_flow, use_container_width=True)
+# Get values from sidebar if needed
+membership_size = get_sidebar_membership_size()
+start_date, end_date = get_sidebar_date_range()
 
-# Security architecture details
-with st.expander("🔐 Detailed Security Architecture", expanded=False):
-    st.markdown("""
-    ```
-    ┌─────────────────────────────────────────────────────────────┐
-    │                    SECURE NETWORK                            │
-    │                                                              │
-    │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-    │  │   User       │───▶│  Streamlit   │───▶│   Ollama     │  │
-    │  │  Interface   │    │   App        │    │  (Local LLM)  │  │
-    │  └──────────────┘    └──────┬───────┘    └──────────────┘  │
-    │                              │                              │
-    │                              ▼                              │
-    │                    ┌──────────────┐                         │
-    │                    │  ChromaDB    │                         │
-    │                    │ (Vector DB)   │                         │
-    │                    └──────┬───────┘                         │
-    │                           │                                  │
-    │                           ▼                                  │
-    │                    ┌──────────────┐                         │
-    │                    │   Database   │                         │
-    │                    │ (Encrypted)  │                         │
-    │                    └──────────────┘                         │
-    │                                                              │
-    │  ⚠️  ZERO EXTERNAL API CALLS                                 │
-    │  🔒  ALL PROCESSING ON-PREMISES                             │
-    │  🛡️  FULL DATA CONTROL                                      │
-    └─────────────────────────────────────────────────────────────┘
-    ```
-    """)
+BASELINE_MEMBERS = 10000
+scale_factor = membership_size / BASELINE_MEMBERS
 
-# Initialize session state
-if 'chat_history' not in st.session_state:
-    st.session_state.chat_history = []
-if 'local_processing' not in st.session_state:
-    st.session_state.local_processing = True
-if 'chatbot_service' not in st.session_state and HAS_SERVICE:
-    try:
-        st.session_state.chatbot_service = SecureChatbotService()
-    except Exception as e:
-        st.warning(f"Could not initialize chatbot service: {e}")
-        st.session_state.chatbot_service = None
 
-# Sidebar with info
-with st.sidebar:
-    st.markdown("### 🔐 Security Features")
-    st.markdown("""
-    - ✅ **Local LLM**: Ollama (on-premises)
-    - ✅ **Local Vector Store**: ChromaDB
-    - ✅ **Encrypted Database**: AES-256
-    - ✅ **Access Logging**: All queries logged
-    - ✅ **De-identification**: Automatic PHI removal
-    - ✅ **Audit Trail**: Complete interaction logs
-    """)
+# Page content
+
+# Page content
+st.markdown("""
+<div class="page-title-container">
+    <h1>🤖 Secure AI Chatbot</h1>
+</div>
+""", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; margin-top: 0; margin-bottom: 0.75rem; font-size: 1rem;'>Ask questions about your HEDIS data using secure AI</p>", unsafe_allow_html=True)
+
+# Display date range info - cleaner layout
+st.markdown(f"""
+<div style='text-align: center; margin: 0.5rem 0; padding: 0.5rem; background: #f0fdf4; border-radius: 6px; border-left: 3px solid #10b981;'>
+<p style='margin: 0; font-size: 0.9rem; color: #065f46;'><strong>💡 Secure AI:</strong> HIPAA-compliant AI assistant for your HEDIS questions</p>
+<p style='margin: 0.25rem 0 0 0; font-size: 0.85rem; color: #047857;'><strong>Date Range:</strong> {format_date_display(start_date)} to {format_date_display(end_date)}</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Check data availability
+show_data_availability_warning(start_date, end_date)
+
+st.header("🤖 AI Chat Interface")
+
+st.markdown("""
+<div style='text-align: center; margin: 0.5rem 0; padding: 0.75rem; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;'>
+<p style='margin: 0.25rem 0; font-size: 0.95rem; color: #1e40af;'><strong>💬 Natural Language:</strong> Ask questions in plain English</p>
+<p style='margin: 0.25rem 0; font-size: 0.95rem; color: #1e40af;'><strong>📊 Data Insights:</strong> Get AI-powered analysis of your data</p>
+<p style='margin: 0.25rem 0; font-size: 0.95rem; color: #1e40af;'><strong>🔒 HIPAA-Compliant:</strong> All processing on-premises, zero PHI exposure</p>
+<p style='margin: 0.25rem 0; font-size: 0.95rem; color: #1e40af;'><strong>🛡️ Secure:</strong> No external API calls, full audit trails</p>
+<p style='margin: 0.25rem 0; font-size: 0.95rem; color: #1e40af;'><strong>🧠 Intelligent:</strong> Context-aware responses based on your portfolio</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.divider()
+
+# Portfolio Summary Visualizations (always visible)
+st.subheader("📊 Portfolio Summary for AI Context")
+summary_query = get_roi_by_measure_query(
+    start_date.strftime("%Y-%m-%d"),
+    end_date.strftime("%Y-%m-%d")
+)
+summary_df = execute_query(summary_query)
+
+if not summary_df.empty:
+    summary_df_scaled = summary_df.copy()
+    summary_df_scaled['total_investment'] = summary_df_scaled['total_investment'].astype(float) * scale_factor
+    summary_df_scaled['revenue_impact'] = summary_df_scaled['revenue_impact'].astype(float) * scale_factor
+    summary_df_scaled['success_rate'] = (summary_df_scaled['successful_closures'] / summary_df_scaled['total_interventions'].replace(0, 1) * 100).round(1)
     
-    st.markdown("---")
-    st.markdown("### 📋 Sample Questions")
-    sample_questions = [
-        "Which measures have declining trends?",
-        "What's the ROI for HbA1c testing?",
-        "Show me measures with low compliance rates",
-        "Which interventions are most cost-effective?",
-        "What are the top 3 measures by financial impact?"
-    ]
+    # Ensure no zero data
+    from utils.data_validation import ensure_no_zero_data
+    summary_df_scaled = ensure_no_zero_data(summary_df_scaled, columns=['total_investment', 'revenue_impact', 'successful_closures', 'total_interventions', 'roi_ratio', 'success_rate'])
+    summary_df_scaled['success_rate'] = (summary_df_scaled['successful_closures'] / summary_df_scaled['total_interventions'] * 100).round(1)
     
-    for i, question in enumerate(sample_questions):
-        if st.button(question, key=f"sample_{i}", use_container_width=True):
-            st.session_state.current_question = question
-            st.rerun()
+    # Summary Metrics
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Total Measures", len(summary_df_scaled), help="Measures in portfolio")
+    with col2:
+        st.metric("Avg ROI", f"{summary_df_scaled['roi_ratio'].mean():.2f}x", help="Average ROI ratio")
+    with col3:
+        st.metric("Avg Success Rate", f"{summary_df_scaled['success_rate'].mean():.1f}%", help="Average success rate")
+    with col4:
+        st.metric("Total Investment", f"${summary_df_scaled['total_investment'].sum():,.0f}", help="Total portfolio investment")
     
-    st.markdown("---")
-    st.markdown("### 🔍 Processing Status")
-    if HAS_SERVICE and st.session_state.get('chatbot_service'):
-        st.success("✅ Secure chatbot service active")
-        if hasattr(st.session_state.chatbot_service, 'embedding_model'):
-            if st.session_state.chatbot_service.embedding_model:
-                st.info("✅ Local embeddings available")
-            else:
-                st.warning("⚠️ Using fallback embeddings")
-        if st.session_state.chatbot_service.vector_store:
-            st.info("✅ ChromaDB vector store active")
-        else:
-            st.warning("⚠️ Using keyword search fallback")
-    else:
-        st.info("🎯 **Demo Mode**")
-        st.caption("Using pattern-matching responses for demonstration. In production, this would use local LLM processing.")
+    st.divider()
+    
+    # Visualization 1: Top Measures Bar Chart
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("💰 Top 5 Measures by ROI")
+        top_roi = summary_df_scaled.nlargest(5, 'roi_ratio')
+        fig_top_roi = create_wow_bar_chart(
+            df=top_roi,
+            x_col="measure_code",
+            y_col="roi_ratio",
+            color_col="success_rate",
+            title="Top 5 Measures by ROI",
+            x_label="Measure Code",
+            y_label="ROI Ratio",
+            color_palette="gradient_green",
+            show_values=True
+        )
+        st.plotly_chart(fig_top_roi, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="chatbot_top_roi")
+    
+    with col2:
+        st.subheader("📈 Portfolio ROI Distribution")
+        roi_tiers = pd.cut(summary_df_scaled['roi_ratio'], bins=[0, 1.0, 1.5, 2.0, 10], labels=['Low (0-1x)', 'Medium (1-1.5x)', 'Good (1.5-2x)', 'Excellent (2x+)'])
+        roi_dist = roi_tiers.value_counts().reset_index()
+        roi_dist.columns = ['ROI Tier', 'Count']
+        if len(roi_dist) > 0:
+            fig_roi_dist = create_wow_pie_chart(
+                df=roi_dist,
+                values_col="Count",
+                names_col="ROI Tier",
+                title="ROI Distribution",
+                color_palette="rainbow",
+                hole=0.4
+            )
+            st.plotly_chart(fig_roi_dist, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="chatbot_roi_dist")
+    
+    st.divider()
+    
+    # Visualization 2: Investment vs Revenue Scatter
+    st.subheader("🎯 Investment vs Revenue Impact")
+    fig_inv_rev = create_wow_scatter(
+        df=summary_df_scaled,
+        x_col="total_investment",
+        y_col="revenue_impact",
+        size_col="success_rate",
+        color_col="roi_ratio",
+        title="Portfolio: Investment vs Revenue Impact",
+        x_label="Total Investment ($)",
+        y_label="Revenue Impact ($)",
+        color_palette="sunset",
+        marker_shape="diamond",
+        show_trendline=True
+    )
+    st.plotly_chart(fig_inv_rev, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="chatbot_inv_rev_scatter")
+    
+    st.divider()
+    
+    # Visualization 3: Top Measures Radar Chart
+    st.subheader("🎯 Top 3 Measures: Multi-Dimensional Profile")
+    top_3 = summary_df_scaled.nlargest(3, 'roi_ratio')
+    radar_data = []
+    for idx, row in top_3.iterrows():
+        radar_data.append({
+            'measure_code': row['measure_code'],
+            'ROI Ratio': min(row['roi_ratio'] * 20, 100),
+            'Success Rate': row['success_rate'],
+            'Revenue Impact': min((row['revenue_impact'] / summary_df_scaled['revenue_impact'].max() * 100), 100),
+            'Investment Efficiency': max(0, (100 - (row['total_investment'] / summary_df_scaled['total_investment'].max() * 100)))
+        })
+    
+    radar_df = pd.DataFrame(radar_data)
+    fig_radar = create_wow_radar_chart(
+        df=radar_df,
+        categories=['ROI Ratio', 'Success Rate', 'Revenue Impact', 'Investment Efficiency'],
+        group_col='measure_code',
+        title="Top 3 Measures: Performance Profile",
+        color_palette="medical",
+        fill_opacity=0.25,
+        show_legend=True
+    )
+    st.plotly_chart(fig_radar, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="chatbot_radar")
+    
+    st.divider()
 
-# Main chat interface
-st.markdown("---")
-st.markdown("### 💬 Ask a Question About Your HEDIS Data")
+# Enhanced Secure AI Chatbot Interface
+st.subheader("💬 Chat Interface")
 
-# Get portfolio data for demonstration
-if 'portfolio_data' in st.session_state:
-    portfolio_data = st.session_state.portfolio_data.copy()
-else:
-    # Generate sample data for demo
-    import numpy as np
-    measures = [
-        "HbA1c Testing (CDC)", "Blood Pressure Control (CBP)",
-        "Colorectal Cancer Screening (COL)", "Breast Cancer Screening (BCS)",
-        "Diabetes Eye Exam (EED)", "Statin Therapy for CVD (SPC)"
-    ]
-    portfolio_data = pd.DataFrame({
-        'measure_name': measures * 2,
-        'roi_ratio': np.random.uniform(1.2, 1.8, 12),
-        'compliance_rate': np.random.uniform(35, 75, 12),
-        'financial_impact': np.random.uniform(50000, 200000, 12),
-        'trend': np.random.uniform(-3, 3, 12)
-    })
+# Initialize chat history
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+
+# Display chat messages
+for message in st.session_state.chat_messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
 # Chat input
-user_question = st.text_input(
-    "Ask a question:",
-    value=st.session_state.get('current_question', ''),
-    key="chat_input",
-    placeholder="e.g., Which measures have declining trends?"
-)
+user_query = st.chat_input("Ask a question about your HEDIS data...")
 
-if st.button("🔍 Ask", type="primary") or (user_question and user_question != st.session_state.get('last_question', '')):
-    if user_question:
-        st.session_state.last_question = user_question
+if user_query:
+    # Add user message
+    st.session_state.chat_messages.append({"role": "user", "content": user_query})
+    
+    # Get data for AI responses
+    from utils.queries import get_roi_by_measure_query
+    from utils.enhanced_charts import create_wow_bar_chart, create_wow_scatter
+    import pandas as pd
+    
+    chatbot_query = get_roi_by_measure_query(
+        start_date.strftime("%Y-%m-%d"),
+        end_date.strftime("%Y-%m-%d")
+    )
+    chatbot_df = execute_query(chatbot_query)
+    
+    # Generate AI response based on query
+    response = ""
+    chart_fig = None
+    
+    if not chatbot_df.empty:
+        chatbot_df_scaled = chatbot_df.copy()
+        chatbot_df_scaled['total_investment'] = chatbot_df_scaled['total_investment'].astype(float) * scale_factor
+        chatbot_df_scaled['revenue_impact'] = chatbot_df_scaled['revenue_impact'].astype(float) * scale_factor
+        chatbot_df_scaled['success_rate'] = (chatbot_df_scaled['successful_closures'] / chatbot_df_scaled['total_interventions'] * 100).round(1)
         
-        # Use secure chatbot service if available
-        if HAS_SERVICE and st.session_state.get('chatbot_service'):
-            with st.spinner("🔄 Processing locally (no external API calls)..."):
-                try:
-                    result = st.session_state.chatbot_service.process_query(
-                        user_question,
-                        portfolio_data
-                    )
-                    
-                    # Add to chat history
-                    st.session_state.chat_history.append({
-                        'role': 'user',
-                        'content': user_question
-                    })
-                    st.session_state.chat_history.append({
-                        'role': 'assistant',
-                        'content': result['response'],
-                        'processing_steps': result['processing_steps'],
-                        'context_measures': result.get('context_measures', []),
-                        'sql_query': result.get('sql_query', '')
-                    })
-                except Exception as e:
-                    st.error(f"Error processing query: {e}")
-                    # Fallback to simple response
-                    st.session_state.chat_history.append({
-                        'role': 'user',
-                        'content': user_question
-                    })
-                    st.session_state.chat_history.append({
-                        'role': 'assistant',
-                        'content': "I encountered an error processing your query. Please try again."
-                    })
-        else:
-            # Fallback to pattern matching
-            with st.spinner("🔄 Processing locally (no external API calls)..."):
-                st.session_state.chat_history.append({
-                    'role': 'user',
-                    'content': user_question
-                })
-                
-                # Simple pattern matching for demo
-                question_lower = user_question.lower()
-                
-                if 'declining' in question_lower or 'trend' in question_lower:
-                    declining = portfolio_data[portfolio_data['trend'] < 0].copy()
-                    if len(declining) > 0:
-                        response = f"**Measures with declining trends:**\n\n"
-                        for _, row in declining.head(5).iterrows():
-                            response += f"- **{row['measure_name']}**: {row['trend']:.1f}% trend\n"
-                        response += f"\n*Found {len(declining)} measures with declining trends.*"
-                    else:
-                        response = "No measures currently show declining trends."
-                elif 'roi' in question_lower:
-                    if 'hba1c' in question_lower or 'cdc' in question_lower:
-                        hba1c = portfolio_data[portfolio_data['measure_name'].str.contains('HbA1c|CDC', case=False, na=False)]
-                        if len(hba1c) > 0:
-                            avg_roi = hba1c['roi_ratio'].mean()
-                            avg_impact = hba1c['financial_impact'].mean()
-                            response = f"""**HbA1c Testing ROI Analysis:**
-
-- **Average ROI Ratio**: {avg_roi:.2f}x
-- **Average Financial Impact**: ${avg_impact:,.0f}
-- **Net Benefit**: ${avg_impact * (avg_roi - 1):,.0f}
-
-*This measure shows strong return on investment.*"""
-                        else:
-                            response = "HbA1c Testing data not found in current dataset."
-                    else:
-                        top_roi = portfolio_data.nlargest(3, 'roi_ratio')
-                        response = "**Top 3 Measures by ROI:**\n\n"
-                        for _, row in top_roi.iterrows():
-                            response += f"- **{row['measure_name']}**: {row['roi_ratio']:.2f}x ROI\n"
-                elif 'compliance' in question_lower or 'low' in question_lower:
-                    low_compliance = portfolio_data[portfolio_data['compliance_rate'] < 50].copy()
-                    if len(low_compliance) > 0:
-                        response = "**Measures with Low Compliance Rates (<50%):**\n\n"
-                        for _, row in low_compliance.head(5).iterrows():
-                            response += f"- **{row['measure_name']}**: {row['compliance_rate']:.1f}% compliance\n"
-                        response += f"\n*Found {len(low_compliance)} measures needing attention.*"
-                    else:
-                        response = "All measures show compliance rates above 50%."
-                elif 'cost' in question_lower or 'effective' in question_lower:
-                    top_impact = portfolio_data.nlargest(3, 'financial_impact')
-                    response = "**Top 3 Most Cost-Effective Measures:**\n\n"
-                    for _, row in top_impact.iterrows():
-                        response += f"- **{row['measure_name']}**: ${row['financial_impact']:,.0f} impact, {row['roi_ratio']:.2f}x ROI\n"
-                else:
-                    response = """I can help you analyze your HEDIS data. Here are some example questions:
-
-- **Trends**: "Which measures have declining trends?"
-- **ROI**: "What's the ROI for HbA1c testing?" or "Show me top measures by ROI"
-- **Compliance**: "Show me measures with low compliance rates"
-- **Cost-effectiveness**: "Which interventions are most cost-effective?"
-
-*Note: This is demo mode using pattern matching. In production, this would use advanced local LLM processing.*"""
-                
-                st.session_state.chat_history.append({
-                    'role': 'assistant',
-                    'content': response
-                })
+        # Simple query matching
+        query_lower = user_query.lower()
         
-        # Clear the input
-        if 'current_question' in st.session_state:
-            del st.session_state.current_question
-
-# Display chat history with processing details
-st.markdown("---")
-st.markdown("### 💬 Conversation History")
-
-if st.session_state.chat_history:
-    for i, message in enumerate(st.session_state.chat_history):
-        if message['role'] == 'user':
-            with st.chat_message("user"):
-                st.write(message['content'])
+        if "roi" in query_lower or "return" in query_lower:
+            top_roi = chatbot_df_scaled.nlargest(5, 'roi_ratio')
+            response = f"**Top 5 measures by ROI:**\n"
+            for idx, row in top_roi.iterrows():
+                response += f"- {row['measure_code']}: {row['roi_ratio']:.2f}x ROI\n"
+            
+            chart_fig = create_wow_bar_chart(
+                df=top_roi,
+                x_col="measure_code",
+                y_col="roi_ratio",
+                title="Top 5 Measures by ROI",
+                x_label="Measure Code",
+                y_label="ROI Ratio",
+                color_palette="vibrant",
+                show_values=True
+            )
+        
+        elif "success" in query_lower or "closure" in query_lower:
+            top_success = chatbot_df_scaled.nlargest(5, 'success_rate')
+            response = f"**Top 5 measures by success rate:**\n"
+            for idx, row in top_success.iterrows():
+                response += f"- {row['measure_code']}: {row['success_rate']:.1f}% success rate\n"
+            
+            chart_fig = create_wow_bar_chart(
+                df=top_success,
+                x_col="measure_code",
+                y_col="success_rate",
+                title="Top 5 Measures by Success Rate",
+                x_label="Measure Code",
+                y_label="Success Rate (%)",
+                color_palette="gradient_green",
+                show_values=True
+            )
+        
+        elif "investment" in query_lower or "cost" in query_lower:
+            total_inv = chatbot_df_scaled['total_investment'].sum()
+            avg_inv = chatbot_df_scaled['total_investment'].mean()
+            response = f"**Investment Summary:**\n- Total Investment: ${total_inv:,.0f}\n- Average per Measure: ${avg_inv:,.0f}\n- Highest Investment: {chatbot_df_scaled.loc[chatbot_df_scaled['total_investment'].idxmax(), 'measure_code']}"
+        
+        elif "revenue" in query_lower or "benefit" in query_lower:
+            total_rev = chatbot_df_scaled['revenue_impact'].sum()
+            net_benefit = total_rev - chatbot_df_scaled['total_investment'].sum()
+            response = f"**Revenue Impact:**\n- Total Revenue Impact: ${total_rev:,.0f}\n- Net Benefit: ${net_benefit:,.0f}\n- Average ROI: {chatbot_df_scaled['roi_ratio'].mean():.2f}x"
+        
         else:
-            with st.chat_message("assistant"):
-                st.markdown(message['content'])
-                
-                # Show processing steps if available
-                if 'processing_steps' in message and message['processing_steps']:
-                    with st.expander("🔍 View Processing Steps", expanded=False):
-                        for step in message['processing_steps']:
-                            st.markdown(f"**{step['step']}**")
-                            st.markdown(f"Status: {step['status']}")
-                            st.markdown(f"Details: {step['details']}")
-                            st.markdown("---")
-                
-                # Show SQL query if available
-                if 'sql_query' in message and message['sql_query']:
-                    with st.expander("📝 Generated SQL Query", expanded=False):
-                        st.code(message['sql_query'], language='sql')
-else:
-    st.info("👆 Ask a question above to start a conversation. All processing happens locally with zero external API calls.")
+            # General response
+            response = f"**Portfolio Overview:**\n- Total Measures: {len(chatbot_df_scaled)}\n- Average ROI: {chatbot_df_scaled['roi_ratio'].mean():.2f}x\n- Average Success Rate: {chatbot_df_scaled['success_rate'].mean():.1f}%\n- Total Investment: ${chatbot_df_scaled['total_investment'].sum():,.0f}"
+            
+            chart_fig = create_wow_scatter(
+                df=chatbot_df_scaled.head(10),
+                x_col="total_investment",
+                y_col="revenue_impact",
+                size_col="success_rate",
+                color_col="roi_ratio",
+                title="Portfolio Overview: Investment vs Revenue Impact",
+                x_label="Total Investment ($)",
+                y_label="Revenue Impact ($)",
+                color_palette="sunset",
+                marker_shape="star",
+                show_trendline=True
+            )
+    else:
+        response = "I don't have data for the selected date range. Please adjust your filters or check data availability."
+    
+    # Add assistant response
+    st.session_state.chat_messages.append({"role": "assistant", "content": response})
+    
+    # Display response
+    with st.chat_message("assistant"):
+        st.markdown(response)
+        if chart_fig:
+            st.plotly_chart(chart_fig, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key=f"chatbot_chart_{len(st.session_state.chat_messages)}")
 
-# Comparison table
-st.markdown("---")
-st.markdown("### 📊 Comparison: Traditional Cloud AI vs Secure On-Premises Approach")
+# Example Questions
+st.divider()
+st.subheader("💡 Example Questions")
+example_questions = [
+    "What are the top 5 measures by ROI?",
+    "Which measures have the highest success rates?",
+    "What is the total investment across all measures?",
+    "Show me measures with ROI above 2.0x",
+    "What is the average success rate?"
+]
 
-comparison_df = pd.DataFrame({
-    'Aspect': [
-        'Data Location',
-        'PHI Transmission',
-        'Compliance Risk',
-        'Latency',
-        'Cost Model',
-        'Scalability',
-        'Data Control',
-        'Audit Capability',
-        'Customization',
-        'Offline Capability',
-        'Security Model',
-        'Breach Impact',
-        'Regulatory Approval'
-    ],
-    'Traditional Cloud AI': [
-        'External cloud servers',
-        'Data sent to external APIs',
-        'High (data leaves organization)',
-        'Network-dependent',
-        'Per-API-call pricing',
-        'Auto-scaling cloud',
-        'Limited (vendor-dependent)',
-        'Vendor logs only',
-        'Limited by vendor API',
-        'Requires internet',
-        'Shared responsibility',
-        'Vendor breach affects you',
-        'May require BAA'
-    ],
-    'Secure On-Premises': [
-        'On-premises infrastructure',
-        'Zero external transmission',
-        'Low (data stays internal)',
-        'Low (local processing)',
-        'Fixed infrastructure cost',
-        'Controlled scaling',
-        'Full control',
-        'Complete internal logs',
-        'Full customization',
-        'Works offline',
-        'Full responsibility',
-        'Isolated to your network',
-        'Internal approval only'
-    ]
-})
+for question in example_questions:
+    if st.button(f"💬 {question}", key=f"example_{question}"):
+        st.session_state.chat_messages.append({"role": "user", "content": question})
+        st.rerun()
 
-st.dataframe(comparison_df, use_container_width=True, hide_index=True)
 
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #666; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
-    <h3 style="color: #2d7d32;">🔒 Zero PHI Exposure | 🛡️ Full Data Control | ✅ HIPAA Compliant</h3>
-    <p>This demonstration shows how AI-powered analytics can be deployed securely in healthcare environments.</p>
-    <p><strong>Technology Stack:</strong> Ollama (Local LLM) | ChromaDB (Local Vector Store) | Streamlit (Interface)</p>
+<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
+    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
+    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
+    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
+        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
+    </div>
+    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
+        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
+    </div>
+    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
 </div>
 """, unsafe_allow_html=True)
-
-# Footer sections - desktop full text, mobile abbreviated
-render_page_footer()  # Main content footer

@@ -25,6 +25,8 @@ from datetime import datetime, date, timedelta
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+from utils.page_components import apply_header_spacing, add_page_footer, centered_metric
+# add_mobile_ready_badge removed - badge no longer needed
 
 st.set_page_config(
     page_title="HEDIS Portfolio Optimizer",
@@ -34,602 +36,113 @@ st.set_page_config(
 )
 
 # ============================================================================
-# RESPONSIVE DESIGN SYSTEM - Desktop & Mobile Formatting
+# FINAL FIX - All Three Issues Resolved
+# Header fully visible + Home button + Performance Dashboard emoji fix
 # ============================================================================
 st.markdown("""
 <style>
-/* ========== VIEWPORT & BASE SETTINGS ========== */
-@viewport {
-    width: device-width;
-    initial-scale: 1.0;
+/* ========== FINAL CSS - HEADER FULLY VISIBLE + SIDEBAR FIXES ========== */
+
+/* ========== REDUCE VERTICAL PADDING GLOBALLY ========== */
+.main .block-container {
+    padding-top: 0.1rem !important;
+    padding-bottom: 0.1rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    margin-top: 0 !important;
+    max-width: 100% !important;
 }
 
-/* ========== DESKTOP STYLES (default, 769px+) ========== */
-/* Enhanced Desktop Layout System */
-.header-container {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%);
-    padding: 0.5rem 0.75rem 0.6rem 0.75rem;
-    border-radius: 6px;
-    margin-top: -1rem !important;
-    margin-bottom: 0.1rem;
-    text-align: center;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
-    max-width: 100%;
-}
+/* Note: More specific vertical padding rules are defined below */
 
-.header-title {
-    color: white !important;
-    font-weight: 700;
-    font-size: 1.25rem;
-    margin-bottom: 0.4rem;
-    display: block !important;
-    line-height: 1.5;
-    letter-spacing: 0.3px;
-}
-
-.header-subtitle {
-    color: #E8D4FF !important;
-    font-size: 0.9rem;
-    font-style: italic;
-    display: block !important;
-    line-height: 1.4;
-    opacity: 0.95;
-}
-
-/* Desktop Container - Optimized for wide screens */
-div.block-container {
-    padding-top: 0rem !important;
-    padding-left: 4rem !important;
-    padding-right: 4rem !important;
-    padding-bottom: 0.5rem !important;
-    max-width: 1600px !important;
-    margin: 0 auto !important;
-}
-
-/* Zero-top enforcement - Headers flush to top */
-.main > div:first-child {
-    padding-top: 0 !important;
+.main > div:first-child,
+section.main > div:first-child {
+    padding-top: 0.1rem !important;
     margin-top: 0 !important;
 }
 
-/* Desktop Typography Hierarchy - CENTER ALIGNED */
-h1 {
-    margin-top: 0.2rem !important;
-    margin-bottom: 0.15rem !important;
-    font-size: 2.5rem !important;
-    font-weight: 700 !important;
-    line-height: 1.2 !important;
-    color: #1f2937 !important;
+section.main > div {
+    padding-top: 0.5rem !important;
+    margin-top: 0 !important;
+}
+
+/* StarGuard Header Container - NO BOTTOM BORDER HERE */
+.starguard-header-container {
+    background: linear-gradient(135deg, #4A3D6F 0%, #6F5F96 100%);
+    padding: 1rem 1.5rem 0.5rem 1.5rem !important;
+    border-radius: 10px;
+    margin-top: 0 !important;
+    margin-bottom: 0.5rem !important;  /* Reduced spacing after header */
     text-align: center !important;
-}
-
-h2 {
-    margin-top: 0.15rem !important;
-    margin-bottom: 0.1rem !important;
-    font-size: 1.75rem !important;
-    font-weight: 600 !important;
-    line-height: 1.3 !important;
-    color: #374151 !important;
-    text-align: center !important;
-}
-
-h3 {
-    margin-top: 0.1rem !important;
-    margin-bottom: 0.1rem !important;
-    font-size: 1.35rem !important;
-    font-weight: 600 !important;
-    color: #4b5563 !important;
-    text-align: center !important;
-}
-
-h4, h5, h6 {
-    text-align: center !important;
-}
-
-/* Center align all markdown headers */
-div[data-testid="stMarkdownContainer"] h1,
-div[data-testid="stMarkdownContainer"] h2,
-div[data-testid="stMarkdownContainer"] h3,
-div[data-testid="stMarkdownContainer"] h4,
-div[data-testid="stMarkdownContainer"] h5,
-div[data-testid="stMarkdownContainer"] h6 {
-    text-align: center !important;
-}
-
-/* Desktop Grid System - Better column layouts */
-[data-testid="column"] {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-}
-
-/* Center align columns containing metrics */
-/* FIX 4: Replaced :has() with class-based approach for iOS Safari < 15.4 compatibility */
-.metric-column {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-}
-
-/* Desktop Cards & Containers */
-.element-container {
-    padding: 0 !important;
-    margin-bottom: 0 !important;
-    text-align: left !important;
-}
-
-/* Desktop Metrics - Larger, more prominent - CENTER ALIGNED */
-[data-testid="stMetric"] {
-    text-align: center !important;
-}
-
-[data-testid="stMetricValue"] {
-    font-size: 2.5rem !important;
-    font-weight: 700 !important;
-    text-align: center !important;
-}
-
-[data-testid="stMetricLabel"] {
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    text-align: center !important;
-}
-
-[data-testid="stMetricDelta"] {
-    text-align: center !important;
-}
-
-/* Center align metric containers */
-[data-testid="metric-container"],
-[data-testid="stMetricContainer"] {
-    text-align: center !important;
-    margin: 0 auto !important;
+    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
+    border-bottom: none !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
 }
 
-/* Ensure all metric container children are centered */
-[data-testid="metric-container"] > *,
-[data-testid="stMetricContainer"] > * {
+/* Title - GREEN LINE HERE (between title and subtitle) */
+.starguard-title {
+    color: white !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin: 0 auto 0.2rem auto !important;
+    padding: 0 0 0.2rem 0 !important;
+    line-height: 1.2 !important;
+    border-bottom: 3px solid #4ade80 !important;
     text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    width: 100% !important;
 }
 
-/* Center align custom metric cards */
-.compact-metric-card,
-.kpi-card {
+/* Tagline */
+.starguard-tagline {
+    color: white !important;
+    font-size: 0.9rem !important;
+    margin: 0.1rem auto !important;
+    font-weight: 500 !important;
     text-align: center !important;
+    width: 100% !important;
 }
 
-.compact-metric-title,
-.kpi-title {
+/* Subtitle - NO BORDER HERE */
+.starguard-subtitle {
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-size: 0.85rem !important;
+    margin: 0.2rem auto 0 auto !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border-bottom: none !important;
     text-align: center !important;
+    width: 100% !important;
 }
 
-.compact-metric-value,
-.kpi-value {
-    text-align: center !important;
-}
-
-.compact-metric-subtitle,
-.kpi-subtitle {
-    text-align: center !important;
-}
-
-/* Desktop Tables - Better spacing */
-.stDataFrame {
-    margin-top: 1rem !important;
-    margin-bottom: 1rem !important;
-}
-
-/* Desktop Buttons - Better sizing */
-button[kind="primary"],
-button[kind="secondary"] {
-    padding: 0.6rem 1.5rem !important;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    border-radius: 6px !important;
-    margin-right: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-}
-
-/* Desktop Sidebar - Wider for better navigation */
-[data-testid="stSidebar"] {
-    min-width: 300px !important;
-    padding: 1.5rem 1rem !important;
-}
-
-/* Desktop Expanders - Better spacing */
-[data-testid="stExpander"] {
-    margin-bottom: 1rem !important;
-}
-
-/* Desktop Selectboxes & Inputs - Better sizing */
-.stSelectbox,
-.stTextInput,
-.stNumberInput {
-    margin-bottom: 1rem !important;
-}
-
-/* Desktop Charts - Better spacing */
-.plotly {
-    margin-top: 1rem !important;
-    margin-bottom: 1rem !important;
-}
-
-/* Desktop Spacing Utilities */
-.desktop-spacing-sm { margin-bottom: 0.5rem !important; }
-.desktop-spacing-md { margin-bottom: 1rem !important; }
-.desktop-spacing-lg { margin-bottom: 1.5rem !important; }
-.desktop-spacing-xl { margin-bottom: 2rem !important; }
-
-/* ========== MOBILE STYLES (max-width: 768px) ========== */
+/* ========== MOBILE HEADER FORMATTING ========== */
 @media (max-width: 768px) {
-    .header-container {
-        padding: 0.6rem 0.8rem;
-        border-radius: 6px;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 2px 4px rgba(74, 61, 111, 0.15);
+    .starguard-header-container {
+        padding: 0.5rem !important;
     }
     
-    .header-title {
-        font-size: 0.9rem;
-        margin-bottom: 0.25rem;
-        line-height: 1.3;
-        font-weight: 600;
-    }
-    
-    .header-subtitle {
-        font-size: 0.65rem;
-        line-height: 1.2;
-    }
-    
-    /* Mobile spacing - tighter */
-    div.block-container {
-        padding-top: 2rem !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-    
-    h1 {
-        margin-top: 0.5rem !important;
-        font-size: 1.5rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h2 {
-        margin-top: 0.75rem !important;
-        font-size: 1.25rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h3 {
-        font-size: 1.1rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h4, h5, h6 {
-        text-align: center !important;
-    }
-    
-    /* Center align markdown headers on mobile */
-    div[data-testid="stMarkdownContainer"] h1,
-    div[data-testid="stMarkdownContainer"] h2,
-    div[data-testid="stMarkdownContainer"] h3,
-    div[data-testid="stMarkdownContainer"] h4,
-    div[data-testid="stMarkdownContainer"] h5,
-    div[data-testid="stMarkdownContainer"] h6 {
-        text-align: center !important;
-    }
-    
-    /* Center align metrics on mobile */
-    [data-testid="stMetric"],
-    [data-testid="stMetricValue"],
-    [data-testid="stMetricLabel"],
-    [data-testid="stMetricDelta"],
-    [data-testid="metric-container"],
-    .compact-metric-card,
-    .kpi-card {
-        text-align: center !important;
-    }
-    
-    /* Center align Streamlit app header title on mobile */
-    header[data-testid="stHeader"],
-    .stAppHeader,
-    .st-emotion-cache-ttupiz {
-        text-align: center !important;
-    }
-    
-    header[data-testid="stHeader"] *,
-    .stAppHeader *,
-    .st-emotion-cache-ttupiz * {
-        text-align: center !important;
-    }
-    
-    /* Mobile sidebar adjustments */
-    [data-testid="stSidebar"] {
-        min-width: 240px !important;
-    }
-    
-    /* Hide Home button on mobile - redundant with sidebar nav */
-    [data-testid="stSidebar"] .home-button-desktop {
-        display: none !important;
-    }
-    
-    /* Hide the hr separator after Home button on mobile */
-    /* FIX 4: Replaced :has() with class-based approach for iOS Safari < 15.4 compatibility */
-    [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"].has-home-button hr,
-    [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] hr[style*="margin: 1rem 0"] {
-        display: none !important;
-    }
-    
-    /* Mobile tables - horizontal scroll */
-    .stDataFrame {
-        overflow-x: auto !important;
-    }
-    
-    /* Mobile columns - stack vertically */
-    [data-testid="column"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-    
-    /* Mobile buttons - full width */
-    button[kind="primary"],
-    button[kind="secondary"] {
-        width: 100% !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Mobile metrics - smaller */
-    [data-testid="stMetricValue"] {
-        font-size: 1.5rem !important;
-    }
-    
-    [data-testid="stMetricLabel"] {
-        font-size: 0.85rem !important;
-    }
-    
-    /* Mobile tabs - stack vertically to eliminate horizontal scrolling */
-    [data-testid="stTabs"] {
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab-list"] {
-        flex-direction: column !important;
-        width: 100% !important;
-        gap: 0.5rem !important;
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-        text-align: left !important;
-        padding: 0.75rem 1rem !important;
+    .starguard-title {
+        font-size: 1rem !important;
+        line-height: 1.2 !important;
         margin-bottom: 0.25rem !important;
     }
     
-    /* Wrap Plotly chart titles on mobile */
-    .js-plotly-plot .gtitle,
-    .plotly .gtitle,
-    .js-plotly-plot .xtitle,
-    .plotly .xtitle {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-        max-width: 100% !important;
-        overflow-wrap: break-word !important;
-        hyphens: auto !important;
+    .starguard-tagline {
+        font-size: 0.8rem !important;
     }
     
-    /* Ensure chart titles wrap */
-    .js-plotly-plot .gtitle text,
-    .plotly .gtitle text {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-    }
-    
-    .stTabs [data-baseweb="tab-panel"] {
-        width: 100% !important;
+    .starguard-subtitle {
+        font-size: 0.65rem !important;
+        line-height: 1.4 !important;
     }
 }
 
-/* ========== TABLET STYLES (769px - 1024px) ========== */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .header-container {
-        padding: 0.7rem 1rem;
-    }
-    
-    .header-title {
-        font-size: 1rem;
-    }
-    
-    .header-subtitle {
-        font-size: 0.75rem;
-    }
-    
-    div.block-container {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-    }
-    
-    h1 {
-        font-size: 1.75rem !important;
-    }
-}
+/* ========== SIDEBAR FIXES ========== */
 
-/* ========== LARGE DESKTOP (1025px+) ========== */
-@media (min-width: 1025px) {
-    div.block-container {
-        max-width: 1600px !important;
-        margin: 0 auto !important;
-        padding-left: 5rem !important;
-        padding-right: 5rem !important;
-    }
-    
-    .header-container {
-        padding: 1.2rem 2.5rem;
-        margin-top: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .header-title {
-        font-size: 1.4rem;
-    }
-    
-    .header-subtitle {
-        font-size: 1rem;
-    }
-    
-    h1 {
-        font-size: 2.75rem !important;
-    }
-    
-    h2 {
-        font-size: 2rem !important;
-    }
-}
-
-/* ========== ULTRA-WIDE DESKTOP (1440px+) ========== */
-@media (min-width: 1440px) {
-    div.block-container {
-        max-width: 1800px !important;
-        padding-left: 6rem !important;
-        padding-right: 6rem !important;
-    }
-    
-    [data-testid="stSidebar"] {
-        min-width: 320px !important;
-    }
-}
-
-/* ========== KPI SECTION STYLING ========== */
-/* Target the specific vertical block container class */
-div.stVerticalBlock.st-emotion-cache-e9yaxd.e1f1d6gn2 {
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 0px !important;
-    text-align: left !important;
-}
-
-/* Target KPI section wrapper and all nested containers */
-.kpi-section-wrapper,
-.kpi-section-wrapper div.stVerticalBlock {
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 0px !important;
-    text-align: left !important;
-}
-
-/* Reduce vertical white space - target element containers in KPI section */
-.kpi-section-wrapper .element-container {
-    margin-bottom: 0.5rem !important;
-    padding-bottom: 0 !important;
-}
-
-/* Reduce spacing in columns within KPI section */
-.kpi-section-wrapper [data-testid="column"] {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-/* Target plotly containers to reduce spacing */
-.kpi-section-wrapper .plotly-container {
-    margin-bottom: 0.5rem !important;
-}
-
-/* Reduce margin on h4 heading in KPI section */
-.kpi-section-wrapper h4 {
-    margin-bottom: 0.5rem !important;
-    margin-top: 0.5rem !important;
-}
-
-/* ========== PRINT STYLES ========== */
-@media print {
-    [data-testid="stSidebar"] {
-        display: none !important;
-    }
-    
-    .header-container {
-        page-break-after: avoid;
-    }
-}
-</style>
-""", unsafe_allow_html=True)
-
-# Responsive Header - Adapts to Desktop/Mobile
-st.markdown("""
-<div class="header-container">
-    <div class="header-title">⭐ StarGuard AI | Turning Data Into Stars</div>
-    <div class="header-subtitle">Powered by Predictive Analytics & Machine Learning</div>
-</div>
-""", unsafe_allow_html=True)
-
-# ========== AGGRESSIVE SPACING REDUCTION ==========
-# MATCHED TO INTERVENTION PERFORMANCE ANALYSIS PAGE (Perfect Spacing Template)
-st.markdown("""
-<style>
-.block-container {
-    padding-top: 0.5rem !important;
-    padding-bottom: 1rem !important;
-    max-width: 100% !important;
-}
-
-div[data-testid="stVerticalBlock"] > div:first-child {
-    margin-bottom: 0 !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.5rem !important;
-    padding-top: 0 !important;
-}
-
-p {
-    margin-top: 0 !important;
-    margin-bottom: 0.5rem !important;
-}
-
-div[data-testid="stVerticalBlock"] {
-    gap: 0.25rem !important;
-}
-
-section.main > div {
-    padding-top: 0.5rem !important;
-}
-
-.stMarkdown {
-    margin-bottom: 0.25rem !important;
-}
-
-div[data-testid="stMetric"] {
-    padding: 0.25rem !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# Rest of your page content starts here
-# ... etc
-
-# ============================================================================
-# 2. PAGE CONFIG (already set above - no duplicate needed)
-# ============================================================================
-# Mobile device detection handled via JavaScript below
-
-# Purple Sidebar Theme + White Text Everywhere
-st.markdown("""
-<style>
-/* ========== PURPLE SIDEBAR THEME ========== */
-/* Match the StarGuard AI header purple gradient */
+/* Purple Sidebar */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
 }
@@ -638,105 +151,1425 @@ st.markdown("""
     background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
 }
 
-/* ========== ALL SIDEBAR TEXT WHITE ========== */
-/* Force ALL text in sidebar to be white */
-[data-testid="stSidebar"] * {
-    color: #FFFFFF !important;
-}
-
-[data-testid="stSidebar"] p,
+/* All sidebar text white */
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] *,
 [data-testid="stSidebar"] span,
+[data-testid="stSidebar"] p,
 [data-testid="stSidebar"] div,
 [data-testid="stSidebar"] a,
 [data-testid="stSidebar"] label,
-[data-testid="stSidebar"] button {
+[data-testid="stSidebar"] button,
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] h4 {
     color: #FFFFFF !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
-/* ========== WHITE "HOME" LABEL ========== */
+/* ========== SIDEBAR BUTTONS - UNIFORM SIZE ========== */
+/* Make all sidebar buttons the same size */
+[data-testid="stSidebar"] button[kind="secondary"],
+[data-testid="stSidebar"] button[kind="primary"],
+[data-testid="stSidebar"] .stButton > button {
+    width: 100% !important;
+    min-height: 2.5rem !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+}
+
+/* Ensure buttons in columns are same size */
+[data-testid="stSidebar"] [data-testid="column"] button,
+[data-testid="stSidebar"] [data-testid="column"] .stButton > button {
+    width: 100% !important;
+    min-height: 2.5rem !important;
+}
+
+/* Center all subheaders in sidebar */
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] h4,
+[data-testid="stSidebar"] h5,
+[data-testid="stSidebar"] h6,
+[data-testid="stSidebar"] .stMarkdown h1,
+[data-testid="stSidebar"] .stMarkdown h2,
+[data-testid="stSidebar"] .stMarkdown h3,
+[data-testid="stSidebar"] .stMarkdown h4,
+[data-testid="stSidebar"] .stMarkdown h5,
+[data-testid="stSidebar"] .stMarkdown h6 {
+    text-align: center !important;
+}
+
+/* Center subheaders in main page content */
+.main h2,
+.main h3,
+.main h4,
+.main h5,
+.main h6,
+h2, h3, h4, h5, h6 {
+    text-align: center !important;
+}
+
+/* Center markdown subheaders */
+.stMarkdown h2,
+.stMarkdown h3,
+.stMarkdown h4,
+.stMarkdown h5,
+.stMarkdown h6,
+div[data-testid="stMarkdownContainer"] h2,
+div[data-testid="stMarkdownContainer"] h3,
+div[data-testid="stMarkdownContainer"] h4,
+div[data-testid="stMarkdownContainer"] h5,
+div[data-testid="stMarkdownContainer"] h6 {
+    text-align: center !important;
+}
+
+/* Center Streamlit headers and subheaders */
+[data-testid="stHeader"],
+[data-testid="stHeader"] h1,
+[data-testid="stHeader"] h2,
+[data-testid="stHeader"] h3 {
+    text-align: center !important;
+}
+
+/* ========== FIX "app" LABEL - CONVERT TO HOME BUTTON ========== */
+
+/* Hide the default "app" text and replace with "🏠 Home" */
 [data-testid="stSidebarNav"] ul li:first-child a {
-    font-size: 0 !important;
+    font-size: 0 !important;  /* Hide original text */
     background: rgba(255, 255, 255, 0.2) !important;
     padding: 0.75rem 1rem !important;
     border-radius: 8px !important;
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+    transition: all 0.2s ease !important;
 }
 
+/* Add "🏠 Home" text */
 [data-testid="stSidebarNav"] ul li:first-child a::before {
     content: "🏠 Home" !important;
     font-size: 1.1rem !important;
     color: #FFFFFF !important;
     font-weight: 700 !important;
     display: block !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* All sidebar navigation links white */
+/* Hover effect for Home button */
+[data-testid="stSidebarNav"] ul li:first-child a:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* ========== FIX PERFORMANCE DASHBOARD EMOJI ========== */
+
+/* Enhanced font stack for emoji rendering */
+[data-testid="stSidebarNav"] a,
+[data-testid="stSidebarNav"] span,
+[data-testid="stSidebarNav"] div,
+[data-testid="stSidebarNav"] p {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+}
+
+/* Force emoji to render properly - specific targeting */
 [data-testid="stSidebarNav"] a {
-    color: #FFFFFF !important;
+    white-space: normal !important;  /* Allow text to flow naturally */
+    word-wrap: normal !important;
+    overflow-wrap: normal !important;
+    text-overflow: clip !important;
 }
 
-[data-testid="stSidebarNav"] a span,
-[data-testid="stSidebarNav"] a div,
-[data-testid="stSidebarNav"] a p {
-    color: #FFFFFF !important;
+/* Prevent line breaks in middle of emoji sequences */
+[data-testid="stSidebarNav"] li {
+    line-break: strict !important;
+    word-break: keep-all !important;
 }
 
-/* "Mobile Optimized" badge - white text */
-[data-testid="stSidebar"] .element-container div[data-testid="stMarkdownContainer"] p {
-    color: #FFFFFF !important;
+/* ========== SIDEBAR SEPARATOR STYLING - REMOVE DUPLICATES ========== */
+/* Remove extra green lines in sidebar */
+[data-testid="stSidebar"] hr {
+    display: none !important;
 }
 
-/* Success/Info boxes in sidebar - white text */
-[data-testid="stSidebar"] [data-testid="stSuccess"],
-[data-testid="stSidebar"] [data-testid="stInfo"] {
-    color: #FFFFFF !important;
-    background: rgba(255, 255, 255, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
+/* Show only specific separators you want */
+[data-testid="stSidebar"] .sidebar-divider {
+    display: block !important;
+    border: none !important;
+    height: 4px !important;
+    margin: 1rem 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(74, 222, 128, 0.8) 50%,
+        transparent 100%
+    ) !important;
 }
 
-[data-testid="stSidebar"] [data-testid="stSuccess"] *,
-[data-testid="stSidebar"] [data-testid="stInfo"] * {
-    color: #FFFFFF !important;
+/* CSS Backup: Add emoji via ::before for Performance Dashboard links */
+[data-testid="stSidebarNav"] a[href*="Performance_Dashboard"]::before {
+    content: "⚡ " !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", sans-serif !important;
+    display: inline !important;
 }
 
-/* View less/more links - white */
-[data-testid="stSidebar"] button {
-    color: #FFFFFF !important;
+/* ========== REDUCED VERTICAL PADDING - GLOBAL ========== */
+
+/* Main container */
+.main .block-container {
+    padding-top: 0.1rem !important;
+    padding-bottom: 0.1rem !important;
 }
 
-/* Mobile responsive */
+/* Headers */
+h1 { 
+    margin: 0.2rem 0 0.1rem 0 !important; 
+    padding-top: 0 !important;
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+}
+
+h2 { 
+    margin: 0.15rem 0 0.1rem 0 !important; 
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+}
+
+h3 { 
+    margin: 0.1rem 0 0.05rem 0 !important; 
+    font-size: 1.2rem !important;
+    line-height: 1.2 !important;
+}
+
+/* Sections */
+.element-container {
+    margin-top: 0.1rem !important;
+    margin-bottom: 0.25rem !important;
+    padding: 0 !important;
+}
+
+/* Charts */
+[data-testid="stPlotlyChart"] {
+    margin: 0.1rem 0 !important;
+}
+
+/* Metric containers */
+[data-testid="metric-container"] {
+    padding: 0.1rem !important;
+    margin: 0.1rem 0 !important;
+}
+
+/* StarGuard header */
+.starguard-header-container {
+    margin-bottom: 0.25rem !important;
+    margin-top: 0 !important;
+    padding: 0.5rem !important;
+}
+
+/* Dividers */
+hr {
+    margin: 0.25rem 0 !important;
+}
+
+/* ========== CENTER PAGE DESCRIPTIONS ========== */
+/* Center page descriptions and subtitles */
+.page-description, 
+.page-subtitle {
+    text-align: center !important;
+    color: #6b7280 !important;
+}
+
+/* Center paragraphs immediately after page titles */
+.page-title-container + p,
+.page-title-container ~ p:first-of-type,
+h1 + p,
+h1 ~ p:first-of-type,
+h3:first-of-type + p,
+h3:first-of-type ~ p:first-of-type {
+    text-align: center !important;
+    color: #6b7280 !important;
+}
+
+/* Center info boxes and captions after page titles */
+.page-title-container ~ div[data-testid="stInfo"],
+.page-title-container ~ div[data-testid="stAlert"],
+.page-title-container ~ .stCaption,
+h1 ~ div[data-testid="stInfo"],
+h1 ~ div[data-testid="stAlert"],
+h1 ~ .stCaption {
+    text-align: center !important;
+}
+
+div[data-testid="stVerticalBlock"] {
+    gap: 0.3rem !important;
+}
+
+hr {
+    margin: 0.4rem 0 !important;
+}
+
+.stMarkdown {
+    margin-bottom: 0.3rem !important;
+}
+
+/* Override ANY conflicting styles */
+.starguard-header,
+.starguard-header * {
+    border-bottom: none !important;
+}
+
+.starguard-header-container * {
+    border-bottom: none !important;
+}
+
+.starguard-title {
+    border-bottom: 3px solid #4ade80 !important;
+}
+
+/* ========== REDUCE SPACING AFTER HEADER - AGGRESSIVE ========== */
+.starguard-header-container + *,
+.starguard-header-container ~ * {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce spacing for first content element after header */
+.starguard-header-container ~ .element-container:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"]:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"] {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Target markdown containers immediately after header */
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"],
+.starguard-header-container ~ .stMarkdown {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+    margin-bottom: 0rem !important;
+    padding-bottom: 0 !important;
+}
+
+/* Remove all excess padding from Streamlit containers */
+div[data-testid="stVerticalBlock"],
+div[data-testid="stHorizontalBlock"],
+div[data-testid="stColumn"] {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Remove padding from markdown containers */
+div[data-testid="stMarkdownContainer"] {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Remove padding from all Streamlit element wrappers */
+.stApp > div > div > div > div {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Target headings immediately after header */
+.starguard-header-container ~ h1,
+.starguard-header-container ~ h2,
+.starguard-header-container ~ h3,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h1,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h2,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h3 {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce padding on header subtitle */
+.starguard-subtitle {
+    margin-bottom: 0rem !important;
+    padding-bottom: 0rem !important;
+}
+
+/* ========== MOBILE OPTIMIZATIONS ========== */
+/* Mobile - even tighter spacing */
+/* ========== MOBILE - EVEN TIGHTER ========== */
 @media (max-width: 768px) {
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
+    .main .block-container {
+        padding-top: 0.05rem !important;
+        padding-bottom: 0.05rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
     
-    [data-testid="stSidebar"] * {
-        color: #FFFFFF !important;
+    h1 { 
+        margin: 0.1rem 0 !important; 
+        font-size: 1.1rem !important; 
     }
     
-    /* Hide "Mobile Optimized" message on mobile */
-    [data-testid="stSidebar"] [data-testid="stSuccess"]:has-text("Mobile Optimized"),
-    [data-testid="stSidebar"] [data-testid="stSuccess"]:has-text("📱 Mobile Optimized") {
-        display: none !important;
+    h2 { 
+        margin: 0.08rem 0 !important; 
+        font-size: 1rem !important; 
     }
     
-    /* Alternative: Hide all sidebar success messages containing Mobile Optimized text */
-    [data-testid="stSidebar"] [data-testid="stSuccess"] {
-        display: none !important;
+    h3 { 
+        margin: 0.05rem 0 !important; 
+        font-size: 0.9rem !important; 
+    }
+    
+    h1, h2, h3 {
+        text-align: center !important;
+    }
+    
+    .element-container {
+        margin-bottom: 0.1rem !important;
+        margin-top: 0.05rem !important;
+    }
+    
+    .starguard-header-container {
+        margin-bottom: 0.1rem !important;
+        margin-top: 0 !important;
+        padding: 0.3rem 0.5rem !important;
+    }
+    
+    .starguard-title {
+        font-size: 1.2rem !important;
+        margin-bottom: 0.15rem !important;
+        padding-bottom: 0.15rem !important;
+    }
+    
+    .starguard-subtitle {
+        font-size: 0.7rem !important;
+        margin-top: 0.15rem !important;
+        margin-bottom: 0.1rem !important;
+    }
+    
+    [data-testid="stPlotlyChart"] {
+        margin: 0.05rem 0 !important;
+    }
+    
+    [data-testid="metric-container"] {
+        padding: 0.05rem !important;
+        margin: 0.05rem 0 !important;
+    }
+    
+    hr {
+        margin: 0.1rem 0 !important;
+    }
+    
+    /* ========== FIX MOBILE SIDEBAR CLOSE BUTTON ========== */
+    /* Ensure close button is clickable - override any JavaScript hiding */
+    [data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"],
+    [data-testid="collapsedControl"],
+    [data-testid="stSidebar"] button[aria-label*="Close"],
+    [data-testid="stSidebar"] button[aria-label*="close"],
+    [data-testid="stSidebar"] button[title*="Close"],
+    [data-testid="stSidebar"] button[title*="close"] {
+        z-index: 9999 !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    /* Make close button visible - override JavaScript hiding */
+    [data-testid="stSidebar"] button[kind="header"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        z-index: 9999 !important;
+    }
+    
+    /* Ensure sidebar header is interactive */
+    [data-testid="stSidebarHeader"],
+    [data-testid="stSidebar"] > div:first-child {
+        pointer-events: auto !important;
+    }
+    
+    /* Fix any overlay blocking clicks */
+    [data-testid="stSidebar"] > div {
+        pointer-events: auto !important;
+    }
+    
+    /* Ensure close button SVG/icons are visible */
+    [data-testid="stSidebar"] button[kind="header"] svg,
+    [data-testid="stSidebar"] button[aria-label*="Close"] svg,
+    [data-testid="stSidebar"] button[aria-label*="close"] svg {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: none !important; /* SVG itself doesn't need pointer events */
+    }
+    
+    /* ========== GLOBAL MOBILE TEXT FIX ========== */
+    /* Center everything */
+    .main .block-container,
+    .main .block-container * {
+        text-align: center !important;
+    }
+    
+    /* But left-align data tables */
+    [data-testid="stDataFrame"] * {
+        text-align: left !important;
+    }
+    
+    /* Reduce all font sizes */
+    .main h1 { font-size: 1.1rem !important; }
+    .main h2 { font-size: 1rem !important; }
+    .main h3 { font-size: 0.9rem !important; }
+    .main p { font-size: 0.85rem !important; }
+    
+    /* Sidebar - smaller fonts */
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
+        font-size: 0.9rem !important;
+    }
+    
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] label {
+        font-size: 0.8rem !important;
+    }
+    
+    /* ========== MOBILE SIDEBAR - SMALLER FILTER TITLES ========== */
+    /* Reduce filter section headers */
+    [data-testid="stSidebar"] h1 {
+        font-size: 1rem !important;
+    }
+    
+    [data-testid="stSidebar"] h2 {
+        font-size: 0.95rem !important;
+    }
+    
+    [data-testid="stSidebar"] h3 {
+        font-size: 0.9rem !important;
+    }
+    
+    [data-testid="stSidebar"] h4 {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Specific filter labels */
+    [data-testid="stSidebar"] .stMarkdown h1,
+    [data-testid="stSidebar"] .stMarkdown h2,
+    [data-testid="stSidebar"] .stMarkdown h3 {
+        font-size: 0.9rem !important;
+        margin: 0.25rem 0 !important;
+    }
+    
+    /* "Plan Membership Size", "Date Range" etc */
+    [data-testid="stSidebar"] p {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Slider labels */
+    [data-testid="stSidebar"] .stSlider label {
+        font-size: 0.8rem !important;
+    }
+    
+    /* Caption text */
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Fix chart overflow */
+    .js-plotly-plot,
+    [data-testid="stPlotlyChart"] {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Ensure charts don't have cut-off legends */
+    .legend {
+        font-size: 8px !important;
+    }
+    
+    /* ========== MOBILE CENTER ALIGNMENT ========== */
+    /* Center all main content text */
+    .main .block-container {
+        text-align: center !important;
+    }
+    
+    /* Center metric cards content */
+    [data-testid="metric-container"],
+    [data-testid="stMetricLabel"],
+    [data-testid="stMetricValue"],
+    [data-testid="stMetricDelta"] {
+        text-align: center !important;
+        justify-content: center !important;
+    }
+    
+    /* Center KPI list items */
+    .element-container {
+        text-align: center !important;
+    }
+    
+    /* Center paragraphs */
+    .stMarkdown p {
+        text-align: center !important;
+    }
+    
+    /* Tagline mobile sizing */
+    .starguard-tagline {
+        font-size: 0.8rem !important;
     }
 }
 
-/* Desktop: Show "Mobile Optimized" message */
-@media (min-width: 769px) {
-    [data-testid="stSidebar"] [data-testid="stSuccess"] {
-        display: block !important;
+/* ========== CENTER METRIC LABELS AND VALUES ========== */
+/* Center metric labels and values across all pages - AGGRESSIVE TARGETING */
+[data-testid="stMetricLabel"],
+[data-testid="stMetricLabel"] *,
+[data-testid="stMetricLabel"] > div,
+[data-testid="stMetricLabel"] > div > div,
+[data-testid="stMetricLabel"] > div > div > div {
+    text-align: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+}
+
+[data-testid="stMetricValue"],
+[data-testid="stMetricValue"] *,
+[data-testid="stMetricValue"] > div,
+[data-testid="stMetricValue"] > div > div,
+[data-testid="stMetricValue"] > div > div > div {
+    text-align: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+[data-testid="stMetricDelta"],
+[data-testid="stMetricDelta"] *,
+[data-testid="stMetricDelta"] > div,
+[data-testid="stMetricDelta"] > div > div {
+    text-align: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Center metric container and all nested elements */
+div[data-testid="stMetricContainer"],
+div[data-testid="stMetricContainer"] *,
+div[data-testid="stMetricContainer"] > div,
+div[data-testid="stMetricContainer"] > div > div {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+/* Force center alignment for metric text content */
+div[data-testid="stMetricContainer"] p,
+div[data-testid="stMetricContainer"] span,
+div[data-testid="stMetricContainer"] div {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Center metric columns */
+div[data-testid="column"] [data-testid="stMetricContainer"],
+div[data-testid="column"] [data-testid="stMetricContainer"] * {
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 
+═══════════════════════════════════════════════════════════════════════════════
+SITE-WIDE FORMATTING RULES - HEDIS Portfolio Optimizer
+═══════════════════════════════════════════════════════════════════════════════
+
+RULE #1: CENTERED METRIC HEADERS
+All KPI/metric summary headers must be perfectly centered over their data values.
+This applies to:
+- st.metric() labels
+- st.caption() used as headers
+- Custom HTML metric headers
+- Any text that serves as a label above a data point
+
+RULE #2: CONSISTENT VISUAL HIERARCHY  
+Primary KPIs (top row): Larger values, prominent colors
+Secondary KPIs (bottom row): Standard size, supporting data
+
+RULE #3: MOBILE RESPONSIVENESS
+All metrics must stack properly on mobile with centered alignment maintained.
+
+═══════════════════════════════════════════════════════════════════════════════
+*/
+
+/* ========== CENTER-ALIGN METRICS AND TABLES FOR CLEAN VIEWING ========== */
+
+/* ========== RULE: CENTER ALL METRIC HEADERS OVER DATA ========== */
+/* This is a site-wide standard - metric labels center over values */
+
+/* Center the metric label text (header above the number) */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+[data-testid="stMetricLabel"] label,
+[data-testid="stMetricLabel"] p,
+[data-testid="stMetricLabel"] span {
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+/* Center the metric value (the big number) */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Center the delta indicator (+$1,264,020 annually, etc.) */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+}
+
+/* Center metric cards - values and labels (backward compatibility) */
+[data-testid="stMetricDelta"] {
+    text-align: center !important;
+    justify-content: center !important;
+}
+
+/* Center the entire metric container */
+[data-testid="metric-container"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Center metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Ensure columns containing metrics are centered */
+[data-testid="column"] > div > div > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Center any custom metric-style headers (non-st.metric) */
+.metric-header, .kpi-header, .summary-header {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Center st.caption used as metric labels */
+[data-testid="stCaptionContainer"] {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stCaptionContainer"] p {
+    text-align: center !important;
+}
+
+/* Fix for columns - ensure flex centering */
+.row-widget.stHorizontalBlock > div {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.row-widget.stHorizontalBlock [data-testid="column"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* ========== AGGRESSIVE METRIC CENTERING - TARGET COLUMN STRUCTURE ========== */
+/* Force center alignment for metrics inside columns */
+[data-testid="column"] [data-testid="stMetricContainer"],
+[data-testid="column"] [data-testid="metric-container"],
+[data-testid="column"] > div > div > div[data-testid="stMetricContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* Force center for metric labels inside columns */
+[data-testid="column"] [data-testid="stMetricLabel"],
+[data-testid="column"] [data-testid="stMetricLabel"] > div,
+[data-testid="column"] [data-testid="stMetricLabel"] label,
+[data-testid="column"] [data-testid="stMetricLabel"] p,
+[data-testid="column"] [data-testid="stMetricLabel"] span {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric values inside columns */
+[data-testid="column"] [data-testid="stMetricValue"],
+[data-testid="column"] [data-testid="stMetricValue"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric deltas inside columns */
+[data-testid="column"] [data-testid="stMetricDelta"],
+[data-testid="column"] [data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Target the actual Streamlit metric structure */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+}
+
+div[data-testid="stMetricContainer"] > div {
+    text-align: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* Override any inline styles or conflicting rules */
+[data-testid="stMetricLabel"] * {
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] * {
+    text-align: center !important;
+}
+
+[data-testid="stMetricDelta"] * {
+    text-align: center !important;
+}
+
+/* ========== NUCLEAR OPTION: FORCE CENTER ALL METRIC TEXT ========== */
+/* Target every possible element inside metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+div[data-testid="stMetricContainer"] * {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for label text specifically */
+div[data-testid="stMetricContainer"] > div:first-child,
+div[data-testid="stMetricContainer"] > div:first-child * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for value text */
+div[data-testid="stMetricContainer"] > div:nth-child(2),
+div[data-testid="stMetricContainer"] > div:nth-child(2) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for delta text */
+div[data-testid="stMetricContainer"] > div:nth-child(3),
+div[data-testid="stMetricContainer"] > div:nth-child(3) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* ========== FORCE CENTER ALL MARKDOWN CONTENT IN COLUMNS ========== */
+/* This ensures custom HTML metrics are centered */
+.centered-metric-container {
+    text-align: center !important;
+    padding: 0.5rem 0 !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.centered-metric-container p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+[data-testid="column"] .stMarkdown,
+[data-testid="column"] .stMarkdownContainer,
+[data-testid="column"] .stMarkdown > div,
+[data-testid="column"] .stMarkdownContainer > div {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+[data-testid="column"] .stMarkdown p,
+[data-testid="column"] .stMarkdownContainer p,
+[data-testid="column"] .stMarkdown div,
+[data-testid="column"] .stMarkdownContainer div {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+}
+
+/* Force center any divs inside columns */
+[data-testid="column"] > div > div > div > div {
+    text-align: center !important;
+}
+
+[data-testid="column"] > div > div > div > div > p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Center data tables - cell content */
+.stDataFrame,
+.stDataFrame table,
+.stDataFrame td,
+.stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center table headers */
+.stDataFrame thead th {
+    text-align: center !important;
+    font-weight: 600 !important;
+}
+
+/* Center table cells */
+.stDataFrame tbody td {
+    text-align: center !important;
+}
+
+/* Center sidebar metrics */
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    text-align: center !important;
+}
+
+[data-testid="stSidebar"] div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+}
+
+/* Center summary tables in sidebars */
+[data-testid="stSidebar"] .stDataFrame,
+[data-testid="stSidebar"] .stDataFrame table,
+[data-testid="stSidebar"] .stDataFrame td,
+[data-testid="stSidebar"] .stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center caption text */
+.stCaption {
+    text-align: center !important;
+}
+
+/* Center info boxes - selective (only for summary/metric displays) */
+.stAlert[data-baseweb="notification"],
+.stInfo[data-baseweb="notification"],
+.stSuccess[data-baseweb="notification"],
+.stWarning[data-baseweb="notification"],
+.stError[data-baseweb="notification"] {
+    text-align: center !important;
+}
+
+/* Keep expander headers left-aligned for readability */
+.streamlit-expanderHeader {
+    text-align: left !important;
+}
+
+/* Center numeric values in tables */
+.stDataFrame td {
+    text-align: center !important;
+}
+
+/* Keep text content left-aligned (headings, paragraphs) for readability */
+/* Exception: h2 and h3 are centered (see CENTER SUMMARY HEADERS section below) */
+h1, h4, h5, h6 {
+    text-align: left !important;
+}
+
+p, li {
+    text-align: left !important;
+}
+
+/* Exception: Center specific summary/metric section headers - handled by h2, h3 rule above */
+
+
+/* ========== CENTER SUMMARY HEADERS AND NOTES ========== */
+
+/* Center all h2, h3, h4 headers (section headers) */
+h2, h3, h4 {
+    text-align: center !important;
+}
+
+/* Center page subheaders in markdown containers */
+.stMarkdown h2,
+.stMarkdown h3,
+.stMarkdown h4,
+div[data-testid="stMarkdownContainer"] h2,
+div[data-testid="stMarkdownContainer"] h3,
+div[data-testid="stMarkdownContainer"] h4 {
+    text-align: center !important;
+}
+
+/* Center markdown headers - comprehensive targeting */
+.stMarkdown h2,
+.stMarkdown h3,
+div[data-testid="stMarkdownContainer"] h2,
+div[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+.element-container h2,
+.element-container h3,
+div[data-testid="stVerticalBlock"] h2,
+div[data-testid="stVerticalBlock"] h3 {
+    text-align: center !important;
+}
+
+/* Center all markdown content headers */
+.stMarkdown:has(h2),
+.stMarkdown:has(h3) {
+    text-align: center !important;
+}
+
+/* Center captions and notes */
+.stCaption,
+[data-testid="stCaption"],
+p.stCaption,
+div.stCaption {
+    text-align: center !important;
+}
+
+/* Center headers that come after dividers (section headers) */
+hr + h2,
+hr + h3 {
+    text-align: center !important;
+}
+
+/* Center notes/details below metrics */
+[data-testid="stMetricContainer"] + .stMarkdown,
+[data-testid="stMetricContainer"] ~ .stMarkdown,
+.stMetric + .stMarkdown {
+    text-align: center !important;
+}
+
+/* Center all section headers in main content */
+.main h2,
+.main h3,
+section.main h2,
+section.main h3 {
+    text-align: center !important;
+}
+
+
+
+
+
+
+/* Center summary section headers (using class-based targeting) */
+.stMarkdown:has(h2),
+.stMarkdown:has(h3) {
+    text-align: center !important;
+}
+
+/* ========== CENTER KPI/METRIC HEADERS (ENHANCED) ========== */
+/* This section reinforces the site-wide metric centering rule above */
+/* All metric labels, values, and deltas are centered */
+
+/* Additional reinforcement for metric labels */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Additional reinforcement for metric values */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Additional reinforcement for metric deltas */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+/* Additional reinforcement for metric containers */
+[data-testid="metric-container"] {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* Additional reinforcement for column content */
+[data-testid="column"] {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* ========== CENTER SIDEBAR CONTENT ========== */
+/* Center sidebar text and labels */
+[data-testid="stSidebar"] [data-testid="stMarkdown"] {
+    text-align: center !important;
+}
+
+/* Center sidebar subheaders (h2, h3, h4) */
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] h4,
+[data-testid="stSidebar"] .stMarkdown h2,
+[data-testid="stSidebar"] .stMarkdown h3,
+[data-testid="stSidebar"] .stMarkdown h4,
+[data-testid="stSidebar"] p {
+    text-align: center !important;
+}
+
+/* Center sidebar metric cards */
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Center expander headers in sidebar */
+[data-testid="stSidebar"] .streamlit-expanderHeader {
+    justify-content: center !important;
+}
+
+/* ========== SIDEBAR FILTER STYLING ========== */
+/* Filter section header */
+[data-testid="stSidebar"] h3 {
+    color: white !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+    border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* Compact filter widgets */
+[data-testid="stSidebar"] .stSelectbox,
+[data-testid="stSidebar"] .stMultiSelect,
+[data-testid="stSidebar"] .stSlider,
+[data-testid="stSidebar"] .stRadio {
+    margin-bottom: 0.75rem !important;
+}
+
+/* Filter labels */
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stMultiSelect label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stRadio label {
+    color: white !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* Dropdown styling on purple background */
+[data-testid="stSidebar"] .stSelectbox > div > div,
+[data-testid="stSidebar"] .stMultiSelect > div > div {
+    background-color: rgba(255,255,255,0.95) !important;
+    border-radius: 5px !important;
+}
+
+/* ========== LEFT ALIGN SIDEBAR CONTENT ========== */
+/* Left align sidebar content */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] .stMarkdown p,
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] h4 {
+    text-align: left !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+    text-align: left !important;
+}
+
+/* ========== CENTER TAB LABELS ========== */
+/* Center tab labels */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+    justify-content: center !important;
+}
+
+[data-testid="stTabs"] button[data-baseweb="tab"] {
+    text-align: center !important;
+}
+
+/* Stack tabs on mobile */
+@media (max-width: 768px) {
+    [data-testid="stTabs"] [data-baseweb="tab-list"] {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+    
+    [data-testid="stTabs"] button[data-baseweb="tab"] {
+        flex: 0 0 45% !important;
+        margin: 2px !important;
+        font-size: 0.75rem !important;
     }
 }
+
+/* ========== LARGER CENTERED KPI VALUES ========== */
+/* Larger centered KPI values */
+[data-testid="stMetricValue"] {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    justify-content: center !important;
+}
+
+[data-testid="stMetricLabel"] {
+    text-align: center !important;
+    justify-content: center !important;
+    font-size: 0.9rem !important;
+}
+
+[data-testid="stMetricDelta"] {
+    text-align: center !important;
+    justify-content: center !important;
+}
+
+[data-testid="metric-container"] {
+    text-align: center !important;
+    align-items: center !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
+
+# ============================================================================
+# ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
+# ============================================================================
+st.markdown("""
+<script>
+// Fix Performance Dashboard emoji rendering - Enhanced version
+(function() {
+    'use strict';
+    
+    function fixPerformanceDashboardEmoji() {
+        // Find all sidebar links
+        const sidebarLinks = document.querySelectorAll('[data-testid="stSidebarNav"] a');
+        
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            const text = (link.textContent || link.innerText || '').trim();
+            
+            // Check if this is the Performance Dashboard link (by href - most reliable)
+            const isPerformanceDashboard = (
+                href.includes('Performance_Dashboard') ||
+                href.includes('Performance-Dashboard') ||
+                href.toLowerCase().includes('performance') && href.toLowerCase().includes('dashboard')
+            );
+            
+            // Also check by text as backup
+            const textMatches = (
+                text === 'Performance Dashboard' ||
+                text.includes('Performance Dashboard') ||
+                text.match(/Performance\s*Dashboard/i)
+            );
+            
+            const hasEmoji = text.includes('⚡') || text.includes('\u26A1') || link.innerHTML.includes('⚡');
+            
+            // If it's Performance Dashboard but missing emoji, add it
+            if ((isPerformanceDashboard || textMatches) && !hasEmoji) {
+                // Method 1: Clear and rebuild the entire link content
+                const originalHTML = link.innerHTML;
+                
+                // Try to preserve any icons/spans but update text
+                if (link.querySelector('span, div')) {
+                    // Has child elements - update them
+                    const children = link.querySelectorAll('span, div, p');
+                    children.forEach(child => {
+                        const childText = (child.textContent || child.innerText || '').trim();
+                        if (childText === 'Performance Dashboard' || childText.includes('Performance Dashboard')) {
+                            child.textContent = '⚡ Performance Dashboard';
+                            child.innerText = '⚡ Performance Dashboard';
+                        }
+                    });
+                } else {
+                    // No children - replace entire content
+                    link.textContent = '⚡ Performance Dashboard';
+                    link.innerText = '⚡ Performance Dashboard';
+                }
+                
+                // Method 2: Use innerHTML as backup
+                if (!link.textContent.includes('⚡')) {
+                    link.innerHTML = '⚡ Performance Dashboard';
+                }
+                
+                // Method 3: Create a new text node
+                const newText = document.createTextNode('⚡ Performance Dashboard');
+                if (link.childNodes.length === 0 || !link.textContent.includes('⚡')) {
+                    link.innerHTML = '';
+                    link.appendChild(newText);
+                }
+                
+                // Force proper font rendering
+                link.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Segoe UI", sans-serif';
+                link.style.whiteSpace = 'normal';
+                
+                // Add data attribute to mark as fixed
+                link.setAttribute('data-emoji-fixed', 'true');
+            }
+        });
+    }
+    
+    // Run immediately
+    fixPerformanceDashboardEmoji();
+    
+    // Run on DOM changes (Streamlit reruns)
+    const observer = new MutationObserver(function() {
+        fixPerformanceDashboardEmoji();
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+    
+    // Run after delays to catch late-rendering elements
+    setTimeout(fixPerformanceDashboardEmoji, 50);
+    setTimeout(fixPerformanceDashboardEmoji, 100);
+    setTimeout(fixPerformanceDashboardEmoji, 300);
+    setTimeout(fixPerformanceDashboardEmoji, 500);
+    setTimeout(fixPerformanceDashboardEmoji, 1000);
+    setTimeout(fixPerformanceDashboardEmoji, 2000);
+    setTimeout(fixPerformanceDashboardEmoji, 3000);
+    
+    // Periodic check as backup (every 2 seconds)
+    setInterval(fixPerformanceDashboardEmoji, 2000);
+    
+    // Also run when page becomes visible (user switches tabs back)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            setTimeout(fixPerformanceDashboardEmoji, 100);
+        }
+    });
+})();
+</script>
+""", unsafe_allow_html=True)
+# ↑↑↑ END OF FINAL FIX CSS + JAVASCRIPT ↑↑↑
+
+# apply_header_spacing() - COMMENTED OUT: Now handled by Nuclear Option CSS above
+
+# ============================================================================
+# RESPONSIVE DESIGN SYSTEM - REMOVED (Now handled by Nuclear Option CSS)
+# ============================================================================
+# This entire section has been replaced by the Nuclear Option CSS above.
+# If you need additional responsive styles, add them to the Nuclear Option CSS block.
+# ============================================================================
+
+# StarGuard Header HTML (CSS already defined in Nuclear Option above)
+st.markdown("""
+<div class='starguard-header-container'>
+    <h1 class='starguard-title'>⭐ StarGuard AI</h1>
+    <p class='starguard-tagline'>Turning Data Into Stars</p>
+    <p class='starguard-subtitle'>
+        Healthcare AI Architect • $148M+ Savings<br>
+        🔒 Zero PHI • Context Engineering • Agentic RAG
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# ============================================================================
+# DUPLICATE CSS REMOVED - All styling now handled by Nuclear Option CSS above
+# ============================================================================
+# The following sections were removed as duplicates:
+# - "AGGRESSIVE SPACING REDUCTION" block (now in Nuclear Option)
+# - "Purple Sidebar Theme" block (now in Nuclear Option)
+# ============================================================================
 
 # Mobile detection and redirect - Force mobile to home page with collapsed sidebar
 # Use session state to prevent redirect loops
@@ -823,17 +1656,24 @@ st.markdown("""
                 sidebar.style.opacity = '0';
             }
             
-            // Hide sidebar toggle button
+            // Hide sidebar toggle button (but NOT the close button)
             const sidebarToggle = document.querySelector('button[aria-label*="sidebar"], button[aria-label*="menu"]');
             if (sidebarToggle) {
-                sidebarToggle.style.display = 'none';
+                // Don't hide close buttons
+                const ariaLabel = sidebarToggle.getAttribute('aria-label') || '';
+                if (!ariaLabel.toLowerCase().includes('close') && !ariaLabel.toLowerCase().includes('collapse')) {
+                    sidebarToggle.style.display = 'none';
+                }
             }
             
-            // Also try to find by class
+            // Also try to find by class (but preserve close buttons)
             const toggleButtons = document.querySelectorAll('button');
             toggleButtons.forEach(btn => {
                 const ariaLabel = btn.getAttribute('aria-label') || '';
-                if (ariaLabel.toLowerCase().includes('sidebar') || ariaLabel.toLowerCase().includes('menu')) {
+                const isCloseButton = ariaLabel.toLowerCase().includes('close') || 
+                                     ariaLabel.toLowerCase().includes('collapse') ||
+                                     btn.getAttribute('data-testid')?.includes('Collapse');
+                if ((ariaLabel.toLowerCase().includes('sidebar') || ariaLabel.toLowerCase().includes('menu')) && !isCloseButton) {
                     btn.style.display = 'none';
                 }
             });
@@ -1228,8 +2068,8 @@ h3 {
     line-height: 1.2 !important; 
 }
 
-/* Reduce spacing between elements */
-.element-container { margin-bottom: 0.4rem !important; }
+/* Reduce section spacing */
+.element-container { margin-bottom: 0.5rem !important; }
 .stMarkdown { margin-bottom: 0.4rem !important; }
 
 /* Readable metric fonts */
@@ -1240,6 +2080,35 @@ h3 {
 /* Chart and data spacing */
 .stPlotlyChart { margin-bottom: 0.6rem !important; }
 .stDataFrame { margin-bottom: 0.6rem !important; }
+
+/* Global table mobile scrolling - applies to all tables */
+@media (max-width: 768px) {
+    /* Force all tables to be scrollable on mobile */
+    .stDataFrame,
+    div[data-testid="stDataFrame"],
+    [data-testid="stExpander"] .stDataFrame,
+    [data-testid="stExpander"] div[data-testid="stDataFrame"] {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+    }
+    
+    /* Table wrapper */
+    .stDataFrame > div,
+    div[data-testid="stDataFrame"] > div {
+        overflow-x: auto !important;
+        width: 100% !important;
+    }
+    
+    /* Table element */
+    .stDataFrame table,
+    div[data-testid="stDataFrame"] table {
+        min-width: 600px !important; /* Ensure table doesn't shrink too much */
+        width: auto !important;
+    }
+}
 
 /* Column spacing */
 [data-testid="column"] { padding: 0.3rem !important; }
@@ -1277,6 +2146,32 @@ hr { margin: 0.6rem 0 !important; }
 
 /* Mobile adjustments - Match Home page formatting */
 @media (max-width: 768px) {
+    /* Mobile header improvements */
+    .main .block-container {
+        padding-top: 0.25rem !important;
+    }
+    
+    .starguard-header-container {
+        padding: 0.5rem !important;
+        margin: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .starguard-title {
+        font-size: 0.95rem !important;
+        margin-bottom: 0.15rem !important;
+    }
+    
+    .starguard-subtitle {
+        font-size: 0.6rem !important;
+        line-height: 1.3 !important;
+    }
+    
+    /* Reduce gap between header and page title */
+    h1:first-of-type {
+        margin-top: 0.25rem !important;
+    }
+    
     .header-container {
         padding: 0.6rem 0.8rem;
         border-radius: 6px;
@@ -1338,7 +2233,16 @@ hr { margin: 0.6rem 0 !important; }
         text-align: center !important;
     }
     
-    /* Center align metrics on mobile */
+    /* Center align metrics on mobile - labels above, values below */
+    [data-testid="stMetricContainer"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+    
     [data-testid="stMetric"],
     [data-testid="stMetricValue"],
     [data-testid="stMetricLabel"],
@@ -1347,6 +2251,29 @@ hr { margin: 0.6rem 0 !important; }
     .compact-metric-card,
     .kpi-card {
         text-align: center !important;
+        width: 100% !important;
+    }
+    
+    /* Ensure metric labels are above values */
+    [data-testid="stMetricLabel"] {
+        display: block !important;
+        text-align: center !important;
+        margin-bottom: 0.3rem !important;
+        width: 100% !important;
+    }
+    
+    [data-testid="stMetricValue"] {
+        display: block !important;
+        text-align: center !important;
+        margin-top: 0.2rem !important;
+        width: 100% !important;
+    }
+    
+    [data-testid="stMetricDelta"] {
+        display: block !important;
+        text-align: center !important;
+        margin-top: 0.2rem !important;
+        width: 100% !important;
     }
     
     /* Mobile columns - stack vertically */
@@ -1372,9 +2299,74 @@ hr { margin: 0.6rem 0 !important; }
         font-size: 0.85rem !important;
     }
     
-    /* Mobile tables - horizontal scroll */
-    .stDataFrame {
+    /* Mobile tables - ensure visibility with horizontal scroll - COMPREHENSIVE FIX */
+    .stDataFrame,
+    div[data-testid="stDataFrame"],
+    div[data-testid="stDataFrame"] > div,
+    div[data-testid="stDataFrame"] > div > div {
         overflow-x: auto !important;
+        overflow-y: visible !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        -webkit-overflow-scrolling: touch !important;
+        position: relative !important;
+    }
+    
+    /* Force table wrapper to scroll */
+    div[data-testid="stDataFrame"] {
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Table container */
+    .stDataFrame > div,
+    div[data-testid="stDataFrame"] > div {
+        overflow-x: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+    }
+    
+    /* Actual table element */
+    .stDataFrame table,
+    div[data-testid="stDataFrame"] table {
+        width: auto !important;
+        min-width: 100% !important;
+        table-layout: auto !important;
+        display: table !important;
+    }
+    
+    /* Table cells - allow wrapping for better mobile UX */
+    .stDataFrame th,
+    .stDataFrame td,
+    div[data-testid="stDataFrame"] th,
+    div[data-testid="stDataFrame"] td {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        padding: 0.5rem 0.4rem !important;
+        font-size: 0.75rem !important;
+        max-width: 200px !important;
+    }
+    
+    /* Table headers - smaller font on mobile */
+    .stDataFrame th,
+    div[data-testid="stDataFrame"] th {
+        font-size: 0.7rem !important;
+        font-weight: 600 !important;
+        padding: 0.4rem 0.3rem !important;
+    }
+    
+    /* Ensure expander tables also scroll */
+    [data-testid="stExpander"] .stDataFrame,
+    [data-testid="stExpander"] div[data-testid="stDataFrame"] {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
     
     /* Mobile tabs - stack vertically to eliminate horizontal scrolling */
@@ -1412,6 +2404,26 @@ hr { margin: 0.6rem 0 !important; }
         word-wrap: break-word !important;
         white-space: normal !important;
     }
+    
+    /* Mobile chart fixes */
+    .js-plotly-plot .plotly .gtitle {
+        font-size: 12px !important;
+    }
+    
+    .js-plotly-plot .plotly .legend {
+        font-size: 9px !important;
+    }
+    
+    /* Footer - center all content on mobile */
+    div[data-testid="stMarkdownContainer"]:has(> div > p:contains("HEDIS Portfolio Optimizer")) {
+        text-align: center !important;
+    }
+    
+    /* Center footer paragraphs */
+    div[data-testid="stMarkdownContainer"] p {
+        text-align: center !important;
+    }
+    
 }
     </style>
     """, unsafe_allow_html=True)
@@ -2021,8 +3033,282 @@ st.markdown("""
     /* Sidebar selectbox and inputs */
     [data-testid="stSidebar"] .stSelectbox label,
     [data-testid="stSidebar"] .stSlider label,
-    [data-testid="stSidebar"] .stDateInput label {
-        color: #ffffff !important;
+    /* ========== DATE INPUT VISIBILITY - DESKTOP & MOBILE ========== */
+    
+    /* Date input container in sidebar - all screen sizes */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 5px !important;
+        padding: 2px 4px !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    /* Reduce padding inside date input boxes */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] > div,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] > div > div {
+        padding: 0.2rem 0.35rem !important;
+        margin: 0 !important;
+    }
+    
+    /* Reduce padding for date input columns */
+    [data-testid="stSidebar"] [data-testid="column"] {
+        padding: 0.1rem !important;
+        gap: 0.25rem !important;
+    }
+    
+    /* ========== HIDE DATE INPUT LABELS INSIDE INPUT BOXES ========== */
+    /* Hide labels that appear inside date input boxes (we use custom labels above) */
+    [data-testid="stSidebar"] .stDateInput label,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] label,
+    [data-testid="stSidebar"] .stDateInput > label,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] > label,
+    [data-testid="stSidebar"] .stDateInput [data-baseweb="form-control"] label,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] [data-baseweb="form-control"] label {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 0 !important;
+    }
+    
+    /* Hide any placeholder text that might show "Start Date" or "End Date" */
+    [data-testid="stSidebar"] .stDateInput input::placeholder,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input::placeholder {
+        color: transparent !important;
+    }
+    
+    /* Force the date input text visible - REDUCED PADDING */
+    [data-testid="stSidebar"] .stDateInput input,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input,
+    [data-testid="stSidebar"] [data-baseweb="input"] input {
+        color: #1f2937 !important;
+        background-color: white !important;
+        -webkit-text-fill-color: #1f2937 !important;
+        padding: 0.15rem 0.3rem !important; /* Minimized padding */
+        border: 1px solid #d1d5db !important;
+        border-radius: 4px !important;
+        font-size: 0.9rem !important;
+        opacity: 1 !important;
+    }
+    
+    /* Reduce date input container padding */
+    [data-testid="stSidebar"] .stDateInput,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] {
+        padding: 0.05rem 0 !important; /* Minimized container padding */
+        margin: 0.05rem 0 !important;
+    }
+    
+    /* Reduce date input wrapper padding */
+    [data-testid="stSidebar"] .stDateInput > div,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] > div {
+        padding: 0.05rem !important; /* Minimized wrapper padding */
+    }
+    
+    /* Reduce padding on date input containers */
+    [data-testid="stSidebar"] .stDateInput,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] {
+        padding: 0.1rem 0 !important;
+    }
+    
+    /* Date input wrapper */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] > div > div {
+        background-color: white !important;
+    }
+    
+    /* BaseWeb input component */
+    [data-testid="stSidebar"] [data-baseweb="input"] {
+        background-color: white !important;
+    }
+    
+    [data-testid="stSidebar"] [data-baseweb="input"] input {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+    }
+    
+    /* ========== FORCE DATE VALUES VISIBLE ========== */
+    /* Force date values visible - Enhanced */
+    [data-testid="stDateInput"] input {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+        background-color: white !important;
+        font-size: 0.9rem !important;
+        padding: 0.5rem !important;
+    }
+    
+    /* Target BaseWeb input */
+    [data-baseweb="input"] input {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+    }
+    
+    /* Also target text type inputs */
+    [data-testid="stDateInput"] input[type="text"] {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+        background-color: white !important;
+        opacity: 1 !important;
+    }
+    
+    /* Sidebar specific */
+    [data-testid="stSidebar"] input {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+        background-color: white !important;
+    }
+    
+    /* Force the date text to show */
+    [data-testid="stDateInput"] [data-baseweb="base-input"] {
+        background-color: white !important;
+    }
+    
+    [data-testid="stDateInput"] [data-baseweb="base-input"] input {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+        opacity: 1 !important;
+    }
+    
+    /* Date picker button/icon */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] button {
+        color: #4A3D6F !important;
+        background-color: white !important;
+    }
+    
+    [data-testid="stSidebar"] [data-testid="stDateInput"] svg {
+        fill: #4A3D6F !important;
+    }
+    
+    /* Caption text (days selected) */
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+        color: white !important;
+        font-size: 0.85rem !important;
+    }
+    
+    /* Section headers */
+    [data-testid="stSidebar"] h3 {
+        color: white !important;
+    }
+    
+    /* ========== MOBILE-SPECIFIC ENHANCEMENTS ========== */
+    
+    @media (max-width: 768px) {
+        /* Larger touch targets for mobile date inputs */
+        [data-testid="stSidebar"] [data-testid="stDateInput"] input {
+            padding: 0.75rem !important;
+            font-size: 1rem !important;
+            min-height: 44px !important;  /* Apple's minimum touch target */
+        }
+        
+        /* Larger tap area for calendar icon */
+        [data-testid="stSidebar"] [data-testid="stDateInput"] button {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            padding: 0.5rem !important;
+        }
+        
+        /* More spacing between date fields on mobile */
+        [data-testid="stSidebar"] [data-testid="stDateInput"] {
+            margin-bottom: 0.75rem !important;
+        }
+        
+        /* Ensure date labels are readable on mobile */
+        [data-testid="stSidebar"] [data-testid="stDateInput"] label {
+            font-size: 0.95rem !important;
+        }
+        
+        /* Mobile specific - force labels visible */
+        [data-testid="stSidebar"] .stDateInput label {
+            color: white !important;
+            font-size: 0.95rem !important;
+        }
+        
+        /* Days selected caption - larger on mobile */
+        [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+            font-size: 0.9rem !important;
+            padding: 0.5rem 0 !important;
+        }
+        
+        /* Section header larger on mobile */
+        [data-testid="stSidebar"] h3 {
+            font-size: 1.1rem !important;
+        }
+    }
+    
+    /* ========== HIDE SEARCH/FILTER TEXT BOXES ON MOBILE ========== */
+    @media (max-width: 768px) {
+        /* Hide dataframe search/filter text boxes on mobile */
+        [data-testid="stDataFrame"] input[type="text"],
+        [data-testid="stDataFrame"] input[type="search"],
+        .stDataFrame input[type="text"],
+        .stDataFrame input[type="search"] {
+            display: none !important;
+        }
+        
+        /* Hide generic search boxes (chat inputs have different placeholders, so they stay visible) */
+        [data-testid="stTextInput"][placeholder*="search" i],
+        [data-testid="stTextInput"][placeholder*="filter" i],
+        [data-testid="stTextInput"][placeholder*="Search" i],
+        [data-testid="stTextInput"][placeholder*="Filter" i] {
+            display: none !important;
+        }
+        
+        /* Hide search boxes in expanders and containers */
+        .streamlit-expander input[type="text"],
+        .streamlit-expander input[type="search"] {
+            display: none !important;
+        }
+        
+        /* Fix tables on mobile - prevent off-page overflow */
+        [data-testid="stDataFrame"] {
+            overflow-x: auto !important;
+            max-width: 100% !important;
+        }
+        
+        [data-testid="stDataFrame"] > div {
+            max-width: 100vw !important;
+        }
+        
+        /* Ensure table containers don't overflow */
+        .stDataFrame {
+            overflow-x: auto !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+        
+        /* Force table scrolling on mobile */
+        [data-testid="stDataFrame"] table {
+            min-width: 100% !important;
+            display: table !important;
+        }
+    }
+    
+    /* ========== CALENDAR POPUP FIXES ========== */
+    
+    /* Ensure calendar popup is visible and usable */
+    [data-baseweb="popover"] {
+        z-index: 9999 !important;
+    }
+    
+    [data-baseweb="calendar"] {
+        background-color: white !important;
+        color: #1f2937 !important;
+    }
+    
+    [data-baseweb="calendar"] button {
+        color: #1f2937 !important;
+    }
+    
+    /* Mobile calendar sizing */
+    @media (max-width: 768px) {
+        [data-baseweb="calendar"] {
+            font-size: 0.95rem !important;
+        }
+        
+        [data-baseweb="calendar"] button {
+            min-width: 40px !important;
+            min-height: 40px !important;
+        }
     }
     
     /* Executive summary expander - expanded by default styling */
@@ -2086,6 +3372,20 @@ st.markdown("""
     [data-testid="stSidebar"] button[aria-label*="More"],
     [data-testid="stSidebar"] button[aria-label*="Less"] {
         color: #ffffff !important;
+    }
+    
+    /* ========== ENSURE DATE RANGE LABELS ARE VISIBLE ========== */
+    /* Force all paragraphs in sidebar to be white (covers custom date labels) */
+    [data-testid="stSidebar"] p {
+        color: #FFFFFF !important;
+    }
+    
+    /* Specifically target custom date labels */
+    [data-testid="stSidebar"] p[style*="Start Date"],
+    [data-testid="stSidebar"] p[style*="End Date"] {
+        color: #FFFFFF !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
     }
     
     /* Target all text content inside navigation buttons - comprehensive */
@@ -2173,6 +3473,17 @@ st.markdown("""
         border-radius: 12px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 1.5rem;
+        text-align: center !important;
+    }
+    
+    .plotly-container h4 {
+        text-align: center !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .plotly-container p {
+        text-align: center !important;
+        margin: 0.25rem 0 !important;
     }
     
     /* Spacing utilities */
@@ -2289,6 +3600,281 @@ st.markdown("""
     setTimeout(aggressiveMobileCleanup, 500);
     setTimeout(aggressiveMobileCleanup, 1000);
     setTimeout(aggressiveMobileCleanup, 2000);
+    
+    // Fix sidebar label: ALWAYS ensure "⚡ Performance Dashboard" is shown correctly
+    function fixPerformanceDashboardLabel() {
+        const sidebarNav = document.querySelector('[data-testid="stSidebarNav"]');
+        if (sidebarNav) {
+            const links = sidebarNav.querySelectorAll('a, [role="link"]');
+            links.forEach(link => {
+                const text = (link.textContent || link.innerText || '').trim();
+                const lowerText = text.toLowerCase();
+                
+                // Check if it's Performance Dashboard - catch ANY variation including corrupted emojis
+                const isPerformanceDashboard = (
+                    lowerText.includes('performance dashboard') ||
+                    lowerText.includes('performance_dashboard') ||
+                    /performance\s*dashboard/i.test(text)
+                );
+                
+                // Check if it needs fixing (missing emoji, has wrong prefix, or corrupted)
+                const needsFix = (
+                    isPerformanceDashboard && (
+                        text.startsWith('z') ||
+                        text.startsWith('â') ||
+                        text.startsWith('š') ||
+                        text.startsWith('¡') ||
+                        !text.includes('⚡')
+                    )
+                );
+                
+                if (needsFix || (isPerformanceDashboard && text !== '⚡ Performance Dashboard')) {
+                    // Force set to correct text
+                    link.textContent = '⚡ Performance Dashboard';
+                    link.innerText = '⚡ Performance Dashboard';
+                    
+                    // Fix all child elements
+                    link.querySelectorAll('span, div, p, *').forEach(child => {
+                        const childText = (child.textContent || child.innerText || '').trim();
+                        if (childText.toLowerCase().includes('performance dashboard') && 
+                            childText !== '⚡ Performance Dashboard') {
+                            child.textContent = '⚡ Performance Dashboard';
+                            child.innerText = '⚡ Performance Dashboard';
+                        }
+                    });
+                }
+            });
+        }
+    }
+    
+    // Run on page load and after delays
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixPerformanceDashboardLabel);
+    } else {
+        fixPerformanceDashboardLabel();
+    }
+    setTimeout(fixPerformanceDashboardLabel, 500);
+    setTimeout(fixPerformanceDashboardLabel, 1000);
+    setTimeout(fixPerformanceDashboardLabel, 2000);
+    // ====================================================================
+    // FORCE CENTER ALL METRIC LABELS AND VALUES (CUSTOM HTML METRICS)
+    // ====================================================================
+    function forceCenterCustomMetrics() {
+        // Find all custom metric containers
+        const customContainers = document.querySelectorAll('.centered-metric-container');
+        
+        customContainers.forEach(container => {
+            // Force center alignment on container
+            container.style.textAlign = 'center';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+            container.style.width = '100%';
+            container.style.marginLeft = 'auto';
+            container.style.marginRight = 'auto';
+            
+            // Center all paragraphs inside
+            const paragraphs = container.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                p.style.textAlign = 'center';
+                p.style.marginLeft = 'auto';
+                p.style.marginRight = 'auto';
+                p.style.width = '100%';
+                p.style.display = 'block';
+            });
+            
+            // Center all spans (like help icons)
+            const spans = container.querySelectorAll('span');
+            spans.forEach(span => {
+                span.style.textAlign = 'center';
+                span.style.display = 'inline';
+            });
+        });
+        
+        // Also target markdown containers in columns
+        const columnMarkdowns = document.querySelectorAll('[data-testid="column"] .stMarkdown, [data-testid="column"] .stMarkdownContainer');
+        columnMarkdowns.forEach(md => {
+            md.style.textAlign = 'center';
+            md.style.display = 'flex';
+            md.style.flexDirection = 'column';
+            md.style.alignItems = 'center';
+            
+            const mdParagraphs = md.querySelectorAll('p');
+            mdParagraphs.forEach(p => {
+                p.style.textAlign = 'center';
+                p.style.marginLeft = 'auto';
+                p.style.marginRight = 'auto';
+                p.style.width = '100%';
+            });
+        });
+    }
+    
+    // Run immediately and on delays
+    forceCenterCustomMetrics();
+    setTimeout(forceCenterCustomMetrics, 100);
+    setTimeout(forceCenterCustomMetrics, 500);
+    setTimeout(forceCenterCustomMetrics, 1000);
+    setTimeout(forceCenterCustomMetrics, 2000);
+    
+    // Watch for new metrics being added
+    const metricObserver = new MutationObserver(function() {
+        forceCenterCustomMetrics();
+    });
+    
+    metricObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // ====================================================================
+    // REMOVE DATE INPUT LABELS FROM INPUT BOXES
+    // ====================================================================
+    function removeDateInputLabels() {
+        // Find all date input labels in sidebar
+        const dateLabels = document.querySelectorAll('[data-testid="stSidebar"] .stDateInput label, [data-testid="stSidebar"] [data-testid="stDateInput"] label');
+        
+        dateLabels.forEach(label => {
+            const labelText = (label.textContent || label.innerText || '').trim();
+            // Hide labels that say "Start Date" or "End Date"
+            if (labelText === 'Start Date' || labelText === 'End Date' || labelText.includes('Start Date') || labelText.includes('End Date')) {
+                label.style.display = 'none';
+                label.style.visibility = 'hidden';
+                label.style.height = '0';
+                label.style.margin = '0';
+                label.style.padding = '0';
+            }
+        });
+    }
+    
+    // ====================================================================
+    // FORCE DARK TEXT ON SIDEBAR DATE INPUTS (for visibility)
+    // ====================================================================
+    function forceDateInputTextVisible() {
+        // Find all date inputs in sidebar
+        const sidebarDateInputs = document.querySelectorAll('[data-testid="stSidebar"] .stDateInput input, [data-testid="stSidebar"] [data-testid="stDateInput"] input');
+        
+        sidebarDateInputs.forEach(input => {
+            // Force dark text color for visibility
+            input.style.color = '#1f2937';
+            input.style.setProperty('color', '#1f2937', 'important');
+            input.style.setProperty('-webkit-text-fill-color', '#1f2937', 'important');
+            input.style.backgroundColor = 'white';
+        });
+        
+        // Also target BaseWeb input wrappers
+        const baseWebInputs = document.querySelectorAll('[data-testid="stSidebar"] [data-baseweb="input"] input');
+        baseWebInputs.forEach(input => {
+            input.style.color = '#1f2937';
+            input.style.setProperty('color', '#1f2937', 'important');
+            input.style.setProperty('-webkit-text-fill-color', '#1f2937', 'important');
+        });
+    }
+    
+    // Run immediately and on delays
+    removeDateInputLabels();
+    forceDateInputTextVisible();
+    setTimeout(removeDateInputLabels, 100);
+    setTimeout(forceDateInputTextVisible, 100);
+    setTimeout(removeDateInputLabels, 500);
+    setTimeout(forceDateInputTextVisible, 500);
+    setTimeout(removeDateInputLabels, 1000);
+    setTimeout(forceDateInputTextVisible, 1000);
+    setTimeout(removeDateInputLabels, 2000);
+    setTimeout(forceDateInputTextVisible, 2000);
+    
+    // Watch for new date inputs being added
+    const dateInputObserver = new MutationObserver(function() {
+        removeDateInputLabels();
+        forceDateInputTextVisible();
+    });
+    
+    dateInputObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Also run periodically to catch any missed inputs
+    setInterval(function() {
+        removeDateInputLabels();
+        forceDateInputTextVisible();
+    }, 2000);
+    
+    // ====================================================================
+    // FORCE DATE INPUT VISIBILITY - DARK TEXT ON WHITE BACKGROUND
+    // ====================================================================
+    function forceDateInputVisibility() {
+        // Find all date inputs in sidebar
+        const sidebarDateInputs = document.querySelectorAll('[data-testid="stSidebar"] [data-testid="stDateInput"] input, [data-testid="stSidebar"] .stDateInput input');
+        
+        sidebarDateInputs.forEach(input => {
+            // Force dark text on white background
+            input.style.color = '#1f2937';
+            input.style.setProperty('color', '#1f2937', 'important');
+            input.style.setProperty('-webkit-text-fill-color', '#1f2937', 'important');
+            input.style.backgroundColor = 'white';
+            input.style.setProperty('background-color', 'white', 'important');
+            
+            // Also target parent containers
+            const parent = input.closest('[data-testid="stDateInput"]') || input.closest('.stDateInput');
+            if (parent) {
+                // Make container background white
+                parent.style.backgroundColor = 'white';
+                parent.style.setProperty('background-color', 'white', 'important');
+                
+                // Find BaseWeb input wrapper
+                const baseWebInput = parent.querySelector('[data-baseweb="input"]');
+                if (baseWebInput) {
+                    baseWebInput.style.backgroundColor = 'white';
+                    baseWebInput.style.setProperty('background-color', 'white', 'important');
+                    
+                    const baseWebInputField = baseWebInput.querySelector('input');
+                    if (baseWebInputField) {
+                        baseWebInputField.style.color = '#1f2937';
+                        baseWebInputField.style.setProperty('color', '#1f2937', 'important');
+                        baseWebInputField.style.setProperty('-webkit-text-fill-color', '#1f2937', 'important');
+                        baseWebInputField.style.backgroundColor = 'white';
+                    }
+                }
+                
+                // Keep labels white
+                const labels = parent.querySelectorAll('label');
+                labels.forEach(label => {
+                    label.style.color = '#ffffff';
+                    label.style.setProperty('color', '#ffffff', 'important');
+                });
+            }
+        });
+        
+        // Fix captions (days selected)
+        const captions = document.querySelectorAll('[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p, [data-testid="stSidebar"] .stCaption p');
+        captions.forEach(caption => {
+            caption.style.color = '#ffffff';
+            caption.style.setProperty('color', '#ffffff', 'important');
+        });
+    }
+    
+    // Run immediately and on delays
+    forceDateInputVisibility();
+    setTimeout(forceDateInputVisibility, 100);
+    setTimeout(forceDateInputVisibility, 500);
+    setTimeout(forceDateInputVisibility, 1000);
+    setTimeout(forceDateInputVisibility, 2000);
+    
+    // Watch for new date inputs being added
+    const dateVisibilityObserver = new MutationObserver(function() {
+        forceDateInputVisibility();
+    });
+    
+    dateVisibilityObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Also run periodically
+    setInterval(forceDateInputVisibility, 2000);
+
+
 </script>
 """, unsafe_allow_html=True)
 
@@ -2298,11 +3884,7 @@ st.markdown("""
 # ============================================================================
 # Sliders can now safely access raw_portfolio_data
 with st.sidebar:
-    st.markdown("## 🔒 Secure Healthcare AI")
-    st.markdown("### HEDIS Portfolio Optimizer")
-    st.caption("HIPAA-Compliant | Zero PHI Exposure")
-    st.markdown("---")
-    st.title("🎛️ Filters")
+    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>🎛️ Filters</p>", unsafe_allow_html=True)
     
     # ====================================================================
     # MEMBERSHIP SIZE CONTROL - REMOVED (CONSOLIDATED WITH PLAN SIZE FILTER)
@@ -2313,7 +3895,7 @@ with st.sidebar:
     # ====================================================================
     # DATE RANGE - Default Q4 2025
     # ====================================================================
-    st.markdown("### 📅 Date Range")
+    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>📅 Date Range</p>", unsafe_allow_html=True)
     
     # Quick presets
     preset_col1, preset_col2 = st.columns(2, gap="small")
@@ -2334,27 +3916,33 @@ with st.sidebar:
     date_col1, date_col2 = st.columns(2, gap="small")
     
     with date_col1:
+        # Explicitly show Start Date label
+        st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 500; margin-top: 0.75rem; margin-bottom: 0.25rem;'>Start Date</p>", unsafe_allow_html=True)
         start_date = st.date_input(
-            "Start Date",
-            value=st.session_state.filters['date_range_start'],
+            "",  # Empty label - label is shown above
+            value=st.session_state.filters.get('date_range_start', date(2024, 10, 1)),
             key="start_date_filter",
-            format="MM/DD/YYYY"
+            format="MM/DD/YYYY",
+            label_visibility="collapsed"  # Hide label from input box
         )
         st.session_state.filters['date_range_start'] = start_date
     
     with date_col2:
+        # Explicitly show End Date label
+        st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 500; margin-top: 0.75rem; margin-bottom: 0.25rem;'>End Date</p>", unsafe_allow_html=True)
         end_date = st.date_input(
-            "End Date",
-            value=st.session_state.filters['date_range_end'],
+            "",  # Empty label - label is shown above
+            value=st.session_state.filters.get('date_range_end', date(2024, 12, 31)),
             key="end_date_filter",
-            format="MM/DD/YYYY"
+            format="MM/DD/YYYY",
+            label_visibility="collapsed"  # Hide label from input box
         )
         st.session_state.filters['date_range_end'] = end_date
     
     # Display and validate
     if start_date <= end_date:
         days = (end_date - start_date).days
-        st.caption(f"📆 {start_date.strftime('%m/%d/%Y')} to {end_date.strftime('%m/%d/%Y')} ({days} days)")
+        st.markdown(f"<p style='color: white; font-size: 0.85rem; margin-top: 0.5rem;'>📆 {start_date.strftime('%m/%d/%Y')} to {end_date.strftime('%m/%d/%Y')} ({days} days)</p>", unsafe_allow_html=True)
     else:
         st.error("⚠️ Start date must be before end date")
     
@@ -2366,7 +3954,7 @@ with st.sidebar:
     # ====================================================================
     # HEDIS MEASURES - All 12 Selected by Default
     # ====================================================================
-    st.markdown("### 📋 HEDIS Measures")
+    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>📋 HEDIS Measures</p>", unsafe_allow_html=True)
     
     # Get measures from session state
     ALL_MEASURES = st.session_state.all_measures
@@ -2407,7 +3995,7 @@ with st.sidebar:
     # ========================================================================
     # PLAN SIZE FILTER (CONSOLIDATED - Also sets scaling membership size)
     # ========================================================================
-    st.markdown("### 🏥 Plan Size")
+    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>🏥 Plan Size</p>", unsafe_allow_html=True)
     
     PLAN_SIZE_OPTIONS = [
         "Small (< 10K)",
@@ -2461,7 +4049,7 @@ with st.sidebar:
     # ====================================================================
     # THRESHOLD FILTERS - COMPLETE WORKING VERSION
     # ====================================================================
-    st.markdown("### 🎯 Threshold Filters")
+    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>🎯 Threshold Filters</p>", unsafe_allow_html=True)
     
     # Ensure filters dictionary exists
     if 'filters' not in st.session_state:
@@ -2516,14 +4104,11 @@ with st.sidebar:
     else:
         st.caption(f"🔍 Filtering: ≥ {min_closure_value}% closure rate")
     
-    st.markdown("---")
-    
-    
     # ============================================================================
     # LIVE FILTER PREVIEW
     # ============================================================================
     st.markdown("---")
-    st.markdown("### 📊 Filter Impact")
+    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>📊 Filter Impact</p>", unsafe_allow_html=True)
     
     # Apply all current filters to see what would be returned
     if 'portfolio_data' in st.session_state:
@@ -2624,7 +4209,7 @@ with st.sidebar:
     # ========================================================================
     # FILTER ACTIONS
     # ========================================================================
-    st.markdown("### ⚙️ Actions")
+    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>⚙️ Actions</p>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2, gap="small")
     
@@ -2666,8 +4251,6 @@ with st.sidebar:
         else:
             st.success("✓ All data")
     
-    st.markdown("---")
-    
     # Database status
     show_db_status()
     st.markdown("---")
@@ -2675,12 +4258,24 @@ with st.sidebar:
     st.markdown("**Built by:** Robert Reichert")
     st.markdown("**Version:** 4.0")
     
-    # Sidebar value proposition - at bottom
-    from utils.value_proposition import render_sidebar_value_proposition
-    render_sidebar_value_proposition()
-    
     # Sidebar footer - must be inside sidebar context
     render_sidebar_footer()
+    
+    # Secure AI box (Mobile Optimized badge removed)
+    st.sidebar.markdown("""
+    <style>
+    #secure-ai-box, #secure-ai-box * { color: #000 !important; }
+    </style>
+    
+    <div id='secure-ai-box' style='background: #e8f5e9; padding: 12px; border-radius: 12px; margin: 16px auto; text-align: center; border: 2px solid #4caf50; max-width: 280px;'>
+        <div style='color: #000 !important; font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;'>
+            <font color='#000000'>🔒 Secure AI Architect</font>
+        </div>
+        <div style='color: #000 !important; font-size: 0.85rem; line-height: 1.5;'>
+            <font color='#000000'>Healthcare AI insights without data exposure. On-premises intelligence delivering 2.8-4.1x ROI and full HIPAA compliance.</font>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ============================================================================
 # SYNC WIDGET VALUES FOR BACKWARD COMPATIBILITY
@@ -2696,8 +4291,6 @@ if 'membership_slider_widget' in st.session_state:
 # 6. MAIN CONTENT
 # ============================================================================
 # StarGuard AI Header (already rendered above after st.set_page_config)
-st.markdown("### Production-Grade Analytics for Medicare Advantage Star Rating Optimization | Zero PHI Exposure | HIPAA-Compliant Architecture")
-
 
 # ============================================================================
 # HERO SECTION - DYNAMIC PORTFOLIO PERFORMANCE OVERVIEW
@@ -2739,39 +4332,39 @@ if not hero_filtered.empty:
     current_stars = 4.0  # Baseline
     projected_stars = min(5.0, current_stars + star_improvement)
     
-    # 4-column metric cards
+    # 4-column metric cards - USING CENTERED CUSTOM HTML
     col1, col2, col3, col4 = st.columns(4, gap="small")
     
     with col1:
-        st.metric(
+        centered_metric(
             label="Potential ROI",
             value=f"{hero_roi_percent:.0f}%",
             delta=f"+{format_currency(hero_net_benefit)} annually",
-            help=f"Projected return on {format_currency(hero_investment)} investment"
+            help_text=f"Projected return on {format_currency(hero_investment)} investment"
         )
     
     with col2:
-        st.metric(
+        centered_metric(
             label="Star Rating Impact",
             value=f"{projected_stars:.1f} ⭐",
             delta=f"+{star_improvement:.1f} stars",
-            help="Projected improvement in CMS Star Rating for 2025"
+            help_text="Projected improvement in CMS Star Rating for 2025"
         )
     
     with col3:
-        st.metric(
+        centered_metric(
             label="Members Optimized",
             value=f"{hero_members:,}",
             delta=f"{hero_closures:,} closures",
-            help=f"Total members in filtered dataset at {st.session_state.membership_size:,} member plan size"
+            help_text=f"Total members in filtered dataset at {st.session_state.membership_size:,} member plan size"
         )
     
     with col4:
-        st.metric(
+        centered_metric(
             label="Compliance Rate",
             value=f"{hero_success_rate:.1f}%",
             delta=f"+{hero_success_rate - baseline_success:.1f}%",
-            help="Overall HEDIS measure compliance rate vs industry baseline"
+            help_text="Overall HEDIS measure compliance rate vs industry baseline"
         )
 
 else:
@@ -2781,16 +4374,16 @@ else:
     col1, col2, col3, col4 = st.columns(4, gap="small")
     
     with col1:
-        st.metric(label="Potential ROI", value="--", delta="Adjust filters")
+        centered_metric(label="Potential ROI", value="--", delta="Adjust filters")
     
     with col2:
-        st.metric(label="Star Rating Impact", value="--", delta="Adjust filters")
+        centered_metric(label="Star Rating Impact", value="--", delta="Adjust filters")
     
     with col3:
-        st.metric(label="Members Optimized", value="0", delta="No data")
+        centered_metric(label="Members Optimized", value="0", delta="No data")
     
     with col4:
-        st.metric(label="Compliance Rate", value="--", delta="Adjust filters")
+        centered_metric(label="Compliance Rate", value="--", delta="Adjust filters")
 
 # Style the metric cards
 if HAS_STREAMLIT_EXTRAS:
@@ -2815,14 +4408,15 @@ else:
 
 current_filtered = apply_all_filters(current_data)
 
-# Create status bar
+# Create status bar - USING CENTERED CUSTOM HTML
 col1, col2, col3, col4, col5 = st.columns(5, gap="small")
 
 with col1:
-    st.metric(
+    delta_val = f"{len(current_filtered) - len(current_data):,}" if len(current_filtered) != len(current_data) else None
+    centered_metric(
         label="📋 Records Shown",
         value=f"{len(current_filtered):,}",
-        delta=f"{len(current_filtered) - len(current_data):,}" if len(current_filtered) != len(current_data) else None
+        delta=delta_val
     )
 
 with col2:
@@ -2830,25 +4424,26 @@ with col2:
     if not current_filtered.empty and 'measure_name' in current_filtered.columns:
         unique_measures = current_filtered['measure_name'].nunique()
         total_measures = current_data['measure_name'].nunique() if not current_data.empty else 12
-        st.metric(
+        delta_val = f"{total_measures - unique_measures} filtered out" if unique_measures < total_measures else "All measures"
+        centered_metric(
             label="📊 Measures",
             value=f"{unique_measures}",
-            delta=f"{total_measures - unique_measures} filtered out" if unique_measures < total_measures else "All measures"
+            delta=delta_val
         )
     else:
-        st.metric(label="📊 Measures", value="--")
+        centered_metric(label="📊 Measures", value="--")
 
 with col3:
     if not current_filtered.empty and 'financial_value' in current_filtered.columns:
         total_value = current_filtered['financial_value'].sum()
         scaled_value = total_value * (st.session_state.membership_size / 10000)
-        st.metric(
+        centered_metric(
             label="💰 Total Value",
             value=format_currency(scaled_value),
             delta=None
         )
     else:
-        st.metric(label="💰 Total Value", value="$0")
+        centered_metric(label="💰 Total Value", value="$0")
 
 with col4:
     # Plan Size Count
@@ -2857,23 +4452,24 @@ with col4:
     membership_size = st.session_state.get('membership_size', 10000)
     
     if plan_size_count > 0:
-        st.metric(
+        help_text = f"Selected plan size categories: {', '.join(plan_sizes_selected[:2])}{'...' if len(plan_sizes_selected) > 2 else ''}"
+        centered_metric(
             label="🏥 Plan Sizes",
             value=f"{plan_size_count}",
             delta=f"Scaling: {membership_size:,} members",
-            help=f"Selected plan size categories: {', '.join(plan_sizes_selected[:2])}{'...' if len(plan_sizes_selected) > 2 else ''}"
+            help_text=help_text
         )
     else:
-        st.metric(
+        centered_metric(
             label="🏥 Plan Sizes",
             value="All",
             delta=f"Scaling: {membership_size:,} members",
-            help="No plan size filter applied - showing all plan sizes"
+            help_text="No plan size filter applied - showing all plan sizes"
         )
 
 with col5:
     filter_pct = (len(current_filtered) / len(current_data) * 100) if len(current_data) > 0 else 0
-    st.metric(
+    centered_metric(
         label="🎯 Filter Efficiency",
         value=f"{filter_pct:.1f}%",
         delta="Active" if filter_pct < 100 else "No filters"
@@ -3140,8 +4736,21 @@ with tab1:
             if available_cols:
                 st.dataframe(
                     filtered_data[available_cols].head(10),
-                    use_container_width=True
+                    use_container_width=True,
+                    hide_index=True
                 )
+                # Add mobile-specific styling for table visibility
+                st.markdown("""
+                <style>
+                @media (max-width: 768px) {
+                    /* Ensure sample filtered data table is scrollable */
+                    div[data-testid="stDataFrame"]:has(+ div) {
+                        overflow-x: auto !important;
+                        -webkit-overflow-scrolling: touch !important;
+                    }
+                }
+                </style>
+                """, unsafe_allow_html=True)
     
     # ========================================================================
     # CHECK IF FILTERS REMOVED ALL DATA
@@ -3191,6 +4800,32 @@ with tab1:
     avg_cost_per_closure = baseline_investment / baseline_closures if baseline_closures > 0 else 0
     
     # Main Content Grid - 2x2 layout (always displayed)
+    st.markdown("""
+    <style>
+    /* Center KPI metric containers and all their content */
+    .plotly-container {
+        text-align: center !important;
+    }
+    
+    .plotly-container h4 {
+        text-align: center !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .plotly-container p {
+        text-align: center !important;
+        margin: 0.25rem 0 !important;
+    }
+    
+    /* Center columns containing plotly containers */
+    [data-testid="column"]:has(.plotly-container) {
+        text-align: center !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     st.markdown('<div class="kpi-section-wrapper">', unsafe_allow_html=True)
     st.markdown("#### 📈 Key Performance Indicators")
     
@@ -3199,12 +4834,12 @@ with tab1:
     
     with col1:
         st.markdown("""
-        <div class="plotly-container">
-            <h4>Total Investment</h4>
-            <p style="font-size: 2.5rem; font-weight: 700; color: #0066cc;">
+        <div class="plotly-container" style="text-align: center;">
+            <h4 style="text-align: center; margin: 0.5rem 0;">Total Investment</h4>
+            <p style="font-size: 2.5rem; font-weight: 700; color: #0066cc; text-align: center; margin: 0.25rem 0;">
                 {}
             </p>
-            <p style="color: #666;">
+            <p style="color: #666; text-align: center; margin: 0.25rem 0;">
                 {} per member
             </p>
         </div>
@@ -3216,12 +4851,12 @@ with tab1:
     
     with col2:
         st.markdown("""
-        <div class="plotly-container">
-            <h4>Successful Closures</h4>
-            <p style="font-size: 2.5rem; font-weight: 700; color: #0066cc;">
+        <div class="plotly-container" style="text-align: center;">
+            <h4 style="text-align: center; margin: 0.5rem 0;">Successful Closures</h4>
+            <p style="font-size: 2.5rem; font-weight: 700; color: #0066cc; text-align: center; margin: 0.25rem 0;">
                 {}
             </p>
-            <p style="color: #666;">
+            <p style="color: #666; text-align: center; margin: 0.25rem 0;">
                 {} success rate
             </p>
         </div>
@@ -3236,12 +4871,12 @@ with tab1:
     
     with col3:
         st.markdown("""
-        <div class="plotly-container">
-            <h4>Revenue Impact</h4>
-            <p style="font-size: 2.5rem; font-weight: 700; color: #0066cc;">
+        <div class="plotly-container" style="text-align: center;">
+            <h4 style="text-align: center; margin: 0.5rem 0;">Revenue Impact</h4>
+            <p style="font-size: 2.5rem; font-weight: 700; color: #0066cc; text-align: center; margin: 0.25rem 0;">
                 {}
             </p>
-            <p style="color: #666;">
+            <p style="color: #666; text-align: center; margin: 0.25rem 0;">
                 {} per member
             </p>
         </div>
@@ -3253,12 +4888,12 @@ with tab1:
     
     with col4:
         st.markdown("""
-        <div class="plotly-container">
-            <h4>Net Benefit</h4>
-            <p style="font-size: 2.5rem; font-weight: 700; color: #00cc66;">
+        <div class="plotly-container" style="text-align: center;">
+            <h4 style="text-align: center; margin: 0.5rem 0;">Net Benefit</h4>
+            <p style="font-size: 2.5rem; font-weight: 700; color: #00cc66; text-align: center; margin: 0.25rem 0;">
                 {}
             </p>
-            <p style="color: #666;">
+            <p style="color: #666; text-align: center; margin: 0.25rem 0;">
                 ROI: {:.2f}x
             </p>
         </div>
@@ -3416,7 +5051,17 @@ with tab2:
             showlegend=False,
             hovermode='x unified',
             plot_bgcolor='white',
-            paper_bgcolor='white'
+            paper_bgcolor='white',
+            margin=dict(l=10, r=10, t=50, b=60),
+            title=dict(font=dict(size=12), x=0.5),
+            legend=dict(
+                orientation='h',
+                yanchor='top',
+                y=-0.2,
+                xanchor='center',
+                x=0.5,
+                font=dict(size=9)
+            )
         )
         
         # Add target line at 1.0x (break-even)
@@ -3428,7 +5073,7 @@ with tab2:
             annotation_position="right"
         )
         
-        st.plotly_chart(fig_roi, use_container_width=True)
+        st.plotly_chart(fig_roi, use_container_width=True, key="tab2_measure_deepdive_roi_bar_chart")
         
         st.markdown("---")
         
@@ -3459,17 +5104,16 @@ with tab2:
                 plot_bgcolor='white',
                 paper_bgcolor='white',
                 hovermode='closest',
-                title={
-                    'text': 'Cost Efficiency vs Success Rate',
-                    'font': {'size': 16, 'family': 'Arial, sans-serif'},
-                    'x': 0.5,
-                    'xanchor': 'center',
-                    'y': 0.98,
-                    'yanchor': 'top',
-                    'pad': {'t': 10, 'b': 5},
-                    'automargin': True
-                },
-                margin={'l': 60, 'r': 20, 't': 70, 'b': 60},  # Extra top margin for wrapped title
+                margin=dict(l=10, r=10, t=50, b=60),
+                title=dict(font=dict(size=12), x=0.5),
+                legend=dict(
+                    orientation='h',
+                    yanchor='top',
+                    y=-0.2,
+                    xanchor='center',
+                    x=0.5,
+                    font=dict(size=9)
+                ),
                 autosize=True
             )
             
@@ -3491,7 +5135,7 @@ with tab2:
                 annotation_text=f"Median Success: {median_success:.1f}%"
             )
             
-            st.plotly_chart(fig_scatter, use_container_width=True)
+            st.plotly_chart(fig_scatter, use_container_width=True, key="tab2_measure_deepdive_cost_efficiency_scatter")
             
             # Quadrant analysis
             st.markdown("##### 📊 Quadrant Analysis")
@@ -3535,22 +5179,69 @@ with tab3:
     st.markdown("---")
     
     st.markdown("#### Member Segmentation")
+    
+    # Calculate actual impact values from filtered data
+    if not filtered_data.empty:
+        # Check if member_id column exists (synthetic data may not have it)
+        has_member_id = 'member_id' in filtered_data.columns
+        
+        if has_member_id:
+            # Calculate high priority members (multiple gaps)
+            high_priority_data = filtered_data[filtered_data.groupby('member_id')['measure_name'].transform('count') > 1]
+            high_priority_count = high_priority_data['member_id'].nunique() if not high_priority_data.empty else 0
+            high_priority_impact = high_priority_data['financial_value'].sum() if 'financial_value' in high_priority_data.columns else 0
+            
+            # Calculate standard members (single gap)
+            standard_data = filtered_data[filtered_data.groupby('member_id')['measure_name'].transform('count') == 1]
+            standard_count = standard_data['member_id'].nunique() if not standard_data.empty else 0
+            standard_impact = standard_data['financial_value'].sum() if 'financial_value' in standard_data.columns else 0
+        else:
+            # For synthetic data without member_id, use plan_size as proxy
+            # High priority = plans with multiple measures
+            high_priority_data = filtered_data[filtered_data.groupby('plan_size')['measure_name'].transform('count') > 1]
+            high_priority_count = high_priority_data['plan_size'].nunique() if not high_priority_data.empty else 0
+            high_priority_impact = high_priority_data['financial_value'].sum() if 'financial_value' in high_priority_data.columns else 0
+            
+            # Standard = plans with single measure
+            standard_data = filtered_data[filtered_data.groupby('plan_size')['measure_name'].transform('count') == 1]
+            standard_count = standard_data['plan_size'].nunique() if not standard_data.empty else 0
+            standard_impact = standard_data['financial_value'].sum() if 'financial_value' in standard_data.columns else 0
+        
+        # Format impact values
+        def format_impact(value):
+            if value >= 1000000:
+                return f"${value/1000000:.2f}M"
+            elif value >= 1000:
+                return f"${value/1000:.1f}K"
+            else:
+                return f"${value:,.0f}"
+        
+        high_priority_formatted = format_impact(high_priority_impact)
+        standard_formatted = format_impact(standard_impact)
+    else:
+        high_priority_count = 0
+        high_priority_formatted = "$0"
+        standard_count = 0
+        standard_formatted = "$0"
+    
     segmentation_col1, segmentation_col2 = st.columns(2, gap="small")
     
     with segmentation_col1:
-        st.markdown("""
+        st.markdown(f"""
         **High Priority Members:**
         - Members with multiple gap opportunities
         - High-value intervention targets
-        - Estimated impact: $XX,XXX
+        - **Estimated impact: {high_priority_formatted}**
+        - **Count: {high_priority_count:,} members**
         """)
     
     with segmentation_col2:
-        st.markdown("""
+        st.markdown(f"""
         **Standard Members:**
         - Single gap opportunities
         - Standard intervention protocols
-        - Estimated impact: $XX,XXX
+        - **Estimated impact: {standard_formatted}**
+        - **Count: {standard_count:,} members**
         """)
     
     st.markdown("---")
@@ -3735,12 +5426,15 @@ with tab4:
         hovermode='x unified',
         plot_bgcolor='white',
         paper_bgcolor='white',
+        margin=dict(l=10, r=10, t=50, b=60),
+        title=dict(font=dict(size=12), x=0.5),
         legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1
+            orientation='h',
+            yanchor='top',
+            y=-0.2,
+            xanchor='center',
+            x=0.5,
+            font=dict(size=9)
         )
     )
     
@@ -3752,7 +5446,7 @@ with tab4:
         annotation_text="Break-Even"
     )
     
-    st.plotly_chart(fig_trend, use_container_width=True)
+    st.plotly_chart(fig_trend, use_container_width=True, key="tab4_roi_analysis_trend_chart")
     
     # Summary metrics
     st.markdown("##### 📈 Trend Summary")
@@ -3786,17 +5480,17 @@ with tab5:
     st.markdown("### 🔒 Secure Query Interface")
     st.markdown("#### Zero External API Exposure | On-Premises AI Processing")
     
-    # Security badge - Prominent display
+    # Security badge - Cleaner, more readable display
     st.markdown("""
-    <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 6px solid #2d7d32; margin-bottom: 20px; text-align: center;">
-        <h2 style="color: #2d7d32; margin: 0; font-size: 1.8rem;">🔒 ZERO PHI TRANSMITTED TO EXTERNAL APIS</h2>
-        <p style="margin: 10px 0 0 0; color: #1b5e20; font-size: 1.1rem;">All processing occurs on-premises using local models (Ollama/ChromaDB)</p>
+    <div style="background-color: #e8f5e9; padding: 1rem 1.25rem; border-radius: 8px; border-left: 4px solid #2d7d32; margin-bottom: 1rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="color: #2d7d32; margin: 0 0 0.5rem 0; font-size: 1.3rem; font-weight: 700; line-height: 1.3;">🔒 ZERO PHI TRANSMITTED TO EXTERNAL APIS</h2>
+        <p style="margin: 0; color: #1b5e20; font-size: 0.9rem; line-height: 1.5;">All processing occurs on-premises using local models (Ollama/ChromaDB)</p>
     </div>
     """, unsafe_allow_html=True)
     
     # Data Flow Architecture Diagram
     st.markdown("---")
-    st.markdown("### 📊 Security Architecture: User → Local Model → Internal DB")
+    st.markdown("<h3 style='text-align: center; margin: 0.5rem 0;'>📊 Security Architecture: User → Local Model → Internal DB</h3>", unsafe_allow_html=True)
     
     # Create interactive data flow diagram using Plotly
     import plotly.graph_objects as go
@@ -3820,13 +5514,14 @@ with tab5:
             y=[step["y"]],
             mode='markers+text',
             marker=dict(
-                size=80,
+                size=70,
                 color=step["color"],
-                line=dict(width=2, color='white')
+                line=dict(width=2, color='white'),
+                opacity=0.9
             ),
             text=[step["name"]],
             textposition="middle center",
-            textfont=dict(size=10, color='white', family='Arial Black'),
+            textfont=dict(size=9, color='white', family='Arial Black'),
             name=step["name"],
             showlegend=False,
             hovertemplate=f"<b>{step['name']}</b><extra></extra>"
@@ -3850,22 +5545,31 @@ with tab5:
             arrowcolor="#666"
         )
     
-    # Update layout
+    # Update layout - cleaner, more readable
     fig_flow.update_layout(
+        margin=dict(l=10, r=10, t=50, b=60),
         title=dict(
             text="<b>Secure Data Flow: Zero External API Calls</b>",
             x=0.5,
-            font=dict(size=16, color="#2d7d32")
+            font=dict(size=12, color="#2d7d32", family="Arial")
+        ),
+        legend=dict(
+            orientation='h',
+            yanchor='top',
+            y=-0.2,
+            xanchor='center',
+            x=0.5,
+            font=dict(size=9)
         ),
         xaxis=dict(showgrid=False, showticklabels=False, range=[-0.5, 5.5]),
         yaxis=dict(showgrid=False, showticklabels=False, range=[-0.5, 0.5]),
         height=200,
         plot_bgcolor='white',
         paper_bgcolor='white',
-        margin=dict(l=20, r=20, t=60, b=20)
+        margin=dict(l=30, r=30, t=60, b=20)
     )
     
-    st.plotly_chart(fig_flow, use_container_width=True)
+    st.plotly_chart(fig_flow, use_container_width=True, key="security_flow_diagram")
     
     # Initialize chat interface
     if 'secure_chat_history' not in st.session_state:
@@ -4123,10 +5827,59 @@ with tab5:
 # ============================================================================
 # FOOTER
 # ============================================================================
-# Footer sections - desktop full text, mobile abbreviated
-from src.ui.layout import render_page_footer
-render_page_footer()  # Main content footer
-# Note: render_sidebar_footer() is already called inside the sidebar context (line 1214)
-# Do not call it here as it will render HTML as text in the main content area
+st.markdown("---")
+st.markdown("""
+<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
+    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem; text-align: center;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
+    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem; text-align: center;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
+    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: center; border-radius: 6px;'>
+        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0; text-align: center;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
+    </div>
+    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: center; border-radius: 6px;'>
+        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0; text-align: center;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
+    </div>
+    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem; text-align: center;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
+</div>
+<style>
+@media (max-width: 768px) {
+    /* Ensure footer is centered on mobile */
+    div[data-testid="stMarkdownContainer"]:has(> div > p:contains("HEDIS Portfolio Optimizer")) {
+        text-align: center !important;
+    }
+    
+    /* Center all footer content */
+    div[data-testid="stMarkdownContainer"] div[style*="text-align: center"] {
+        text-align: center !important;
+    }
+    
+    div[data-testid="stMarkdownContainer"] div[style*="text-align: center"] p {
+        text-align: center !important;
+    }
+    
+    /* Footer responsive text sizing */
+    div[data-testid="stMarkdownContainer"] div[style*="HEDIS Portfolio Optimizer"] p {
+        font-size: 0.95rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    div[data-testid="stMarkdownContainer"] div[style*="Built with Streamlit"] p {
+        font-size: 0.8rem !important;
+        line-height: 1.3 !important;
+    }
+    
+    div[data-testid="stMarkdownContainer"] div[style*="Secure AI Architect"] p,
+    div[data-testid="stMarkdownContainer"] div[style*="Portfolio demonstration"] p {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+        text-align: center !important;
+    }
+    
+    div[data-testid="stMarkdownContainer"] div[style*="© 2024-2026"] p {
+        font-size: 0.75rem !important;
+        text-align: center !important;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
 
 
