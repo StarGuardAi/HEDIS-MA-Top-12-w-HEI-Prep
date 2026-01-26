@@ -11,1241 +11,1023 @@ import numpy as np
 
 from utils.database import show_db_status, execute_query
 from utils.historical_tracking import HistoricalTracker
-from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, render_starguard_header
 
-# Page configuration
+# ============================================================================
+# ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
+# ============================================================================
 st.set_page_config(
     page_title="Historical Tracking - HEDIS Portfolio",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="auto"  # Auto: Let Streamlit decide based on screen size (iOS Safari optimized)
 )
-
-# Purple Sidebar Theme + White Text Everywhere
 st.markdown("""
-<style>
-/* ========== PURPLE SIDEBAR THEME ========== */
-/* Match the StarGuard AI header purple gradient */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
-}
-
-[data-testid="stSidebar"] > div:first-child {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
-}
-
-/* ========== ALL SIDEBAR TEXT WHITE ========== */
-/* Force ALL text in sidebar to be white */
-[data-testid="stSidebar"] * {
-    color: #FFFFFF !important;
-}
-
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] div,
-[data-testid="stSidebar"] a,
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] button {
-    color: #FFFFFF !important;
-}
-
-/* ========== WHITE "HOME" LABEL ========== */
-[data-testid="stSidebarNav"] ul li:first-child a {
-    font-size: 0 !important;
-    background: rgba(255, 255, 255, 0.2) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-}
-
-[data-testid="stSidebarNav"] ul li:first-child a::before {
-    content: "🏠 Home" !important;
-    font-size: 1.1rem !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    display: block !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* Target by href for additional coverage */
-[data-testid="stSidebarNav"] a[href="/"],
-[data-testid="stSidebarNav"] a[href="./"],
-[data-testid="stSidebarNav"] a[href*="app"] {
-    font-size: 0 !important;
-    background: rgba(255, 255, 255, 0.2) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-[data-testid="stSidebarNav"] a[href="/"]::before,
-[data-testid="stSidebarNav"] a[href="./"]::before,
-[data-testid="stSidebarNav"] a[href*="app"]::before {
-    content: "🏠 Home" !important;
-    font-size: 1.1rem !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    display: block !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* Hover state - brighter white */
-[data-testid="stSidebarNav"] ul li:first-child a:hover,
-[data-testid="stSidebarNav"] a[href="/"]:hover,
-[data-testid="stSidebarNav"] a[href="./"]:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-}
-
-[data-testid="stSidebarNav"] ul li:first-child a:hover::before,
-[data-testid="stSidebarNav"] a[href="/"]:hover::before,
-[data-testid="stSidebarNav"] a[href="./"]:hover::before {
-    color: #FFFFFF !important;
-}
-
-/* ========== OTHER SIDEBAR LINKS - WHITE TEXT ========== */
-/* Make all other sidebar navigation links white too */
-[data-testid="stSidebarNav"] a {
-    color: #FFFFFF !important;
-}
-
-[data-testid="stSidebarNav"] a span,
-[data-testid="stSidebarNav"] a div,
-[data-testid="stSidebarNav"] a p {
-    color: #FFFFFF !important;
-}
-
-/* Active/selected page - lighter background */
-[data-testid="stSidebarNav"] a[aria-current="page"] {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: #FFFFFF !important;
-}
-
-/* ========== MOBILE RESPONSIVE ========== */
-@media (max-width: 768px) {
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
+<script>
+// Fix Performance Dashboard emoji rendering - Enhanced version
+(function() {
+    'use strict';
+    
+    function fixPerformanceDashboardEmoji() {
+        // Find all sidebar links
+        const sidebarLinks = document.querySelectorAll('[data-testid="stSidebarNav"] a');
+        
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            const text = (link.textContent || link.innerText || '').trim();
+            
+            // Check if this is the Performance Dashboard link (by href - most reliable)
+            const isPerformanceDashboard = (
+                href.includes('Performance_Dashboard') ||
+                href.includes('Performance-Dashboard') ||
+                href.toLowerCase().includes('performance') && href.toLowerCase().includes('dashboard')
+            );
+            
+            // Also check by text as backup
+            const textMatches = (
+                text === 'Performance Dashboard' ||
+                text.includes('Performance Dashboard') ||
+                text.match(/Performance\s*Dashboard/i)
+            );
+            
+            const hasEmoji = text.includes('⚡') || text.includes('\u26A1') || link.innerHTML.includes('⚡');
+            
+            // If it's Performance Dashboard but missing emoji, add it
+            if ((isPerformanceDashboard || textMatches) && !hasEmoji) {
+                // Method 1: Clear and rebuild the entire link content
+                const originalHTML = link.innerHTML;
+                
+                // Try to preserve any icons/spans but update text
+                if (link.querySelector('span, div')) {
+                    // Has child elements - update them
+                    const children = link.querySelectorAll('span, div, p');
+                    children.forEach(child => {
+                        const childText = (child.textContent || child.innerText || '').trim();
+                        if (childText === 'Performance Dashboard' || childText.includes('Performance Dashboard')) {
+                            child.textContent = '⚡ Performance Dashboard';
+                            child.innerText = '⚡ Performance Dashboard';
+                        }
+                    });
+                } else {
+                    // No children - replace entire content
+                    link.textContent = '⚡ Performance Dashboard';
+                    link.innerText = '⚡ Performance Dashboard';
+                }
+                
+                // Method 2: Use innerHTML as backup
+                if (!link.textContent.includes('⚡')) {
+                    link.innerHTML = '⚡ Performance Dashboard';
+                }
+                
+                // Method 3: Create a new text node
+                const newText = document.createTextNode('⚡ Performance Dashboard');
+                if (link.childNodes.length === 0 || !link.textContent.includes('⚡')) {
+                    link.innerHTML = '';
+                    link.appendChild(newText);
+                }
+                
+                // Force proper font rendering
+                link.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Segoe UI", sans-serif';
+                link.style.whiteSpace = 'normal';
+                
+                // Add data attribute to mark as fixed
+                link.setAttribute('data-emoji-fixed', 'true');
+            }
+        });
     }
     
-    [data-testid="stSidebar"] > div:first-child {
-        background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
+    // Run immediately
+    fixPerformanceDashboardEmoji();
+    
+    // Run on DOM changes (Streamlit reruns)
+    const observer = new MutationObserver(function() {
+        fixPerformanceDashboardEmoji();
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+    
+    // Also run after delays to catch late-rendering elements
+    setTimeout(fixPerformanceDashboardEmoji, 50);
+    setTimeout(fixPerformanceDashboardEmoji, 100);
+    setTimeout(fixPerformanceDashboardEmoji, 300);
+    setTimeout(fixPerformanceDashboardEmoji, 500);
+    setTimeout(fixPerformanceDashboardEmoji, 1000);
+    setTimeout(fixPerformanceDashboardEmoji, 2000);
+    setTimeout(fixPerformanceDashboardEmoji, 3000);
+    
+    // Periodic check as backup (every 2 seconds)
+    setInterval(fixPerformanceDashboardEmoji, 2000);
+    
+    // Also run when page becomes visible (user switches tabs back)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            setTimeout(fixPerformanceDashboardEmoji, 100);
+        }
+    });
+})();
+
+    // ====================================================================
+    // FORCE CENTER ALL METRIC LABELS AND VALUES
+    // ====================================================================
+    function forceCenterMetrics() {
+        // Find all metric containers
+        const metricContainers = document.querySelectorAll('[data-testid="stMetricContainer"]');
+        
+        metricContainers.forEach(container => {
+            // Force center alignment on container
+            container.style.textAlign = 'center';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+            
+            // Find and center label
+            const label = container.querySelector('[data-testid="stMetricLabel"]');
+            if (label) {
+                label.style.textAlign = 'center';
+                label.style.width = '100%';
+                label.style.display = 'block';
+                label.style.marginLeft = 'auto';
+                label.style.marginRight = 'auto';
+                
+                // Center all children
+                const labelChildren = label.querySelectorAll('*');
+                labelChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+            
+            // Find and center value
+            const value = container.querySelector('[data-testid="stMetricValue"]');
+            if (value) {
+                value.style.textAlign = 'center';
+                value.style.width = '100%';
+                value.style.display = 'block';
+                value.style.marginLeft = 'auto';
+                value.style.marginRight = 'auto';
+                
+                // Center all children
+                const valueChildren = value.querySelectorAll('*');
+                valueChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+            
+            // Find and center delta
+            const delta = container.querySelector('[data-testid="stMetricDelta"]');
+            if (delta) {
+                delta.style.textAlign = 'center';
+                delta.style.width = '100%';
+                delta.style.display = 'block';
+                delta.style.marginLeft = 'auto';
+                delta.style.marginRight = 'auto';
+                
+                // Center all children
+                const deltaChildren = delta.querySelectorAll('*');
+                deltaChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+        });
     }
     
-    [data-testid="stSidebarNav"] ul li:first-child a {
-        padding: 0.6rem 0.8rem !important;
-    }
+    // Run immediately and on delays
+    forceCenterMetrics();
+    setTimeout(forceCenterMetrics, 100);
+    setTimeout(forceCenterMetrics, 500);
+    setTimeout(forceCenterMetrics, 1000);
+    setTimeout(forceCenterMetrics, 2000);
     
-    [data-testid="stSidebarNav"] ul li:first-child a::before {
-        font-size: 1rem !important;
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-    }
+    // Watch for new metrics being added
+    const metricObserver = new MutationObserver(function() {
+        forceCenterMetrics();
+    });
     
-    [data-testid="stSidebarNav"] a[href="/"]::before,
-    [data-testid="stSidebarNav"] a[href="./"]::before {
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-    }
-    
-    /* Mobile sidebar links - white text */
-    [data-testid="stSidebarNav"] a {
-        color: #FFFFFF !important;
-    }
-}
+    metricObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 
-/* Mobile drawer open state */
-[data-testid="stSidebar"][aria-expanded="true"] {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
-}
-
-[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarNav"] a[href="/"]::before,
-[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarNav"] a[href="./"]::before {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-}
-
-/* Force white on ALL child elements */
-[data-testid="stSidebarNav"] li:first-child *,
-[data-testid="stSidebarNav"] a[href="/"] *,
-[data-testid="stSidebarNav"] a[href="./"] * {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-}
-
-/* Sidebar collapse button - white */
-[data-testid="collapsedControl"] {
-    color: #FFFFFF !important;
-}
-
-/* ========== HEADER CONTAINER STYLES (Match Home Page) ========== */
-.header-container {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%);
-    padding: 0.5rem 0.75rem 0.6rem 0.75rem;
-    border-radius: 6px;
-    margin-top: 1.5rem;
-    margin-bottom: 0.1rem;
-    text-align: center;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
-    max-width: 100%;
-}
-
-.header-title {
-    color: white !important;
-    font-weight: 700;
-    font-size: 1.25rem;
-    margin-bottom: 0.4rem;
-    display: block !important;
-    line-height: 1.5;
-    letter-spacing: 0.3px;
-}
-
-.header-subtitle {
-    color: #E8D4FF !important;
-    font-size: 0.9rem;
-    font-style: italic;
-    display: block !important;
-    line-height: 1.4;
-    opacity: 0.95;
-}
-</style>
+</script>
 """, unsafe_allow_html=True)
 
+from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, render_starguard_header
 
-# Responsive Header - Adapts to Desktop/Mobile (Match Home Page)
-st.markdown("""
-<div class="header-container">
-    <div class="header-title">⭐ StarGuard AI | Turning Data Into Stars</div>
-    <div class="header-subtitle">Powered by Predictive Analytics & Machine Learning</div>
-</div>
-""", unsafe_allow_html=True)
+# Page configuration
 
-# ========== AGGRESSIVE SPACING REDUCTION ==========
+# Aggressive spacing reduction
 st.markdown("""
 <style>
-.block-container {
-    padding-top: 0.5rem !important;
-    padding-bottom: 1rem !important;
-    max-width: 100% !important;
+/* Aggressive spacing reduction */
+.main .block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-top: 0 !important;
 }
 
-div[data-testid="stVerticalBlock"] > div:first-child {
-    margin-bottom: 0 !important;
+.element-container {
+    margin: 0.2rem 0 !important;
+    padding: 0 !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.5rem !important;
-    padding-top: 0 !important;
+h1, h2, h3, h4 {
+    margin: 0.3rem 0 !important;
+    padding: 0.2rem 0 !important;
 }
 
 p {
+    margin: 0.2rem 0 !important;
+}
+
+.stMarkdown {
+    margin: 0.2rem 0 !important;
+}
+
+.stPlotlyChart {
+    margin: 0.3rem 0 !important;
+}
+
+hr {
+    margin: 0.3rem 0 !important;
+}
+
+/* Sidebar spacing */
+[data-testid="stSidebar"] .element-container {
+    margin: 0.2rem 0 !important;
+    padding: 0.1rem 0 !important;
+}
+
+/* Ensure header is at very top */
+.starguard-header {
     margin-top: 0 !important;
     margin-bottom: 0.5rem !important;
 }
 
-div[data-testid="stVerticalBlock"] {
-    gap: 0.25rem !important;
+/* StarGuard Header Container - NO BOTTOM BORDER HERE */
+.starguard-header-container {
+    background: linear-gradient(135deg, #4A3D6F 0%, #6F5F96 100%);
+    padding: 1rem 1.5rem 0.5rem 1.5rem !important;
+    border-radius: 10px;
+    margin-top: 0 !important;
+    margin-bottom: 0rem !important;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
+    border-bottom: none !important;
 }
 
-section.main > div {
-    padding-top: 0.5rem !important;
+/* Title - GREEN LINE HERE (between title and subtitle) */
+.starguard-title {
+    color: white !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin: 0 0 0.5rem 0 !important;
+    padding: 0 0 0.5rem 0 !important;
+    line-height: 1.2 !important;
+    border-bottom: 3px solid #4ade80 !important;
 }
 
-.stMarkdown {
-    margin-bottom: 0.25rem !important;
+/* Subtitle - NO BORDER HERE */
+.starguard-subtitle {
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-size: 0.85rem !important;
+    margin: 0.5rem 0 0 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border-bottom: none !important;
 }
 
-div[data-testid="stMetric"] {
-    padding: 0.25rem !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# Improved compact CSS - READABLE fonts, reduced spacing only
-st.markdown("""
-<style>
-.main .block-container { 
-    padding-top: 1rem !important; 
-    padding-bottom: 1rem !important; 
-    padding-left: 1rem !important; 
-    padding-right: 1rem !important; 
-    max-width: 100% !important; 
-}
-
-/* Section spacing - REDUCE GAPS between sections */
-h1 { 
-    font-size: 1.8rem !important; 
-    margin-top: 0.8rem !important; 
-    margin-bottom: 0.5rem !important; 
-    line-height: 1.2 !important; 
-}
-
-h2 { 
-    font-size: 1.4rem !important; 
-    margin-top: 0.6rem !important; 
-    margin-bottom: 0.4rem !important; 
-    line-height: 1.2 !important; 
-}
-
-h3 { 
-    font-size: 1.1rem !important; 
-    margin-top: 0.5rem !important; 
-    margin-bottom: 0.3rem !important; 
-    line-height: 1.2 !important; 
-}
-
-/* Reduce spacing between elements */
-.element-container { margin-bottom: 0.4rem !important; }
-.stMarkdown { margin-bottom: 0.4rem !important; }
-
-/* Readable metric fonts */
-[data-testid="stMetricValue"] { font-size: 1.6rem !important; }
-[data-testid="stMetricLabel"] { font-size: 0.95rem !important; padding-bottom: 0.3rem !important; }
-[data-testid="metric-container"] { padding: 0.7rem !important; }
-
-/* Chart and data spacing */
-.stPlotlyChart { margin-bottom: 0.6rem !important; }
-.stDataFrame { margin-bottom: 0.6rem !important; }
-
-/* Column spacing */
-[data-testid="column"] { padding: 0.3rem !important; }
-
-/* Interactive elements */
-[data-testid="stExpander"] { margin-bottom: 0.5rem !important; }
-[data-testid="stTabs"] { margin-bottom: 0.6rem !important; }
-.stTabs [data-baseweb="tab-list"] { gap: 0.3rem !important; }
-.stTabs [data-baseweb="tab"] { 
-    padding: 0.5rem 1rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Buttons - keep readable */
-.stButton > button { 
-    padding: 0.6rem 1.2rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Form inputs */
-.stSelectbox, .stTextInput, .stNumberInput { margin-bottom: 0.4rem !important; }
-
-/* Alerts - keep readable */
-.stAlert { 
-    padding: 0.7rem !important; 
-    margin-bottom: 0.5rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Reduce gaps between blocks */
-div[data-testid="stVerticalBlock"] > div { gap: 0.4rem !important; }
-
-/* Horizontal rules */
-hr { margin: 0.6rem 0 !important; }
-
-/* Mobile adjustments - Match Home page formatting */
+/* Mobile */
 @media (max-width: 768px) {
-    .header-container {
-        padding: 0.6rem 0.8rem;
-        border-radius: 6px;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 2px 4px rgba(74, 61, 111, 0.15);
+    .starguard-header-container {
+        padding: 0.8rem 1rem !important;
+        margin-bottom: 0rem !important;
     }
     
-    .header-title {
-        font-size: 0.9rem;
-        margin-bottom: 0.25rem;
-        line-height: 1.3;
-        font-weight: 600;
+    .starguard-title {
+        font-size: 1.2rem !important;
+        margin-bottom: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
     }
     
-    .header-subtitle {
-        font-size: 0.65rem;
-        line-height: 1.2;
-    }
-    
-    /* Mobile spacing - tighter */
-    div.block-container {
-        padding-top: 2rem !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-    
-    h1 {
-        margin-top: 0.5rem !important;
-        font-size: 1.5rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h2 {
-        margin-top: 0.75rem !important;
-        font-size: 1.25rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h3 {
-        font-size: 1.1rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h4, h5, h6 {
-        text-align: center !important;
-    }
-    
-    /* Center align markdown headers on mobile */
-    div[data-testid="stMarkdownContainer"] h1,
-    div[data-testid="stMarkdownContainer"] h2,
-    div[data-testid="stMarkdownContainer"] h3,
-    div[data-testid="stMarkdownContainer"] h4,
-    div[data-testid="stMarkdownContainer"] h5,
-    div[data-testid="stMarkdownContainer"] h6 {
-        text-align: center !important;
-    }
-    
-    /* Center align metrics on mobile */
-    [data-testid="stMetric"],
-    [data-testid="stMetricValue"],
-    [data-testid="stMetricLabel"],
-    [data-testid="stMetricDelta"],
-    [data-testid="metric-container"],
-    .compact-metric-card,
-    .kpi-card {
-        text-align: center !important;
-    }
-    
-    /* Mobile columns - stack vertically */
-    [data-testid="column"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-        padding: 0.2rem !important;
-    }
-    
-    /* Mobile buttons - full width */
-    button[kind="primary"],
-    button[kind="secondary"] {
-        width: 100% !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Mobile metrics - smaller */
-    [data-testid="stMetricValue"] {
-        font-size: 1.5rem !important;
-    }
-    
-    [data-testid="stMetricLabel"] {
-        font-size: 0.85rem !important;
-    }
-    
-    /* Mobile tables - horizontal scroll */
-    .stDataFrame {
-        overflow-x: auto !important;
-    }
-    
-    /* Mobile tabs - stack vertically to eliminate horizontal scrolling */
-    [data-testid="stTabs"] {
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab-list"] {
-        flex-direction: column !important;
-        width: 100% !important;
-        gap: 0.5rem !important;
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-    
-    /* Wrap Plotly chart titles on mobile */
-    .js-plotly-plot .gtitle,
-    .plotly .gtitle,
-    .js-plotly-plot .xtitle,
-    .plotly .xtitle {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-        max-width: 100% !important;
-        overflow-wrap: break-word !important;
-        hyphens: auto !important;
-    }
-    
-    /* Ensure chart titles wrap - target SVG text elements */
-    .js-plotly-plot .gtitle text,
-    .plotly .gtitle text {
-        word-wrap: break-word !important;
-        white-space: normal !important;
+    .starguard-subtitle {
+        font-size: 0.7rem !important;
+        margin-top: 0.4rem !important;
     }
 }
+
+/* Sidebar button */
+[data-testid="stSidebar"] button[kind="header"] {
+    color: white !important;
+}
+[data-testid="stSidebar"] button svg {
+    fill: white !important;
+    stroke: white !important;
+}
+
+/* ========== SIDEBAR SEPARATOR STYLING - SUBTLE GREEN GRADIENT ========== */
+/* Sidebar separator styling - subtle green gradient (thicker for visibility) */
+[data-testid="stSidebar"] hr {
+    border: none !important;
+    height: 4px !important;
+    margin: 1rem 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(74, 222, 128, 0.8) 50%,
+        transparent 100%
+    ) !important;
+}
+
+/* Reduce spacing after header - AGGRESSIVE */
+.starguard-header-container + *,
+.starguard-header-container ~ * {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce spacing for first content element after header */
+.starguard-header-container ~ .element-container:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"]:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"] {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Target markdown containers immediately after header */
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"],
+.starguard-header-container ~ .stMarkdown {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+    margin-bottom: 0rem !important;
+}
+
+/* Target headings immediately after header */
+.starguard-header-container ~ h1,
+.starguard-header-container ~ h2,
+.starguard-header-container ~ h3,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h1,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h2,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h3 {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce padding on header subtitle */
+.starguard-subtitle {
+    margin-bottom: 0rem !important;
+    padding-bottom: 0rem !important;
+}
+
+
+    .mobile-optimized-badge {
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: fit-content !important;
+    }
+
+/* ========== CENTER-ALIGN METRICS AND TABLES FOR CLEAN VIEWING ========== */
+
+/* Center metric cards - values and labels */
+[data-testid="stMetricValue"],
+[data-testid="stMetricLabel"],
+[data-testid="stMetricDelta"] {
+    text-align: center !important;
+    justify-content: center !important;
+}
+
+/* Center metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+}
+
+/* Center metric value text */
+[data-testid="stMetricValue"] > div {
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Center metric labels */
+[data-testid="stMetricLabel"] > div {
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+
+/* ========== NUCLEAR OPTION: FORCE CENTER ALL METRIC TEXT ========== */
+/* Target every possible element inside metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+div[data-testid="stMetricContainer"] * {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for label text specifically */
+div[data-testid="stMetricContainer"] > div:first-child,
+div[data-testid="stMetricContainer"] > div:first-child * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for value text */
+div[data-testid="stMetricContainer"] > div:nth-child(2),
+div[data-testid="stMetricContainer"] > div:nth-child(2) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for delta text */
+div[data-testid="stMetricContainer"] > div:nth-child(3),
+div[data-testid="stMetricContainer"] > div:nth-child(3) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Center data tables - cell content */
+.stDataFrame,
+.stDataFrame table,
+.stDataFrame td,
+.stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center table headers */
+.stDataFrame thead th {
+    text-align: center !important;
+    font-weight: 600 !important;
+}
+
+/* Center table cells */
+.stDataFrame tbody td {
+    text-align: center !important;
+}
+
+/* Center sidebar metrics */
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    text-align: center !important;
+}
+
+[data-testid="stSidebar"] div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+}
+
+/* Center summary tables in sidebars */
+[data-testid="stSidebar"] .stDataFrame,
+[data-testid="stSidebar"] .stDataFrame table,
+[data-testid="stSidebar"] .stDataFrame td,
+[data-testid="stSidebar"] .stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center caption text */
+.stCaption {
+    text-align: center !important;
+}
+
+/* Center info boxes - selective (only for summary/metric displays) */
+.stAlert[data-baseweb="notification"],
+.stInfo[data-baseweb="notification"],
+.stSuccess[data-baseweb="notification"],
+.stWarning[data-baseweb="notification"],
+.stError[data-baseweb="notification"] {
+    text-align: center !important;
+}
+
+/* Keep expander headers left-aligned for readability */
+.streamlit-expanderHeader {
+    text-align: left !important;
+}
+
+/* Center column headers in tables */
+.stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center numeric values in tables */
+.stDataFrame td {
+    text-align: center !important;
+}
+
+/* Keep text content left-aligned (headings, paragraphs) for readability */
+/* Exception: h2 and h3 are centered */
+h1,   h4, h5, h6 {
+    text-align: left !important;
+}
+
+p, li {
+    text-align: left !important;
+}
+
+/* Exception: Center specific summary/metric section headers */
+{
+    text-align: center !important;
+}
+
+
+/* ========== CENTER SUMMARY HEADERS AND NOTES ========== */
+
+/* Center all h2 and h3 headers (section headers) */
+h2, h3 {
+    text-align: center !important;
+}
+
+/* Center markdown headers - comprehensive targeting */
+.stMarkdown h2,
+.stMarkdown h3,
+div[data-testid="stMarkdownContainer"] h2,
+div[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+.element-container h2,
+.element-container h3,
+div[data-testid="stVerticalBlock"] h2,
+div[data-testid="stVerticalBlock"] h3 {
+    text-align: center !important;
+}
+
+/* Center all markdown content headers */
+.stMarkdown:has(h2),
+.stMarkdown:has(h3) {
+    text-align: center !important;
+}
+
+/* Center captions and notes */
+.stCaption,
+[data-testid="stCaption"],
+p.stCaption,
+div.stCaption {
+    text-align: center !important;
+}
+
+/* Center headers that come after dividers (section headers) */
+hr + h2,
+hr + h3 {
+    text-align: center !important;
+}
+
+/* Center notes/details below metrics */
+[data-testid="stMetricContainer"] + .stMarkdown,
+[data-testid="stMetricContainer"] ~ .stMarkdown,
+.stMetric + .stMarkdown {
+    text-align: center !important;
+}
+
+/* Center all section headers in main content */
+.main h2,
+.main h3,
+section.main h2,
+section.main h3 {
+    text-align: center !important;
+}
+
+
+/* Center all h2 and h3 headers that are section headers */
+h2, h3 {
+    text-align: center !important;
+}
+
+/* Center captions and notes */
+.stCaption,
+[data-testid="stCaption"],
+.stMarkdown:has-text("📊"),
+.stMarkdown:has-text("💰"),
+.stMarkdown:has-text("📈"),
+.stMarkdown:has-text("💵"),
+.stMarkdown:has-text("🎯"),
+.stMarkdown:has-text("🤖"),
+.stMarkdown:has-text("📋"),
+.stMarkdown:has-text("⭐"),
+.stMarkdown:has-text("🔄"),
+.stMarkdown:has-text("📊"),
+.stMarkdown:has-text("⚖️"),
+.stMarkdown:has-text("⚡") {
+    text-align: center !important;
+}
+
+/* Center markdown headers that are summary sections */
+.stMarkdown h2,
+.stMarkdown h3 {
+    text-align: center !important;
+}
+
+/* Center section dividers text */
+hr + h2,
+hr + h3,
+.stMarkdown:has(hr) + h2,
+.stMarkdown:has(hr) + h3 {
+    text-align: center !important;
+}
+
+
+
+/* Center all markdown content that follows metrics */
+div[data-testid="stVerticalBlock"]:has([data-testid="stMetricContainer"]) + .stMarkdown,
+div[data-testid="stVerticalBlock"]:has([data-testid="stMetricContainer"]) ~ .stMarkdown {
+    text-align: center !important;
+}
+
+/* Center summary statistics headers */
+{
+    text-align: center !important;
+}
+
+
+
+
+/* ========== CENTER KPI/METRIC HEADERS ========== */
+/* Center metric labels (Potential ROI, Star Rating Impact, etc.) */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Center metric values */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Center metric delta (the +/- change indicators) */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+/* Center content in metric containers */
+[data-testid="metric-container"] {
+    text-align: center !important;
+}
+
+/* Center column content for KPI cards */
+[data-testid="column"] {
+    text-align: center !important;
+}
+
+
+/* ========== RULE: CENTER ALL METRIC HEADERS OVER DATA ========== */
+/* This is a site-wide standard - metric labels center over values */
+
+/* Center the metric label text (header above the number) */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+[data-testid="stMetricLabel"] label,
+[data-testid="stMetricLabel"] p,
+[data-testid="stMetricLabel"] span {
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+/* Center the metric value (the big number) */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Center the delta indicator (+$1,264,020 annually, etc.) */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+}
+
+/* Center the entire metric container */
+[data-testid="metric-container"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Center metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Ensure columns containing metrics are centered */
+[data-testid="column"] > div > div > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Center any custom metric-style headers (non-st.metric) */
+.metric-header, .kpi-header, .summary-header {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Center st.caption used as metric labels */
+[data-testid="stCaptionContainer"] {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stCaptionContainer"] p {
+    text-align: center !important;
+}
+
+/* Fix for columns - ensure flex centering */
+.row-widget.stHorizontalBlock > div {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.row-widget.stHorizontalBlock [data-testid="column"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+
+/* ========== CENTER SIDEBAR CONTENT ========== */
+/* Center sidebar text and labels */
+[data-testid="stSidebar"] [data-testid="stMarkdown"] {
+    text-align: center !important;
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] p {
+    text-align: center !important;
+}
+
+/* Center sidebar metric cards */
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Center expander headers in sidebar */
+[data-testid="stSidebar"] .streamlit-expanderHeader {
+    justify-content: center !important;
+}
+
+
+/* ========== SIDEBAR FILTER STYLING ========== */
+/* Filter section header */
+[data-testid="stSidebar"] h3 {
+    color: white !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+    border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* Compact filter widgets */
+[data-testid="stSidebar"] .stSelectbox,
+[data-testid="stSidebar"] .stMultiSelect,
+[data-testid="stSidebar"] .stSlider,
+[data-testid="stSidebar"] .stRadio {
+    margin-bottom: 0.75rem !important;
+}
+
+/* Filter labels */
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stMultiSelect label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stRadio label {
+    color: white !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* Dropdown styling on purple background */
+[data-testid="stSidebar"] .stSelectbox > div > div,
+[data-testid="stSidebar"] .stMultiSelect > div > div {
+    background-color: rgba(255,255,255,0.95) !important;
+    border-radius: 5px !important;
+}
+
+
+/* ========== AGGRESSIVE METRIC CENTERING - TARGET COLUMN STRUCTURE ========== */
+/* Force center alignment for metrics inside columns */
+[data-testid="column"] [data-testid="stMetricContainer"],
+[data-testid="column"] [data-testid="metric-container"],
+[data-testid="column"] > div > div > div[data-testid="stMetricContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* Force center for metric labels inside columns */
+[data-testid="column"] [data-testid="stMetricLabel"],
+[data-testid="column"] [data-testid="stMetricLabel"] > div,
+[data-testid="column"] [data-testid="stMetricLabel"] label,
+[data-testid="column"] [data-testid="stMetricLabel"] p,
+[data-testid="column"] [data-testid="stMetricLabel"] span {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric values inside columns */
+[data-testid="column"] [data-testid="stMetricValue"],
+[data-testid="column"] [data-testid="stMetricValue"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric deltas inside columns */
+[data-testid="column"] [data-testid="stMetricDelta"],
+[data-testid="column"] [data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Target the actual Streamlit metric structure */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+}
+
+div[data-testid="stMetricContainer"] > div {
+    text-align: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* Override any inline styles or conflicting rules */
+[data-testid="stMetricLabel"] * {
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] * {
+    text-align: center !important;
+}
+
+
+/* ========== PAGE TITLE STYLING - MATCH ROI CALCULATOR ========== */
+/* Large bold h1 titles matching ROI Calculator */
+h1 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-top: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* Style first h3 on page as page title (if not using h1) */
+.main h3:first-of-type,
+div[data-testid="stVerticalBlock"] h3:first-of-type,
+.stMarkdown h3:first-of-type {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-top: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* Center page title containers */
+.page-title-container,
+.roi-calculator-title-container {
+    margin-top: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    text-align: center !important;
+}
+
+/* Center subtitle text immediately after h1 or first h3 */
+h1 + p,
+h1 ~ p:first-of-type,
+h3:first-of-type + p,
+h3:first-of-type ~ p:first-of-type,
+.page-title-container + p,
+.page-title-container ~ p:first-of-type {
+    text-align: center !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem !important;
+    font-size: 1rem !important;
+}
+
+/* Center content columns below page title */
+h1 ~ div[data-testid="column"],
+h3:first-of-type ~ div[data-testid="column"],
+.page-title-container ~ div[data-testid="column"],
+h1 + div[data-testid="stVerticalBlock"] div[data-testid="column"],
+h3:first-of-type + div[data-testid="stVerticalBlock"] div[data-testid="column"] {
+    text-align: center !important;
+}
+
+/* Center info boxes and date range displays below title */
+h1 ~ div[data-testid="stInfo"],
+h1 ~ div[data-testid="stAlert"],
+h3:first-of-type ~ div[data-testid="stInfo"],
+h3:first-of-type ~ div[data-testid="stAlert"],
+.page-title-container ~ div[data-testid="stInfo"],
+.page-title-container ~ div[data-testid="stAlert"] {
+    text-align: center !important;
+}
+
+/* Center markdown content immediately after h1 or first h3 */
+h1 + div[data-testid="stMarkdownContainer"],
+h1 ~ div[data-testid="stMarkdownContainer"]:first-of-type,
+h3:first-of-type + div[data-testid="stMarkdownContainer"],
+h3:first-of-type ~ div[data-testid="stMarkdownContainer"]:first-of-type {
+    text-align: center !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.4rem !important;
+    }
+    
+    .main h3:first-of-type {
+        font-size: 1.5rem !important;
+    }
+    
+    h1 + p,
+    h3:first-of-type + p {
+        font-size: 0.9rem !important;
+    }
+}
+
+
+[data-testid="stMetricDelta"] * {
+    text-align: center !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
-
-# Page header (already rendered above)
-
-# ========== MOBILE DETECTION ==========
-# Use a toggle in sidebar for now, or detect via CSS
-# For automatic detection, we'll use CSS classes to show/hide content
-def is_mobile():
-    """Detect if user is on mobile device - simplified version"""
-    # Check if mobile toggle is set in session state
-    # Default to False (desktop) - user can toggle if needed
-    return st.session_state.get('force_mobile', False)
-
-# Add mobile toggle in sidebar (optional - can be removed for automatic detection)
-# For now, we'll render both versions and use CSS to show/hide
-
-# Apply sidebar styling (purple gradient matching StarGuard AI header)
-from utils.sidebar_styling import apply_sidebar_styling
-apply_sidebar_styling()
-
-# Custom CSS
-st.markdown("""
-<style>
-    .status-badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-    
-    .status-on-track {
-        background: #00cc66;
-        color: white;
-    }
-    
-    .status-at-risk {
-        background: #ffcc00;
-        color: #333;
-    }
-    
-    .status-critical {
-        background: #cc0000;
-        color: white;
-    }
-    
-    .status-unknown {
-        background: #999999;
-        color: white;
-    }
-    
-    .trend-indicator {
-        display: inline-block;
-        margin-left: 0.5rem;
-        font-size: 1.2rem;
-    }
-    
-    .trend-up {
-        color: #00cc66;
-    }
-    
-    .trend-down {
-        color: #cc0000;
-    }
-    
-    .trend-stable {
-        color: #666;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Initialize session state
-if 'historical_tracker' not in st.session_state:
-    st.session_state.historical_tracker = HistoricalTracker()
-
-# Sidebar
-st.sidebar.header("📈 Historical Tracking")
-st.sidebar.markdown("Track performance over time with forecasting")
-
-# Date range selector
-st.sidebar.subheader("📅 Date Range")
-default_end = datetime.now().strftime("%Y-%m-%d")
-default_start = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
-
-start_date = st.sidebar.date_input(
-    "Start Date",
-    value=datetime.strptime(default_start, "%Y-%m-%d"),
-    max_value=datetime.now(),
-    format="MM/DD/YYYY"
-)
-end_date = st.sidebar.date_input(
-    "End Date",
-    value=datetime.strptime(default_end, "%Y-%m-%d"),
-    max_value=datetime.now(),
-    format="MM/DD/YYYY"
-)
-
-if start_date > end_date:
-    st.sidebar.error("Start date must be before end date")
-    st.stop()
-
-start_date_str = start_date.strftime("%Y-%m-%d")
-end_date_str = end_date.strftime("%Y-%m-%d")
-
-# Measure selector
-st.sidebar.subheader("🎯 Measure Selection")
-view_option = st.sidebar.radio(
-    "View",
-    ["All Measures", "Single Measure"],
-    index=0
-)
-
-selected_measure = None
-if view_option == "Single Measure":
-    measures_query = """
-        SELECT DISTINCT mi.measure_id, hm.measure_name
-        FROM member_interventions mi
-        LEFT JOIN hedis_measures hm ON mi.measure_id = hm.measure_id
-        ORDER BY hm.measure_name
-    """
-    measures_df = execute_query(measures_query)
-    
-    if not measures_df.empty:
-        measure_options = [f"{row['measure_name']} ({row['measure_id']})" 
-                          for _, row in measures_df.iterrows()]
-        selected_measure_display = st.sidebar.selectbox("Select Measure", measure_options)
-        if selected_measure_display:
-            selected_measure = selected_measure_display.split("(")[1].split(")")[0]
-
-# Target threshold
-st.sidebar.subheader("⚙️ Settings")
-target_success_rate = st.sidebar.number_input(
-    "Target Success Rate (%)",
-    min_value=0.0,
-    max_value=100.0,
-    value=85.0,
-    step=1.0,
-    key="target_rate"
-)
-
-# Sidebar value proposition - at bottom
-from utils.value_proposition import render_sidebar_value_proposition
-render_sidebar_value_proposition()
-
-# Sidebar footer
-render_sidebar_footer()
-
-# Main content
-st.title("📈 Historical Performance Tracking")
-st.markdown("Track HEDIS measure performance over time with forecasting and trend analysis")
-
-# Status overview
-st.header("📊 Status Overview")
-st.markdown("Current status for all measures")
-
-status_df = st.session_state.historical_tracker.get_all_measures_status(target_success_rate)
-
-if not status_df.empty:
-    # Status summary - count each status type
-    status_counts = status_df['status'].value_counts().to_dict()
-    
-    # Get counts for each status (handle missing keys)
-    on_track = status_counts.get('on_track', 0)
-    at_risk = status_counts.get('at_risk', 0)
-    critical = status_counts.get('critical', 0)
-    unknown = status_counts.get('unknown', 0)
-    
-    status_cols = st.columns(4, gap="small")
-    with status_cols[0]:
-        st.metric("On Track", on_track, delta=None if on_track == 0 else None)
-    with status_cols[1]:
-        st.metric("At Risk", at_risk, delta=None if at_risk == 0 else None)
-    with status_cols[2]:
-        st.metric("Critical", critical, delta=None if critical == 0 else None)
-    with status_cols[3]:
-        st.metric("Total Measures", len(status_df))
-    
-    # Show helpful info messages based on status distribution
-    if unknown == len(status_df) and len(status_df) > 0:
-        st.info("ℹ️ **No performance data available yet.** Status will update once interventions are completed and tracked in the system.")
-    elif unknown > 0 and (on_track == 0 and at_risk == 0):
-        st.info(f"ℹ️ {unknown} measure(s) have no data yet. {critical} measure(s) are below target. Status will update as data becomes available.")
-    elif on_track == 0 and at_risk == 0 and critical == len(status_df):
-        st.warning("⚠️ **All measures are currently below target.** Consider reviewing intervention strategies to improve performance.")
-    
-    # Status table with proper HTML rendering
-    # Add table header
-    col1, col2, col3, col4, col5 = st.columns([3, 2, 1.5, 1.5, 1.5], gap="small")
-    with col1:
-        st.markdown("**Measure**")
-    with col2:
-        st.markdown("**Status**")
-    with col3:
-        st.markdown("**Current Rate**")
-    with col4:
-        st.markdown("**Target Rate**")
-    with col5:
-        st.markdown("**Variance**")
-    st.markdown("---")
-    
-    # Display each measure row
-    for _, row in status_df.iterrows():
-        measure_name = row['measure_name']
-        current_rate = row['current_rate']
-        target_rate = row['target_rate']
-        variance = row['variance']
-        status = row['status']
-        trend = row['trend']
-        
-        # Format status badge
-        status_class = f"status-{status.replace('_', '-')}"
-        status_text = status.replace('_', ' ').title()
-        
-        trend_symbol = "📈" if trend == "improving" else ("📉" if trend == "declining" else "➡️")
-        trend_class = "trend-up" if trend == "improving" else ("trend-down" if trend == "declining" else "trend-stable")
-        
-        # Create table row with HTML
-        col1, col2, col3, col4, col5 = st.columns([3, 2, 1.5, 1.5, 1.5], gap="small")
-        
-        with col1:
-            st.markdown(f"**{measure_name}**")
-        
-        with col2:
-            st.markdown(
-                f'<span class="status-badge {status_class}">{status_text}</span> <span class="trend-indicator {trend_class}">{trend_symbol}</span>',
-                unsafe_allow_html=True
-            )
-        
-        with col3:
-            st.markdown(f"{current_rate:.1f}%")
-        
-        with col4:
-            st.markdown(f"{target_rate:.1f}%")
-        
-        with col5:
-            st.markdown(f"{variance:+.1f}%")
-        
-        st.markdown("---")
-else:
-    st.info("No status data available. Check date range and data availability.")
-
-# ========== CHART FUNCTIONS ==========
-def create_desktop_trend_chart(df, selected_measures):
-    """Create interactive multi-line chart for desktop"""
-    fig = go.Figure()
-    
-    # Color palette for measures
-    colors = [
-        '#6F5F96', '#E76F51', '#2A9D8F', '#E9C46A', '#F4A261',
-        '#264653', '#E63946', '#A8DADC', '#457B9D', '#1D3557'
-    ]
-    
-    for idx, measure in enumerate(selected_measures):
-        # Filter data for this measure
-        measure_data = df[df['measure_name'] == measure]
-        
-        fig.add_trace(go.Scatter(
-            x=pd.to_datetime(measure_data['month_start']),
-            y=measure_data['success_rate'],
-            name=measure,
-            mode='lines+markers',
-            line=dict(
-                color=colors[idx % len(colors)],
-                width=2.5
-            ),
-            marker=dict(
-                size=7,
-                symbol='circle'
-            ),
-            hovertemplate=(
-                '<b>%{fullData.name}</b><br>' +
-                'Month: %{x|%b %Y}<br>' +
-                'Success Rate: %{y:.1f}%<br>' +
-                '<extra></extra>'
-            )
-        ))
-    
-    fig.update_layout(
-        title={
-            'text': '📈 Monthly Success Rate Trends - All Measures',
-            'x': 0.5,
-            'xanchor': 'center',
-            'font': {'size': 20, 'color': '#4A3D6F', 'family': 'Arial'}
-        },
-        xaxis=dict(
-            title='Month',
-            showgrid=True,
-            gridcolor='rgba(128, 128, 128, 0.2)',
-            tickformat='%b %Y'
-        ),
-        yaxis=dict(
-            title='Success Rate (%)',
-            showgrid=True,
-            gridcolor='rgba(128, 128, 128, 0.2)',
-            range=[0, 100]
-        ),
-        hovermode='x unified',
-        legend=dict(
-            orientation="v",
-            yanchor="middle",
-            y=0.5,
-            xanchor="left",
-            x=1.02,
-            bgcolor='rgba(255, 255, 255, 0.8)',
-            bordercolor='#4A3D6F',
-            borderwidth=1
-        ),
-        height=600,
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        font=dict(family='Arial', size=12, color='#333')
-    )
-    
-    return fig
-
-def create_mobile_sparkline(df, measure):
-    """Create compact sparkline for mobile"""
-    measure_data = df[df['measure_name'] == measure].sort_values('month_start')
-    
-    fig = go.Figure()
-    
-    fig.add_trace(go.Scatter(
-        x=pd.to_datetime(measure_data['month_start']),
-        y=measure_data['success_rate'],
-        mode='lines',
-        fill='tozeroy',
-        line=dict(color='#6F5F96', width=2),
-        fillcolor='rgba(111, 95, 150, 0.2)',
-        hoverinfo='skip'
-    ))
-    
-    fig.update_layout(
-        height=80,
-        margin=dict(l=0, r=0, t=0, b=0),
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False),
-        showlegend=False,
-        plot_bgcolor='white',
-        paper_bgcolor='white'
-    )
-    
-    return fig
-
-def render_mobile_measure_card(df, measure):
-    """Render a single measure card for mobile"""
-    measure_data = df[df['measure_name'] == measure].sort_values('month_start')
-    
-    if len(measure_data) == 0:
-        return
-    
-    # Get latest values
-    current_value = measure_data.iloc[-1]['success_rate']
-    if len(measure_data) > 1:
-        previous_value = measure_data.iloc[-2]['success_rate']
-        change = current_value - previous_value
-    else:
-        change = 0
-    
-    # Create card
-    with st.container():
-        st.markdown(f"""
-        <div style="
-            background: linear-gradient(135deg, #F8F9FA 0%, #FFFFFF 100%);
-            padding: 0.75rem;
-            border-radius: 8px;
-            border-left: 4px solid #6F5F96;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        ">
-            <div style="font-weight: 600; font-size: 0.9rem; color: #4A3D6F; margin-bottom: 0.5rem;">
-                {measure}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Sparkline
-        fig = create_mobile_sparkline(df, measure)
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-        
-        # Stats row
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown(f"""
-            <div style="text-align: center;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: #4A3D6F;">
-                    {current_value:.1f}%
-                </div>
-                <div style="font-size: 0.75rem; color: #6C757D;">
-                    Current Rate
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            arrow = "↑" if change > 0 else "↓" if change < 0 else "→"
-            color = "#2A9D8F" if change > 0 else "#E76F51" if change < 0 else "#6C757D"
-            
-            st.markdown(f"""
-            <div style="text-align: center;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: {color};">
-                    {arrow} {abs(change):.1f}%
-                </div>
-                <div style="font-size: 0.75rem; color: #6C757D;">
-                    vs Last Month
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown("---")
-
-# Monthly trends
-st.markdown("---")
-st.header("📉 Monthly Trends")
-
-trends_df = st.session_state.historical_tracker.get_monthly_trends(
-    measure_id=selected_measure,
-    start_date=start_date_str,
-    end_date=end_date_str
-)
-
-if not trends_df.empty:
-    # ========== RESPONSIVE MONTHLY TREND VISUALIZATION ==========
-    
-    # Get unique measures from data
-    all_measures = sorted(trends_df['measure_name'].unique())
-    
-    # Render based on device type and view option
-    if view_option == "All Measures":
-        # Add CSS for responsive display
-        st.markdown("""
-        <style>
-        @media (max-width: 768px) {
-            .desktop-chart-container {
-                display: none !important;
-            }
-        }
-        @media (min-width: 769px) {
-            .mobile-cards-container {
-                display: none !important;
-            }
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        
-        # ===== MOBILE VERSION - Vertical Scrollable Cards =====
-        with st.container():
-            st.markdown('<div class="mobile-cards-container">', unsafe_allow_html=True)
-            st.markdown("### 📊 Monthly Trends by Measure")
-            st.markdown("*Scroll to view all measures*")
-            st.markdown("")
-            
-            # Render cards for each measure
-            for measure in all_measures:
-                render_mobile_measure_card(trends_df, measure)
-            st.markdown('</div>', unsafe_allow_html=True)
-        
-        # ===== DESKTOP VERSION - Interactive Multi-Line Chart =====
-        with st.container():
-            st.markdown('<div class="desktop-chart-container">', unsafe_allow_html=True)
-            st.markdown("### 📈 Interactive Trend Analysis")
-        
-        # Measure selector with select all option
-        col1, col2 = st.columns([3, 1])
-        
-        with col1:
-            selected_measures = st.multiselect(
-                "Select measures to display (click to toggle)",
-                options=all_measures,
-                default=all_measures[:5] if len(all_measures) > 5 else all_measures,
-                help="Choose which measures to show on the chart"
-            )
-        
-        with col2:
-            if st.button("Select All", use_container_width=True):
-                selected_measures = all_measures
-                st.rerun()
-            if st.button("Clear All", use_container_width=True):
-                selected_measures = []
-                st.rerun()
-        
-        # Show chart if measures selected
-        if selected_measures:
-            fig = create_desktop_trend_chart(trends_df, selected_measures)
-            st.plotly_chart(fig, use_container_width=True, config={
-                'displayModeBar': True,
-                'displaylogo': False,
-                'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'select2d']
-            })
-            
-            # Summary statistics table below chart
-            st.markdown("### 📊 Summary Statistics")
-            
-            summary_data = []
-            for measure in selected_measures:
-                measure_df = trends_df[trends_df['measure_name'] == measure].sort_values('month_start')
-                
-                if len(measure_df) > 0:
-                    current = measure_df.iloc[-1]['success_rate']
-                    if len(measure_df) > 1:
-                        previous = measure_df.iloc[-2]['success_rate']
-                        change = current - previous
-                    else:
-                        previous = current
-                        change = 0
-                    
-                    avg_rate = measure_df['success_rate'].mean()
-                    min_rate = measure_df['success_rate'].min()
-                    max_rate = measure_df['success_rate'].max()
-                    
-                    summary_data.append({
-                        'Measure': measure,
-                        'Current Rate': f"{current:.1f}%",
-                        'Change': f"{change:+.1f}%",
-                        'Avg Rate': f"{avg_rate:.1f}%",
-                        'Min': f"{min_rate:.1f}%",
-                        'Max': f"{max_rate:.1f}%"
-                    })
-            
-            summary_df = pd.DataFrame(summary_data)
-            st.dataframe(
-                summary_df,
-                use_container_width=True,
-                hide_index=True
-            )
-            st.markdown('</div>', unsafe_allow_html=True)
-        else:
-            st.info("👆 Please select at least one measure to display the trend chart.")
-            st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        # Single measure detailed view
-        measure_data = trends_df[trends_df['measure_id'] == selected_measure] if selected_measure else trends_df
-        
-        if not measure_data.empty:
-            measure_name = measure_data['measure_name'].iloc[0]
-            
-            # Success rate trend
-            fig_rate = go.Figure()
-            fig_rate.add_trace(go.Scatter(
-                x=pd.to_datetime(measure_data['month_start']),
-                y=measure_data['success_rate'],
-                mode='lines+markers',
-                name='Success Rate',
-                line=dict(color='#0066cc', width=2),
-                fill='tonexty',
-                fillcolor='rgba(0, 102, 204, 0.1)'
-            ))
-            
-            # Add target line
-            fig_rate.add_hline(
-                y=target_success_rate,
-                line_dash="dash",
-                line_color="red",
-                annotation_text=f"Target: {target_success_rate}%"
-            )
-            
-            fig_rate.update_layout(
-                title=f"{measure_name} - Success Rate Trend",
-                xaxis_title="Month",
-                yaxis_title="Success Rate (%)",
-                height=300
-            )
-            
-            st.plotly_chart(fig_rate, use_container_width=True)
-            
-            # Interventions and closures
-            fig_volume = go.Figure()
-            fig_volume.add_trace(go.Bar(
-                x=pd.to_datetime(measure_data['month_start']),
-                y=measure_data['total_interventions'],
-                name='Total Interventions',
-                marker_color='#ffcc00'
-            ))
-            fig_volume.add_trace(go.Bar(
-                x=pd.to_datetime(measure_data['month_start']),
-                y=measure_data['successful_closures'],
-                name='Successful Closures',
-                marker_color='#00cc66'
-            ))
-            
-            fig_volume.update_layout(
-                title=f"{measure_name} - Intervention Volume",
-                xaxis_title="Month",
-                yaxis_title="Count",
-                barmode='group',
-                height=300
-            )
-            
-            st.plotly_chart(fig_volume, use_container_width=True)
-    
-    # Forecast next quarter
-    st.markdown("---")
-    st.header("🔮 Next Quarter Forecast")
-    
-    if selected_measure or view_option == "Single Measure":
-        forecast_measure = selected_measure if selected_measure else trends_df['measure_id'].iloc[0]
-        
-        with st.spinner("Generating forecast..."):
-            forecast_df = st.session_state.historical_tracker.forecast_next_quarter(forecast_measure)
-        
-        if not forecast_df.empty:
-            # Combine historical and forecast
-            historical_data = trends_df[trends_df['measure_id'] == forecast_measure].tail(6)
-            
-            # Create combined chart
-            fig_forecast = go.Figure()
-            
-            # Historical data
-            fig_forecast.add_trace(go.Scatter(
-                x=pd.to_datetime(historical_data['month_start']),
-                y=historical_data['success_rate'],
-                mode='lines+markers',
-                name='Historical',
-                line=dict(color='#0066cc', width=2)
-            ))
-            
-            # Forecast data
-            fig_forecast.add_trace(go.Scatter(
-                x=pd.to_datetime(forecast_df['month_start']),
-                y=forecast_df['forecasted_success_rate'],
-                mode='lines+markers',
-                name='Forecast',
-                line=dict(color='#ff6600', width=2, dash='dash'),
-                marker=dict(symbol='diamond')
-            ))
-            
-            # Target line
-            fig_forecast.add_hline(
-                y=target_success_rate,
-                line_dash="dot",
-                line_color="red",
-                annotation_text=f"Target: {target_success_rate}%"
-            )
-            
-            fig_forecast.update_layout(
-                title="Historical Trend with Next Quarter Forecast",
-                xaxis_title="Month",
-                yaxis_title="Success Rate (%)",
-                height=300
-            )
-            
-            st.plotly_chart(fig_forecast, use_container_width=True)
-            
-            # Forecast table
-            forecast_display = forecast_df[['month', 'forecasted_success_rate', 'forecasted_interventions', 
-                                           'forecasted_closures', 'forecasted_revenue']].copy()
-            forecast_display.columns = ['Month', 'Forecasted Success Rate (%)', 'Forecasted Interventions', 
-                                       'Forecasted Closures', 'Forecasted Revenue ($)']
-            forecast_display['Forecasted Success Rate (%)'] = forecast_display['Forecasted Success Rate (%)'].apply(lambda x: f"{x:.1f}%")
-            forecast_display['Forecasted Revenue ($)'] = forecast_display['Forecasted Revenue ($)'].apply(lambda x: f"${x:,.0f}")
-            
-            st.dataframe(forecast_display, use_container_width=True, hide_index=True)
-    else:
-        st.info("Select a single measure to view forecast")
-else:
-    st.info("No trend data available for selected filters.")
-
-# Year-over-year comparison
-st.markdown("---")
-st.header("📅 Year-over-Year Comparison")
-
-yoy_df = st.session_state.historical_tracker.get_year_over_year_comparison(
-    measure_id=selected_measure
-)
-
-if not yoy_df.empty:
-    # YoY comparison chart
-    fig_yoy = go.Figure()
-    
-    fig_yoy.add_trace(go.Bar(
-        x=yoy_df['measure_name'],
-        y=yoy_df['current_success_rate'],
-        name='Current Year',
-        marker_color='#0066cc'
-    ))
-    
-    fig_yoy.add_trace(go.Bar(
-        x=yoy_df['measure_name'],
-        y=yoy_df['previous_success_rate'],
-        name='Previous Year',
-        marker_color='#999999'
-    ))
-    
-    fig_yoy.update_layout(
-        title="Year-over-Year Success Rate Comparison",
-        xaxis_title="Measure",
-        yaxis_title="Success Rate (%)",
-        barmode='group',
-        height=400
-    )
-    
-    st.plotly_chart(fig_yoy, use_container_width=True)
-    
-    # YoY change indicators
-    yoy_display = yoy_df[['measure_name', 'current_success_rate', 'previous_success_rate', 
-                         'success_rate_change', 'revenue_change_pct']].copy()
-    yoy_display.columns = ['Measure', 'Current Rate (%)', 'Previous Rate (%)', 
-                           'Rate Change (%)', 'Revenue Change (%)']
-    yoy_display['Current Rate (%)'] = yoy_display['Current Rate (%)'].apply(lambda x: f"{x:.1f}%")
-    yoy_display['Previous Rate (%)'] = yoy_display['Previous Rate (%)'].apply(lambda x: f"{x:.1f}%")
-    yoy_display['Rate Change (%)'] = yoy_display['Rate Change (%)'].apply(lambda x: f"{x:+.1f}%")
-    yoy_display['Revenue Change (%)'] = yoy_display['Revenue Change (%)'].apply(lambda x: f"{x:+.1f}%")
-    
-    st.dataframe(yoy_display, use_container_width=True, hide_index=True)
-else:
-    st.info("No year-over-year comparison data available.")
-
-# Seasonal patterns
-st.markdown("---")
-st.header("🌍 Seasonal Pattern Detection")
-
-if selected_measure or view_option == "Single Measure":
-    pattern_measure = selected_measure if selected_measure else trends_df['measure_id'].iloc[0] if not trends_df.empty else None
-    
-    if pattern_measure:
-        with st.spinner("Analyzing seasonal patterns..."):
-            patterns = st.session_state.historical_tracker.detect_seasonal_patterns(
-                measure_id=pattern_measure,
-                start_date=start_date_str,
-                end_date=end_date_str
-            )
-        
-        if patterns.get("has_seasonality"):
-            st.success(f"✅ Seasonal pattern detected!")
-            
-            col1, col2 = st.columns(2, gap="small")
-            with col1:
-                st.metric("Peak Month", patterns.get("peak_month", "N/A"))
-            with col2:
-                st.metric("Low Month", patterns.get("low_month", "N/A"))
-            
-            st.caption(f"Seasonal variance: {patterns.get('seasonal_variance', 0):.2f}%")
-            
-            # Monthly averages chart
-            if patterns.get("monthly_averages"):
-                monthly_avg = patterns["monthly_averages"]
-                months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                
-                fig_seasonal = go.Figure()
-                fig_seasonal.add_trace(go.Bar(
-                    x=[months[i-1] for i in monthly_avg.keys()],
-                    y=list(monthly_avg.values()),
-                    marker_color='#0066cc'
-                ))
-                
-                fig_seasonal.update_layout(
-                    title="Average Success Rate by Month (Seasonal Pattern)",
-                    xaxis_title="Month",
-                    yaxis_title="Average Success Rate (%)",
-                    height=300
-                )
-                
-                st.plotly_chart(fig_seasonal, use_container_width=True)
-        else:
-            st.info("No significant seasonal pattern detected.")
-else:
-    st.info("Select a single measure to analyze seasonal patterns.")
-
-# Footer sections - desktop full text, mobile abbreviated
-render_page_footer()  # Main content footer
-

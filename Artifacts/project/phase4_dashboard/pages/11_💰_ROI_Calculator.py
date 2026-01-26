@@ -9,13 +9,15 @@ import plotly.express as px
 from datetime import datetime, timedelta
 import io
 import time
+import json
 
 from utils.database import show_db_status, execute_query
 from utils.roi_calculator import ROICalculator
 from utils.queries import get_portfolio_summary_query
-from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, render_starguard_header
 
-# Page configuration
+# ============================================================================
+# ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
+# ============================================================================
 st.set_page_config(
     page_title="ROI Calculator - HEDIS Portfolio",
     page_icon="💰",
@@ -23,19 +25,256 @@ st.set_page_config(
     initial_sidebar_state="auto"  # Auto: Let Streamlit decide based on screen size (iOS Safari optimized)
 )
 
+# Fix header visibility - add CSS right after page config
+st.markdown("""
+<style>
+/* Fix header visibility - add top spacing */
+.main .block-container {
+    padding-top: 1rem !important;
+    margin-top: 0 !important;
+}
+
+/* Ensure StarGuard header container has proper spacing */
+.starguard-header-container {
+    margin-top: 0.5rem !important;
+}
+
+/* Prevent any clipping */
+.main > div:first-child {
+    overflow: visible !important;
+}
+
+section.main > div {
+    padding-top: 0.5rem !important;
+}
+
+/* Ensure the header isn't pushed under the top bar */
+[data-testid="stAppViewContainer"] {
+    padding-top: 0 !important;
+}
+
+[data-testid="stHeader"] {
+    height: auto !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<script>
+// Fix Performance Dashboard emoji rendering - Enhanced version
+(function() {
+    'use strict';
+    
+    function fixPerformanceDashboardEmoji() {
+        // Find all sidebar links
+        const sidebarLinks = document.querySelectorAll('[data-testid="stSidebarNav"] a');
+        
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            const text = (link.textContent || link.innerText || '').trim();
+            
+            // Check if this is the Performance Dashboard link (by href - most reliable)
+            const isPerformanceDashboard = (
+                href.includes('Performance_Dashboard') ||
+                href.includes('Performance-Dashboard') ||
+                href.toLowerCase().includes('performance') && href.toLowerCase().includes('dashboard')
+            );
+            
+            // Also check by text as backup
+            const textMatches = (
+                text === 'Performance Dashboard' ||
+                text.includes('Performance Dashboard') ||
+                text.match(/Performance\s*Dashboard/i)
+            );
+            
+            const hasEmoji = text.includes('⚡') || text.includes('\u26A1') || link.innerHTML.includes('⚡');
+            
+            // If it's Performance Dashboard but missing emoji, add it
+            if ((isPerformanceDashboard || textMatches) && !hasEmoji) {
+                // Method 1: Clear and rebuild the entire link content
+                const originalHTML = link.innerHTML;
+                
+                // Try to preserve any icons/spans but update text
+                if (link.querySelector('span, div')) {
+                    // Has child elements - update them
+                    const children = link.querySelectorAll('span, div, p');
+                    children.forEach(child => {
+                        const childText = (child.textContent || child.innerText || '').trim();
+                        if (childText === 'Performance Dashboard' || childText.includes('Performance Dashboard')) {
+                            child.textContent = '⚡ Performance Dashboard';
+                            child.innerText = '⚡ Performance Dashboard';
+                        }
+                    });
+                } else {
+                    // No children - replace entire content
+                    link.textContent = '⚡ Performance Dashboard';
+                    link.innerText = '⚡ Performance Dashboard';
+                }
+                
+                // Method 2: Use innerHTML as backup
+                if (!link.textContent.includes('⚡')) {
+                    link.innerHTML = '⚡ Performance Dashboard';
+                }
+                
+                // Method 3: Create a new text node
+                const newText = document.createTextNode('⚡ Performance Dashboard');
+                if (link.childNodes.length === 0 || !link.textContent.includes('⚡')) {
+                    link.innerHTML = '';
+                    link.appendChild(newText);
+                }
+                
+                // Force proper font rendering
+                link.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Segoe UI", sans-serif';
+                link.style.whiteSpace = 'normal';
+                
+                // Add data attribute to mark as fixed
+                link.setAttribute('data-emoji-fixed', 'true');
+            }
+        });
+    }
+    
+    // Run immediately
+    fixPerformanceDashboardEmoji();
+    
+    // Run on DOM changes (Streamlit reruns)
+    const observer = new MutationObserver(function() {
+        fixPerformanceDashboardEmoji();
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+    
+    // Also run after delays to catch late-rendering elements
+    setTimeout(fixPerformanceDashboardEmoji, 50);
+    setTimeout(fixPerformanceDashboardEmoji, 100);
+    setTimeout(fixPerformanceDashboardEmoji, 300);
+    setTimeout(fixPerformanceDashboardEmoji, 500);
+    setTimeout(fixPerformanceDashboardEmoji, 1000);
+    setTimeout(fixPerformanceDashboardEmoji, 2000);
+    setTimeout(fixPerformanceDashboardEmoji, 3000);
+    
+    // Periodic check as backup (every 2 seconds)
+    setInterval(fixPerformanceDashboardEmoji, 2000);
+    
+    // Also run when page becomes visible (user switches tabs back)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            setTimeout(fixPerformanceDashboardEmoji, 100);
+        }
+    });
+})();
+
+    // ====================================================================
+    // FORCE CENTER ALL METRIC LABELS AND VALUES
+    // ====================================================================
+    function forceCenterMetrics() {
+        // Find all metric containers
+        const metricContainers = document.querySelectorAll('[data-testid="stMetricContainer"]');
+        
+        metricContainers.forEach(container => {
+            // Force center alignment on container
+            container.style.textAlign = 'center';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+            
+            // Find and center label
+            const label = container.querySelector('[data-testid="stMetricLabel"]');
+            if (label) {
+                label.style.textAlign = 'center';
+                label.style.width = '100%';
+                label.style.display = 'block';
+                label.style.marginLeft = 'auto';
+                label.style.marginRight = 'auto';
+                
+                // Center all children
+                const labelChildren = label.querySelectorAll('*');
+                labelChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+            
+            // Find and center value
+            const value = container.querySelector('[data-testid="stMetricValue"]');
+            if (value) {
+                value.style.textAlign = 'center';
+                value.style.width = '100%';
+                value.style.display = 'block';
+                value.style.marginLeft = 'auto';
+                value.style.marginRight = 'auto';
+                
+                // Center all children
+                const valueChildren = value.querySelectorAll('*');
+                valueChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+            
+            // Find and center delta
+            const delta = container.querySelector('[data-testid="stMetricDelta"]');
+            if (delta) {
+                delta.style.textAlign = 'center';
+                delta.style.width = '100%';
+                delta.style.display = 'block';
+                delta.style.marginLeft = 'auto';
+                delta.style.marginRight = 'auto';
+                
+                // Center all children
+                const deltaChildren = delta.querySelectorAll('*');
+                deltaChildren.forEach(child => {
+                    child.style.textAlign = 'center';
+                    child.style.marginLeft = 'auto';
+                    child.style.marginRight = 'auto';
+                });
+            }
+        });
+    }
+    
+    // Run immediately and on delays
+    forceCenterMetrics();
+    setTimeout(forceCenterMetrics, 100);
+    setTimeout(forceCenterMetrics, 500);
+    setTimeout(forceCenterMetrics, 1000);
+    setTimeout(forceCenterMetrics, 2000);
+    
+    // Watch for new metrics being added
+    const metricObserver = new MutationObserver(function() {
+        forceCenterMetrics();
+    });
+    
+    metricObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+</script>
+""", unsafe_allow_html=True)
+
+from src.ui.layout import render_page_footer, render_sidebar_footer, render_header, render_starguard_header
+
+# Page configuration
+
 # ========== AGGRESSIVE SPACING REDUCTION ==========
 # MATCHED TO INTERVENTION PERFORMANCE ANALYSIS PAGE (Perfect Spacing Template)
 st.markdown("""
 <style>
 .block-container {
-    padding-top: 0rem !important;
+    padding-top: 1rem !important;
     padding-bottom: 1rem !important;
     max-width: 100% !important;
 }
 
 /* Zero-top enforcement - Headers flush to top */
 .main > div:first-child {
-    padding-top: 0 !important;
+    padding-top: 1rem !important;
     margin-top: 0 !important;
 }
 
@@ -43,8 +282,8 @@ div[data-testid="stVerticalBlock"] > div:first-child {
     margin-bottom: 0 !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 0.25rem !important;
+h1, h4, h5, h6 {
+    margin-top: 0.1rem !important;
     margin-bottom: 0.5rem !important;
     padding-top: 0 !important;
 }
@@ -63,13 +302,820 @@ section.main > div {
 }
 
 .stMarkdown {
-    margin-bottom: 0.25rem !important;
+    margin-bottom: 0.1rem !important;
 }
 
 div[data-testid="stMetric"] {
     padding: 0.25rem !important;
 }
+/* StarGuard Header Container - NO BOTTOM BORDER HERE */
+.starguard-header-container {
+    background: linear-gradient(135deg, #4A3D6F 0%, #6F5F96 100%);
+    padding: 1rem 1.5rem 0.5rem 1.5rem !important;
+    border-radius: 10px;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0rem !important;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
+    border-bottom: none !important;
+}
+
+/* Title - GREEN LINE HERE (between title and subtitle) */
+.starguard-title {
+    color: white !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin: 0 0 0.5rem 0 !important;
+    padding: 0 0 0.5rem 0 !important;
+    line-height: 1.2 !important;
+    border-bottom: 3px solid #4ade80 !important;
+}
+
+/* Subtitle - NO BORDER HERE */
+.starguard-subtitle {
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-size: 0.85rem !important;
+    margin: 0.5rem 0 0 0 !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+    border-bottom: none !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .starguard-header-container {
+        padding: 0.8rem 1rem !important;
+        margin-bottom: 0rem !important;
+    }
+    
+    .starguard-title {
+        font-size: 1.2rem !important;
+        margin-bottom: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+    }
+    
+    .starguard-subtitle {
+        font-size: 0.7rem !important;
+        margin-top: 0.4rem !important;
+    }
+}
+
+/* Reduce spacing after header - AGGRESSIVE */
+.starguard-header-container + *,
+.starguard-header-container ~ * {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce spacing for first content element after header */
+.starguard-header-container ~ .element-container:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"]:first-of-type,
+.starguard-header-container ~ div[data-testid="stVerticalBlock"] {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Target markdown containers immediately after header */
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"],
+.starguard-header-container ~ .stMarkdown {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+    margin-bottom: 0rem !important;
+}
+
+/* Target headings immediately after header */
+.starguard-header-container ~ h1,
+.starguard-header-container ~ h2,
+.starguard-header-container ~ h3,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h1,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h2,
+.starguard-header-container ~ div[data-testid="stMarkdownContainer"] h3 {
+    margin-top: 0rem !important;
+    padding-top: 0 !important;
+}
+
+/* Reduce padding on header subtitle */
+.starguard-subtitle {
+    margin-bottom: 0rem !important;
+    padding-bottom: 0rem !important;
+}
+
+
+    .mobile-optimized-badge {
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: fit-content !important;
+    }
+
+/* ========== CENTER-ALIGN METRICS AND TABLES FOR CLEAN VIEWING ========== */
+
+/* Center metric cards - values and labels */
+[data-testid="stMetricValue"],
+[data-testid="stMetricLabel"],
+[data-testid="stMetricDelta"] {
+    text-align: center !important;
+    justify-content: center !important;
+}
+
+/* Center metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+}
+
+/* Center metric value text */
+[data-testid="stMetricValue"] > div {
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Center metric labels */
+[data-testid="stMetricLabel"] > div {
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+
+/* ========== NUCLEAR OPTION: FORCE CENTER ALL METRIC TEXT ========== */
+/* Target every possible element inside metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+div[data-testid="stMetricContainer"] * {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for label text specifically */
+div[data-testid="stMetricContainer"] > div:first-child,
+div[data-testid="stMetricContainer"] > div:first-child * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for value text */
+div[data-testid="stMetricContainer"] > div:nth-child(2),
+div[data-testid="stMetricContainer"] > div:nth-child(2) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for delta text */
+div[data-testid="stMetricContainer"] > div:nth-child(3),
+div[data-testid="stMetricContainer"] > div:nth-child(3) * {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Center data tables - cell content */
+.stDataFrame,
+.stDataFrame table,
+.stDataFrame td,
+.stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center table headers */
+.stDataFrame thead th {
+    text-align: center !important;
+    font-weight: 600 !important;
+}
+
+/* Center table cells */
+.stDataFrame tbody td {
+    text-align: center !important;
+}
+
+/* Center sidebar metrics */
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    text-align: center !important;
+}
+
+[data-testid="stSidebar"] div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+}
+
+/* Center summary tables in sidebars */
+[data-testid="stSidebar"] .stDataFrame,
+[data-testid="stSidebar"] .stDataFrame table,
+[data-testid="stSidebar"] .stDataFrame td,
+[data-testid="stSidebar"] .stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center caption text */
+.stCaption {
+    text-align: center !important;
+}
+
+/* Center info boxes - selective (only for summary/metric displays) */
+.stAlert[data-baseweb="notification"],
+.stInfo[data-baseweb="notification"],
+.stSuccess[data-baseweb="notification"],
+.stWarning[data-baseweb="notification"],
+.stError[data-baseweb="notification"] {
+    text-align: center !important;
+}
+
+/* Keep expander headers left-aligned for readability */
+.streamlit-expanderHeader {
+    text-align: left !important;
+}
+
+/* Center column headers in tables */
+.stDataFrame th {
+    text-align: center !important;
+}
+
+/* Center numeric values in tables */
+.stDataFrame td {
+    text-align: center !important;
+}
+
+/* Keep text content left-aligned (headings, paragraphs) for readability */
+/* Exception: h2 and h3 are centered */
+h1,   h4, h5, h6 {
+    text-align: left !important;
+}
+
+p, li {
+    text-align: left !important;
+}
+
+/* Exception: Center specific summary/metric section headers */
+{
+    text-align: center !important;
+}
+
+
+/* ========== CENTER SUMMARY HEADERS AND NOTES ========== */
+
+/* Center all h2 and h3 headers (section headers) */
+h2, h3 {
+    text-align: center !important;
+}
+
+/* Center markdown headers - comprehensive targeting */
+.stMarkdown h2,
+.stMarkdown h3,
+div[data-testid="stMarkdownContainer"] h2,
+div[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+.element-container h2,
+.element-container h3,
+div[data-testid="stVerticalBlock"] h2,
+div[data-testid="stVerticalBlock"] h3 {
+    text-align: center !important;
+}
+
+/* Center all markdown content headers */
+.stMarkdown:has(h2),
+.stMarkdown:has(h3) {
+    text-align: center !important;
+}
+
+/* Center captions and notes */
+.stCaption,
+[data-testid="stCaption"],
+p.stCaption,
+div.stCaption {
+    text-align: center !important;
+}
+
+/* Center headers that come after dividers (section headers) */
+hr + h2,
+hr + h3 {
+    text-align: center !important;
+}
+
+/* Center notes/details below metrics */
+[data-testid="stMetricContainer"] + .stMarkdown,
+[data-testid="stMetricContainer"] ~ .stMarkdown,
+.stMetric + .stMarkdown {
+    text-align: center !important;
+}
+
+/* Center all section headers in main content */
+.main h2,
+.main h3,
+section.main h2,
+section.main h3 {
+    text-align: center !important;
+}
+
+
+/* Center all h2 and h3 headers that are section headers */
+h2, h3 {
+    text-align: center !important;
+}
+
+/* Center captions and notes */
+.stCaption,
+[data-testid="stCaption"],
+.stMarkdown:has-text("📊"),
+.stMarkdown:has-text("💰"),
+.stMarkdown:has-text("📈"),
+.stMarkdown:has-text("💵"),
+.stMarkdown:has-text("🎯"),
+.stMarkdown:has-text("🤖"),
+.stMarkdown:has-text("📋"),
+.stMarkdown:has-text("⭐"),
+.stMarkdown:has-text("🔄"),
+.stMarkdown:has-text("📊"),
+.stMarkdown:has-text("⚖️"),
+.stMarkdown:has-text("⚡") {
+    text-align: center !important;
+}
+
+/* Center markdown headers that are summary sections */
+.stMarkdown h2,
+.stMarkdown h3 {
+    text-align: center !important;
+}
+
+/* Center section dividers text */
+hr + h2,
+hr + h3,
+.stMarkdown:has(hr) + h2,
+.stMarkdown:has(hr) + h3 {
+    text-align: center !important;
+}
+
+
+
+/* Center all markdown content that follows metrics */
+div[data-testid="stVerticalBlock"]:has([data-testid="stMetricContainer"]) + .stMarkdown,
+div[data-testid="stVerticalBlock"]:has([data-testid="stMetricContainer"]) ~ .stMarkdown {
+    text-align: center !important;
+}
+
+/* Center summary statistics headers */
+{
+    text-align: center !important;
+}
+
+
+
+
+/* ========== CENTER KPI/METRIC HEADERS ========== */
+/* Center metric labels (Potential ROI, Star Rating Impact, etc.) */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Center metric values */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Center metric delta (the +/- change indicators) */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+/* Center content in metric containers */
+[data-testid="metric-container"] {
+    text-align: center !important;
+}
+
+/* Center column content for KPI cards */
+[data-testid="column"] {
+    text-align: center !important;
+}
+
+
+/* ========== RULE: CENTER ALL METRIC HEADERS OVER DATA ========== */
+/* This is a site-wide standard - metric labels center over values */
+
+/* Center the metric label text (header above the number) */
+[data-testid="stMetricLabel"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricLabel"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+[data-testid="stMetricLabel"] label,
+[data-testid="stMetricLabel"] p,
+[data-testid="stMetricLabel"] span {
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+}
+
+/* Center the metric value (the big number) */
+[data-testid="stMetricValue"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] > div {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Center the delta indicator (+$1,264,020 annually, etc.) */
+[data-testid="stMetricDelta"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+}
+
+/* Center the entire metric container */
+[data-testid="metric-container"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+/* Center metric containers */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Ensure columns containing metrics are centered */
+[data-testid="column"] > div > div > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+/* Center any custom metric-style headers (non-st.metric) */
+.metric-header, .kpi-header, .summary-header {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Center st.caption used as metric labels */
+[data-testid="stCaptionContainer"] {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+[data-testid="stCaptionContainer"] p {
+    text-align: center !important;
+}
+
+/* Fix for columns - ensure flex centering */
+.row-widget.stHorizontalBlock > div {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.row-widget.stHorizontalBlock [data-testid="column"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+
+/* ========== CENTER SIDEBAR CONTENT ========== */
+/* Center sidebar text and labels */
+[data-testid="stSidebar"] [data-testid="stMarkdown"] {
+    text-align: center !important;
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] p {
+    text-align: center !important;
+}
+
+/* Center sidebar metric cards */
+[data-testid="stSidebar"] [data-testid="stMetricLabel"],
+[data-testid="stSidebar"] [data-testid="stMetricValue"],
+[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Center expander headers in sidebar */
+[data-testid="stSidebar"] .streamlit-expanderHeader {
+    justify-content: center !important;
+}
+
+
+/* ========== SIDEBAR FILTER STYLING ========== */
+/* Filter section header */
+[data-testid="stSidebar"] h3 {
+    color: white !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+    border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* Compact filter widgets */
+[data-testid="stSidebar"] .stSelectbox,
+[data-testid="stSidebar"] .stMultiSelect,
+[data-testid="stSidebar"] .stSlider,
+[data-testid="stSidebar"] .stRadio {
+    margin-bottom: 0.75rem !important;
+}
+
+/* Filter labels */
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stMultiSelect label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stRadio label {
+    color: white !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* Dropdown styling on purple background */
+[data-testid="stSidebar"] .stSelectbox > div > div,
+[data-testid="stSidebar"] .stMultiSelect > div > div {
+    background-color: rgba(255,255,255,0.95) !important;
+    border-radius: 5px !important;
+}
+
+
+/* ========== AGGRESSIVE METRIC CENTERING - TARGET COLUMN STRUCTURE ========== */
+/* Force center alignment for metrics inside columns */
+[data-testid="column"] [data-testid="stMetricContainer"],
+[data-testid="column"] [data-testid="metric-container"],
+[data-testid="column"] > div > div > div[data-testid="stMetricContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* Force center for metric labels inside columns */
+[data-testid="column"] [data-testid="stMetricLabel"],
+[data-testid="column"] [data-testid="stMetricLabel"] > div,
+[data-testid="column"] [data-testid="stMetricLabel"] label,
+[data-testid="column"] [data-testid="stMetricLabel"] p,
+[data-testid="column"] [data-testid="stMetricLabel"] span {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric values inside columns */
+[data-testid="column"] [data-testid="stMetricValue"],
+[data-testid="column"] [data-testid="stMetricValue"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Force center for metric deltas inside columns */
+[data-testid="column"] [data-testid="stMetricDelta"],
+[data-testid="column"] [data-testid="stMetricDelta"] > div {
+    text-align: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Target the actual Streamlit metric structure */
+div[data-testid="stMetricContainer"] {
+    text-align: center !important;
+    align-items: center !important;
+}
+
+div[data-testid="stMetricContainer"] > div {
+    text-align: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* Override any inline styles or conflicting rules */
+[data-testid="stMetricLabel"] * {
+    text-align: center !important;
+}
+
+[data-testid="stMetricValue"] * {
+    text-align: center !important;
+}
+
+[data-testid="stMetricDelta"] * {
+    text-align: center !important;
+}
+
 </style>
+""", unsafe_allow_html=True)
+
+# Add tiny spacer to prevent clipping
+st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+
+# StarGuard Header HTML (CSS already defined above)
+st.markdown("""
+<div class='starguard-header-container'>
+    <div class='starguard-title'>⭐ StarGuard AI | Turning Data Into Stars</div>
+    <div class='starguard-subtitle'>Healthcare AI Architect • $148M+ Documented Savings • HEDIS & Star Rating Expert<br>🔒 Zero PHI Exposure • Context Engineering + Agentic RAG • Production-Grade Analytics</div>
+</div>
+""", unsafe_allow_html=True)
+import sys
+from pathlib import Path
+
+# Fix Python path for Streamlit pages - ensure utils can be imported
+current_dir = Path(__file__).parent
+parent_dir = current_dir.parent
+if str(parent_dir) not in sys.path:
+    sys.path.insert(0, str(parent_dir))
+
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# Core imports
+from utils.database import execute_query
+from utils.data_helpers import show_data_availability_warning, get_data_date_range, format_date_display
+from utils.plan_context import get_plan_context, get_plan_size_scenarios
+
+# UI component imports with error handling
+try:
+    from src.ui.compact_components import compact_metric_card, compact_insight_box
+except ImportError:
+    # Define fallback functions
+    def compact_metric_card(*args, **kwargs):
+        return ""
+    def compact_insight_box(*args, **kwargs):
+        return ""
+
+try:
+    from utils.sidebar_styling import apply_sidebar_styling
+except ImportError:
+    def apply_sidebar_styling():
+        pass
+
+try:
+    from utils.page_components_FIXED import add_page_footer
+    # add_mobile_ready_badge removed - badge no longer needed
+except ImportError:
+    def add_page_footer():
+        st.markdown("---")
+        st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
+    # def add_mobile_ready_badge():
+    #     st.markdown("---")
+    #     st.markdown("📱 Mobile Version Ready")
+
+# ============================================================================
+# ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
+# ============================================================================
+st.markdown("""
+<script>
+// Fix Performance Dashboard emoji rendering - Enhanced version
+(function() {
+    'use strict';
+    
+    function fixPerformanceDashboardEmoji() {
+        // Find all sidebar links
+        const sidebarLinks = document.querySelectorAll('[data-testid="stSidebarNav"] a');
+        
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href') || '';
+            const text = (link.textContent || link.innerText || '').trim();
+            
+            // Check if this is the Performance Dashboard link (by href - most reliable)
+            const isPerformanceDashboard = (
+                href.includes('Performance_Dashboard') ||
+                href.includes('Performance-Dashboard') ||
+                href.toLowerCase().includes('performance') && href.toLowerCase().includes('dashboard')
+            );
+            
+            // Also check by text as backup
+            const textMatches = (
+                text === 'Performance Dashboard' ||
+                text.includes('Performance Dashboard') ||
+                text.match(/Performance\s*Dashboard/i)
+            );
+            
+            const hasEmoji = text.includes('⚡') || text.includes('\u26A1') || link.innerHTML.includes('⚡');
+            
+            // If it's Performance Dashboard but missing emoji, add it
+            if ((isPerformanceDashboard || textMatches) && !hasEmoji) {
+                // Method 1: Clear and rebuild the entire link content
+                const originalHTML = link.innerHTML;
+                
+                // Try to preserve any icons/spans but update text
+                if (link.querySelector('span, div')) {
+                    // Has child elements - update them
+                    const children = link.querySelectorAll('span, div, p');
+                    children.forEach(child => {
+                        const childText = (child.textContent || child.innerText || '').trim();
+                        if (childText === 'Performance Dashboard' || childText.includes('Performance Dashboard')) {
+                            child.textContent = '⚡ Performance Dashboard';
+                            child.innerText = '⚡ Performance Dashboard';
+                        }
+                    });
+                } else {
+                    // No children - replace entire content
+                    link.textContent = '⚡ Performance Dashboard';
+                    link.innerText = '⚡ Performance Dashboard';
+                }
+                
+                // Method 2: Use innerHTML as backup
+                if (!link.textContent.includes('⚡')) {
+                    link.innerHTML = '⚡ Performance Dashboard';
+                }
+                
+                // Method 3: Create a new text node
+                const newText = document.createTextNode('⚡ Performance Dashboard');
+                if (link.childNodes.length === 0 || !link.textContent.includes('⚡')) {
+                    link.innerHTML = '';
+                    link.appendChild(newText);
+                }
+                
+                // Force proper font rendering
+                link.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Segoe UI", sans-serif';
+                link.style.whiteSpace = 'normal';
+                
+                // Add data attribute to mark as fixed
+                link.setAttribute('data-emoji-fixed', 'true');
+            }
+        });
+    }
+    
+    // Run immediately
+    fixPerformanceDashboardEmoji();
+    
+    // Run on DOM changes (Streamlit reruns)
+    const observer = new MutationObserver(function() {
+        fixPerformanceDashboardEmoji();
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+    
+    // Also run after delays to catch late-rendering elements
+    setTimeout(fixPerformanceDashboardEmoji, 50);
+    setTimeout(fixPerformanceDashboardEmoji, 100);
+    setTimeout(fixPerformanceDashboardEmoji, 300);
+    setTimeout(fixPerformanceDashboardEmoji, 500);
+    setTimeout(fixPerformanceDashboardEmoji, 1000);
+    setTimeout(fixPerformanceDashboardEmoji, 2000);
+    setTimeout(fixPerformanceDashboardEmoji, 3000);
+    
+    // Periodic check as backup (every 2 seconds)
+    setInterval(fixPerformanceDashboardEmoji, 2000);
+    
+    // Also run when page becomes visible (user switches tabs back)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            setTimeout(fixPerformanceDashboardEmoji, 100);
+        }
+    });
+})();
+</script>
 """, unsafe_allow_html=True)
 
 # Purple Sidebar Theme + White Text Everywhere
@@ -107,8 +1153,7 @@ st.markdown("""
     padding: 0.75rem 1rem !important;
     border-radius: 8px !important;
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
+    margin-bottom: 0rem !important;
 }
 
 [data-testid="stSidebarNav"] ul li:first-child a::before {
@@ -121,45 +1166,7 @@ st.markdown("""
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Target by href for additional coverage */
-[data-testid="stSidebarNav"] a[href="/"],
-[data-testid="stSidebarNav"] a[href="./"],
-[data-testid="stSidebarNav"] a[href*="app"] {
-    font-size: 0 !important;
-    background: rgba(255, 255, 255, 0.2) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-[data-testid="stSidebarNav"] a[href="/"]::before,
-[data-testid="stSidebarNav"] a[href="./"]::before,
-[data-testid="stSidebarNav"] a[href*="app"]::before {
-    content: "🏠 Home" !important;
-    font-size: 1.1rem !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    display: block !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* Hover state - brighter white */
-[data-testid="stSidebarNav"] ul li:first-child a:hover,
-[data-testid="stSidebarNav"] a[href="/"]:hover,
-[data-testid="stSidebarNav"] a[href="./"]:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-}
-
-[data-testid="stSidebarNav"] ul li:first-child a:hover::before,
-[data-testid="stSidebarNav"] a[href="/"]:hover::before,
-[data-testid="stSidebarNav"] a[href="./"]:hover::before {
-    color: #FFFFFF !important;
-}
-
-/* ========== OTHER SIDEBAR LINKS - WHITE TEXT ========== */
-/* Make all other sidebar navigation links white too */
+/* All sidebar navigation links white */
 [data-testid="stSidebarNav"] a {
     color: #FFFFFF !important;
 }
@@ -170,954 +1177,427 @@ st.markdown("""
     color: #FFFFFF !important;
 }
 
-/* Active/selected page - lighter background */
-[data-testid="stSidebarNav"] a[aria-current="page"] {
+/* CSS Backup: Add emoji via ::before for Performance Dashboard links */
+[data-testid="stSidebarNav"] a[href*="Performance_Dashboard"]::before {
+    content: "⚡ " !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", sans-serif !important;
+    display: inline !important;
+}
+
+/* Success/Info boxes in sidebar - white text */
+[data-testid="stSidebar"] [data-testid="stSuccess"],
+[data-testid="stSidebar"] [data-testid="stInfo"] {
+    color: #FFFFFF !important;
     background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSuccess"] *,
+[data-testid="stSidebar"] [data-testid="stInfo"] * {
     color: #FFFFFF !important;
 }
 
-/* ========== MOBILE RESPONSIVE ========== */
+/* View less/more links - white */
+[data-testid="stSidebar"] button {
+    color: #FFFFFF !important;
+}
+
+/* Mobile responsive */
 @media (max-width: 768px) {
     [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
     }
     
-    [data-testid="stSidebar"] > div:first-child {
-        background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
-    }
-    
-    [data-testid="stSidebarNav"] ul li:first-child a {
-        padding: 0.6rem 0.8rem !important;
-    }
-    
-    [data-testid="stSidebarNav"] ul li:first-child a::before {
-        font-size: 1rem !important;
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-    }
-    
-    [data-testid="stSidebarNav"] a[href="/"]::before,
-    [data-testid="stSidebarNav"] a[href="./"]::before {
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-    }
-    
-    /* Mobile sidebar links - white text */
-    [data-testid="stSidebarNav"] a {
+    [data-testid="stSidebar"] * {
         color: #FFFFFF !important;
     }
+    
 }
 
-/* Mobile drawer open state */
-[data-testid="stSidebar"][aria-expanded="true"] {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
+/* ========== SIDEBAR SEPARATOR STYLING - SUBTLE GREEN GRADIENT ========== */
+/* Sidebar separator styling - subtle green gradient (thicker for visibility) */
+[data-testid="stSidebar"] hr {
+    border: none !important;
+    height: 4px !important;
+    margin: 1rem 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(74, 222, 128, 0.8) 50%,
+        transparent 100%
+    ) !important;
 }
 
-[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarNav"] a[href="/"]::before,
-[data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarNav"] a[href="./"]::before {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-}
-
-/* Force white on ALL child elements */
-[data-testid="stSidebarNav"] li:first-child *,
-[data-testid="stSidebarNav"] a[href="/"] *,
-[data-testid="stSidebarNav"] a[href="./"] * {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-}
-
-/* Sidebar collapse button - white */
-[data-testid="collapsedControl"] {
-    color: #FFFFFF !important;
-}
-
-/* ========== HEADER CONTAINER STYLES (Match Home Page) ========== */
-.header-container {
-    background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%);
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    margin-top: -1rem !important;
-    margin-bottom: 0.3rem;
-    text-align: center;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    box-shadow: 0 4px 12px rgba(74, 61, 111, 0.25);
-    max-width: 100%;
-}
-
-.header-title {
-    color: white !important;
-    font-weight: 700;
-    font-size: 1.25rem;
-    margin-bottom: 0.4rem;
-    display: block !important;
-    line-height: 1.5;
-    letter-spacing: 0.3px;
-}
-
-.header-subtitle {
-    color: #E8D4FF !important;
-    font-size: 0.9rem;
-    font-style: italic;
-    display: block !important;
-    line-height: 1.4;
-    opacity: 0.95;
-}
 </style>
 """, unsafe_allow_html=True)
 
-
-# Responsive Header - Adapts to Desktop/Mobile (Match Home Page)
-st.markdown("""
-<div class="header-container">
-    <div class="header-title">⭐ StarGuard AI | Turning Data Into Stars</div>
-    <div class="header-subtitle">Powered by Predictive Analytics & Machine Learning</div>
-</div>
-""", unsafe_allow_html=True)
-
-# Improved compact CSS - READABLE fonts, reduced spacing only
-# MATCHED TO INTERVENTION PERFORMANCE ANALYSIS PAGE (Perfect Spacing Template)
-st.markdown("""
-<style>
-.main .block-container { 
-    padding-top: 1rem !important; 
-    padding-bottom: 1rem !important; 
-    padding-left: 1rem !important; 
-    padding-right: 1rem !important; 
-    max-width: 100% !important; 
-}
-
-/* Section spacing - REDUCE GAPS between sections */
-h1 { 
-    font-size: 1.8rem !important; 
-    margin-top: 0.8rem !important; 
-    margin-bottom: 0.5rem !important; 
-    line-height: 1.2 !important; 
-}
-
-h2 { 
-    font-size: 1.4rem !important; 
-    margin-top: 0.6rem !important; 
-    margin-bottom: 0.4rem !important; 
-    line-height: 1.2 !important; 
-}
-
-h3 { 
-    font-size: 1.1rem !important; 
-    margin-top: 0.5rem !important; 
-    margin-bottom: 0.3rem !important; 
-    line-height: 1.2 !important; 
-}
-
-/* Reduce spacing between elements */
-.element-container { margin-bottom: 0.4rem !important; }
-.stMarkdown { margin-bottom: 0.4rem !important; }
-
-/* Readable metric fonts */
-[data-testid="stMetricValue"] { font-size: 1.6rem !important; }
-[data-testid="stMetricLabel"] { font-size: 0.95rem !important; padding-bottom: 0.3rem !important; }
-[data-testid="metric-container"] { padding: 0.7rem !important; }
-
-/* Chart and data spacing */
-.stPlotlyChart { margin-bottom: 0.6rem !important; }
-.stDataFrame { margin-bottom: 0.6rem !important; }
-
-/* Column spacing */
-[data-testid="column"] { padding: 0.3rem !important; }
-
-/* Interactive elements */
-[data-testid="stExpander"] { margin-bottom: 0.5rem !important; }
-[data-testid="stTabs"] { margin-bottom: 0.6rem !important; }
-.stTabs [data-baseweb="tab-list"] { gap: 0.3rem !important; }
-.stTabs [data-baseweb="tab"] { 
-    padding: 0.5rem 1rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Buttons - keep readable */
-.stButton > button { 
-    padding: 0.6rem 1.2rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Form inputs */
-.stSelectbox, .stTextInput, .stNumberInput { margin-bottom: 0.4rem !important; }
-
-/* Alerts - keep readable */
-.stAlert { 
-    padding: 0.7rem !important; 
-    margin-bottom: 0.5rem !important; 
-    font-size: 0.95rem !important; 
-}
-
-/* Reduce gaps between blocks */
-div[data-testid="stVerticalBlock"] > div { gap: 0.4rem !important; }
-
-/* Horizontal rules */
-hr { margin: 0.6rem 0 !important; }
-
-/* Mobile adjustments - Match Home page formatting */
-@media (max-width: 768px) {
-    .header-container {
-        padding: 0.6rem 0.8rem;
-        border-radius: 6px;
-        margin-top: -1rem !important;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 2px 4px rgba(74, 61, 111, 0.15);
-    }
-    
-    .header-title {
-        font-size: 0.9rem;
-        margin-bottom: 0.25rem;
-        line-height: 1.3;
-        font-weight: 600;
-    }
-    
-    .header-subtitle {
-        font-size: 0.65rem;
-        line-height: 1.2;
-    }
-    
-    /* Mobile spacing - tighter */
-    div.block-container {
-        padding-top: 0rem !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-    
-    h1 {
-        margin-top: 0.5rem !important;
-        font-size: 1.5rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h2 {
-        margin-top: 0.75rem !important;
-        font-size: 1.25rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h3 {
-        font-size: 1.1rem !important;
-        line-height: 1.3;
-        text-align: center !important;
-    }
-    
-    h4, h5, h6 {
-        text-align: center !important;
-    }
-    
-    /* Center align markdown headers on mobile */
-    div[data-testid="stMarkdownContainer"] h1,
-    div[data-testid="stMarkdownContainer"] h2,
-    div[data-testid="stMarkdownContainer"] h3,
-    div[data-testid="stMarkdownContainer"] h4,
-    div[data-testid="stMarkdownContainer"] h5,
-    div[data-testid="stMarkdownContainer"] h6 {
-        text-align: center !important;
-    }
-    
-    /* Center align metrics on mobile */
-    [data-testid="stMetric"],
-    [data-testid="stMetricValue"],
-    [data-testid="stMetricLabel"],
-    [data-testid="stMetricDelta"],
-    [data-testid="metric-container"],
-    .compact-metric-card,
-    .kpi-card {
-        text-align: center !important;
-    }
-    
-    /* Mobile columns - stack vertically */
-    [data-testid="column"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-        padding: 0.2rem !important;
-    }
-    
-    /* Mobile buttons - full width */
-    button[kind="primary"],
-    button[kind="secondary"] {
-        width: 100% !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Mobile metrics - smaller */
-    [data-testid="stMetricValue"] {
-        font-size: 1.5rem !important;
-    }
-    
-    [data-testid="stMetricLabel"] {
-        font-size: 0.85rem !important;
-    }
-    
-    /* Mobile tables - horizontal scroll */
-    .stDataFrame {
-        overflow-x: auto !important;
-    }
-    
-    /* Mobile tabs - stack vertically to eliminate horizontal scrolling */
-    [data-testid="stTabs"] {
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab-list"] {
-        flex-direction: column !important;
-        width: 100% !important;
-        gap: 0.5rem !important;
-        overflow-x: visible !important;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-    
-    /* Wrap Plotly chart titles on mobile */
-    .js-plotly-plot .gtitle,
-    .plotly .gtitle,
-    .js-plotly-plot .xtitle,
-    .plotly .xtitle {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-        max-width: 100% !important;
-        overflow-wrap: break-word !important;
-        hyphens: auto !important;
-    }
-    
-    /* Ensure chart titles wrap */
-    .js-plotly-plot .gtitle text,
-    .plotly .gtitle text {
-        word-wrap: break-word !important;
-        white-space: normal !important;
-    }
-}
-</style>
-""", unsafe_allow_html=True)
-
-# Page header (already rendered above)
-
-# Apply sidebar styling (purple gradient matching StarGuard AI header)
-from utils.sidebar_styling import apply_sidebar_styling
+# Apply sidebar styling FIRST (purple gradient matching StarGuard AI header)
 apply_sidebar_styling()
 
-# Custom CSS
+# Standardized sidebar with CTA for recruiters/hiring managers
+from utils.standard_sidebar import render_standard_sidebar, get_sidebar_date_range, get_sidebar_membership_size
+
+# Custom filters for ROI Calculator
+def render_roi_calc_filters():
+    st.markdown("### 💰 Calculator Filters")
+    
+    # ROI target
+    roi_target = st.slider(
+        "Target ROI",
+        min_value=1.0,
+        max_value=5.0,
+        value=2.0,
+        step=0.1,
+        key="roi_calc_target",
+        help="Target ROI for calculations"
+    )
+    
+    # Investment range
+    investment_min = st.slider(
+        "Min Investment ($)",
+        min_value=10000,
+        max_value=500000,
+        value=50000,
+        step=10000,
+        key="roi_calc_inv_min",
+        help="Minimum investment to consider"
+    )
+    
+    investment_max = st.slider(
+        "Max Investment ($)",
+        min_value=100000,
+        max_value=2000000,
+        value=500000,
+        step=50000,
+        key="roi_calc_inv_max",
+        help="Maximum investment to consider"
+    )
+    
+    # Success rate assumption
+    success_assumption = st.slider(
+        "Success Rate Assumption (%)",
+        min_value=0,
+        max_value=100,
+        value=45,
+        step=5,
+        key="roi_calc_success",
+        help="Assumed success rate for calculations"
+    )
+    
+    st.markdown("---")
+    
+    # ROI Calculation Parameters
+    st.markdown("### ⚙️ ROI Calculation Parameters")
+    
+    investment_amount = st.number_input(
+        "Investment Amount ($)",
+        min_value=0.0,
+        value=st.session_state.get("roi_calc_investment_amount", 100000.0),
+        step=10000.0,
+        key="roi_calc_investment_amount",
+        help="Total investment for the intervention"
+    )
+    
+    expected_closures = st.number_input(
+        "Expected Successful Closures",
+        min_value=0,
+        value=st.session_state.get("roi_calc_expected_closures", 500),
+        step=50,
+        key="roi_calc_expected_closures",
+        help="Number of successful gap closures expected"
+    )
+    
+    revenue_per_closure = st.number_input(
+        "Revenue per Closure ($)",
+        min_value=0.0,
+        value=st.session_state.get("roi_calc_revenue_per_closure", 500.0),
+        step=50.0,
+        key="roi_calc_revenue_per_closure",
+        help="Revenue impact per successful closure"
+    )
+
+render_standard_sidebar(
+    membership_slider_key="membership_slider_roi_calculator",
+    start_date_key="sidebar_start_date_roi_calculator",
+    end_date_key="sidebar_end_date_roi_calculator",
+    custom_filters=[render_roi_calc_filters]
+)
+
+# Get values from sidebar
+membership_size = get_sidebar_membership_size()
+start_date, end_date = get_sidebar_date_range()
+
+BASELINE_MEMBERS = 10000
+scale_factor = membership_size / BASELINE_MEMBERS
+
+
+# Page content
+# Add CSS to ensure header is fully visible and centered
 st.markdown("""
 <style>
-    .roi-card {
-        background: white;
-        padding: 1rem;
-        border-radius: 12px;
-        border-left: 4px solid #00cc66;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin: 0.5rem 0;
+    /* Fix header visibility - add top spacing */
+    .main .block-container {
+        padding-top: 1rem !important;
+        margin-top: 0 !important;
+    }
+
+    /* Ensure StarGuard header container has proper spacing */
+    .starguard-header-container {
+        margin-top: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Prevent any clipping */
+    .main > div:first-child {
+        overflow: visible !important;
+    }
+
+    section.main > div {
+        padding-top: 0.5rem !important;
+    }
+
+    /* Ensure the header isn't pushed under the top bar */
+    [data-testid="stAppViewContainer"] {
+        padding-top: 0 !important;
+    }
+
+    [data-testid="stHeader"] {
+        height: auto !important;
     }
     
-    .ci-indicator {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        background: #e6f3ff;
-        color: #0066cc;
-        margin-left: 0.5rem;
+    /* Reduce spacing between banner and title */
+    .roi-calculator-title-container {
+        margin-top: 0.5rem !important;
+        padding-top: 0.5rem !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        text-align: center !important;
     }
     
-    .positive-roi {
-        color: #00cc66;
-        font-weight: 700;
+    .roi-calculator-title-container h1 {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        margin-bottom: 0.5rem !important;
+        text-align: center !important;
     }
     
-    .negative-roi {
-        color: #cc0000;
-        font-weight: 700;
+    /* Center all h1 titles */
+    h1 {
+        text-align: center !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Initialize session state
-if 'roi_calculator' not in st.session_state:
-    st.session_state.roi_calculator = ROICalculator()
-if 'roi_results' not in st.session_state:
-    st.session_state.roi_results = []
-    # Auto-generate sample ROI results on page load
-    try:
-        config = {
-            "quality_bonus_per_member_per_star": 50.0,
-            "members_per_measure": 1000,
-            "revenue_per_closure": 100.0,
-            "staff_cost_per_hour": 75.0,
-            "outreach_cost_per_member": 15.0,
-            "lab_cost_per_test": 25.0,
-            "confidence_level": 0.95
-        }
-        sample_results = st.session_state.roi_calculator.generate_sample_roi_results(config)
-        st.session_state.roi_results = sample_results
-    except Exception:
-        pass  # Silently fail if generation fails on init
+# Use markdown with HTML wrapper - positioned with spacing after banner
+st.markdown("""
+<div class="roi-calculator-title-container">
+    <h1>💰 ROI Calculator</h1>
+</div>
+""", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; margin-top: 0; margin-bottom: 0.75rem; font-size: 1rem;'>Calculate projected ROI for different intervention strategies</p>", unsafe_allow_html=True)
 
-# Sidebar
-st.sidebar.header("💰 ROI Calculator")
-st.sidebar.markdown("Calculate comprehensive ROI with quality bonuses and Star Rating impact")
-st.sidebar.divider()
+# Display date range info
+col1, col2 = st.columns([1, 1], gap="small")
+with col1:
+    st.info("💡 **ROI Calculator:** Estimate returns for various investment scenarios.")
+with col2:
+    st.markdown(f"<p style='text-align: center;'><strong>Date Range:</strong> {format_date_display(start_date)} to {format_date_display(end_date)}</p>", unsafe_allow_html=True)
 
-# Configuration
-st.sidebar.subheader("⚙️ Configuration")
+# Check data availability
+show_data_availability_warning(start_date, end_date)
 
-quality_bonus = st.sidebar.number_input(
-    "Quality Bonus per Member per Star ($)",
-    min_value=0.0,
-    value=50.0,
-    step=5.0,
-    key="quality_bonus"
+# Metrics will be displayed after calculations (see below)
+
+# Enhanced ROI Calculator Visualizations
+st.header("💰 Interactive ROI Calculator")
+
+st.info("💡 **Adjust Parameters:** Use the sidebar to modify Investment Amount, Expected Closures, and Revenue per Closure. Results update automatically.")
+
+# Get ROI calculation parameters from sidebar (session state)
+investment_amount = st.session_state.get("roi_calc_investment_amount", 100000.0)
+expected_closures = st.session_state.get("roi_calc_expected_closures", 500)
+revenue_per_closure = st.session_state.get("roi_calc_revenue_per_closure", 500.0)
+
+# Calculate ROI
+total_revenue = max(expected_closures * revenue_per_closure, 1000)
+investment_amount = max(investment_amount, 1000)  # Ensure minimum
+net_benefit = total_revenue - investment_amount
+roi_ratio = max(total_revenue / investment_amount if investment_amount > 0 else 0.1, 0.1)
+roi_percentage = (roi_ratio - 1) * 100
+
+# Display Summary Metrics at Top
+st.subheader("💰 ROI Calculator Summary")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric("Scenarios Calculated", "1", help="Current calculation scenario")
+with col2:
+    st.metric("Best ROI", f"{roi_ratio:.2f}x", help=f"ROI ratio: {roi_percentage:.1f}%")
+with col3:
+    st.metric("Recommended Investment", f"${investment_amount:,.0f}", help="Current investment amount")
+
+st.divider()
+
+# Display Results
+st.subheader("📊 ROI Calculation Results")
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.metric("Total Investment", f"${investment_amount:,.0f}")
+with col2:
+    st.metric("Total Revenue", f"${total_revenue:,.0f}")
+with col3:
+    st.metric("Net Benefit", f"${net_benefit:,.0f}", f"${net_benefit:,.0f}")
+with col4:
+    st.metric("ROI Ratio", f"{roi_ratio:.2f}x", f"{roi_percentage:.1f}%")
+
+st.divider()
+
+# Visualizations
+from utils.enhanced_charts import create_wow_bar_chart, create_wow_pie_chart, create_wow_scatter
+import pandas as pd
+
+# ROI Breakdown Chart
+st.subheader("📈 ROI Breakdown Visualization")
+roi_data = pd.DataFrame({
+    'Category': ['Investment', 'Revenue', 'Net Benefit'],
+    'Amount': [investment_amount, total_revenue, max(net_benefit, 0)]
+})
+
+fig_roi_breakdown = create_wow_bar_chart(
+    df=roi_data,
+    x_col="Category",
+    y_col="Amount",
+    title="ROI Breakdown: Investment vs Revenue vs Net Benefit",
+    x_label="Category",
+    y_label="Amount ($)",
+    color_palette="gradient_green",
+    show_values=True
 )
+st.plotly_chart(fig_roi_breakdown, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="roi_calc_breakdown")
 
-members_per_measure = st.sidebar.number_input(
-    "Members per Measure",
-    min_value=1,
-    value=1000,
-    step=100,
-    key="members_per_measure"
+st.divider()
+
+# Sensitivity Analysis
+st.subheader("📊 Sensitivity Analysis")
+st.markdown("**How ROI changes with different closure rates**")
+
+closure_rates = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
+sensitivity_data = []
+for rate in closure_rates:
+    adj_closures = int(expected_closures * rate)
+    adj_revenue = adj_closures * revenue_per_closure
+    adj_roi = max(adj_revenue / investment_amount if investment_amount > 0 else 0.1, 0.1)
+    sensitivity_data.append({
+        'Closure Rate': rate,  # Keep as numeric for chart
+        'Closure Rate Label': f"{rate:.1f}x",  # For display labels if needed
+        'ROI Ratio': adj_roi,
+        'Net Benefit': max(adj_revenue - investment_amount, 0)
+    })
+
+sensitivity_df = pd.DataFrame(sensitivity_data)
+
+fig_sensitivity = create_wow_scatter(
+    df=sensitivity_df,
+    x_col="Closure Rate",  # Use numeric column
+    y_col="ROI Ratio",
+    size_col="Net Benefit",
+    title="ROI Sensitivity: Impact of Closure Rate Variations",
+    x_label="Closure Rate Multiplier",
+    y_label="ROI Ratio",
+    color_palette="sunset",
+    marker_shape="star",
+    show_trendline=True
 )
+st.plotly_chart(fig_sensitivity, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="roi_calc_sensitivity")
 
-revenue_per_closure = st.sidebar.number_input(
-    "Revenue per Closure ($)",
-    min_value=0.0,
-    value=100.0,
-    step=10.0,
-    key="revenue_per_closure"
+st.divider()
+
+# Comparison with Portfolio Average
+st.subheader("📊 Portfolio Comparison")
+from utils.queries import get_roi_by_measure_query
+
+portfolio_query = get_roi_by_measure_query(
+    start_date.strftime("%Y-%m-%d"),
+    end_date.strftime("%Y-%m-%d")
 )
+portfolio_df = execute_query(portfolio_query)
 
-staff_cost_per_hour = st.sidebar.number_input(
-    "Staff Cost per Hour ($)",
-    min_value=0.0,
-    value=75.0,
-    step=5.0,
-    key="staff_cost"
-)
-
-outreach_cost = st.sidebar.number_input(
-    "Outreach Cost per Member ($)",
-    min_value=0.0,
-    value=15.0,
-    step=1.0,
-    key="outreach_cost"
-)
-
-lab_cost = st.sidebar.number_input(
-    "Lab Cost per Test ($)",
-    min_value=0.0,
-    value=25.0,
-    step=1.0,
-    key="lab_cost"
-)
-
-confidence_level = st.sidebar.slider(
-    "Confidence Level (%)",
-    min_value=80,
-    max_value=99,
-    value=95,
-    step=1,
-    key="confidence_level"
-)
-
-st.sidebar.divider()
-# Date range
-st.sidebar.subheader("📅 Date Range")
-# Default to data range (2024-10-01 to 2024-12-31) instead of last 90 days
-default_start = datetime(2024, 10, 1)
-default_end = datetime(2024, 12, 31)
-
-start_date = st.sidebar.date_input(
-    "Start Date",
-    value=default_start,
-    max_value=datetime.now(),
-    format="MM/DD/YYYY"
-)
-end_date = st.sidebar.date_input(
-    "End Date",
-    value=default_end,
-    max_value=datetime.now(),
-    format="MM/DD/YYYY"
-)
-
-if start_date > end_date:
-    st.sidebar.error("Start date must be before end date")
-    st.stop()
-
-start_date_str = start_date.strftime("%Y-%m-%d")
-end_date_str = end_date.strftime("%Y-%m-%d")
-
-st.sidebar.divider()
-# Measure selection
-st.sidebar.subheader("🎯 Measure Selection")
-calc_option = st.sidebar.radio(
-    "Calculate",
-    ["All Measures", "Single Measure"],
-    index=0
-)
-
-selected_measure = None
-if calc_option == "Single Measure":
-    measures_query = """
-        SELECT DISTINCT mi.measure_id, hm.measure_name
-        FROM member_interventions mi
-        LEFT JOIN hedis_measures hm ON mi.measure_id = hm.measure_id
-        ORDER BY hm.measure_name
-    """
-    measures_df = execute_query(measures_query)
+if not portfolio_df.empty:
+    avg_portfolio_roi = portfolio_df['roi_ratio'].mean()
     
-    if not measures_df.empty:
-        measure_options = [f"{row['measure_name']} ({row['measure_id']})" 
-                          for _, row in measures_df.iterrows()]
-        selected_measure_display = st.sidebar.selectbox("Select Measure", measure_options)
-        if selected_measure_display:
-            selected_measure = selected_measure_display.split("(")[1].split(")")[0]
-
-# Sidebar value proposition - at bottom
-from utils.value_proposition import render_sidebar_value_proposition
-render_sidebar_value_proposition()
-
-# Sidebar footer
-render_sidebar_footer()
-
-# Main content
-st.title("💰 Comprehensive ROI Calculator")
-st.markdown("Calculate quality bonus impact, Star Rating financial impact, and net ROI with confidence intervals")
-
-# Calculate button
-if st.button("🔄 Calculate ROI", type="primary", use_container_width=True):
-    with st.spinner("Calculating ROI..."):
-        config = {
-            "quality_bonus_per_member_per_star": quality_bonus,
-            "members_per_measure": members_per_measure,
-            "revenue_per_closure": revenue_per_closure,
-            "staff_cost_per_hour": staff_cost_per_hour,
-            "outreach_cost_per_member": outreach_cost,
-            "lab_cost_per_test": lab_cost,
-            "confidence_level": confidence_level / 100.0
-        }
-        
-        st.session_state.roi_calculator.defaults.update(config)
-        
-        if calc_option == "All Measures":
-            # Get all measures from hedis_measures table
-            measures_query = """
-                SELECT DISTINCT hm.measure_id, 
-                       COALESCE(NULLIF(hm.measure_name, ''), hm.measure_id) as measure_name
-                FROM hedis_measures hm
-                WHERE hm.measure_id IS NOT NULL 
-                  AND hm.measure_id != ''
-                ORDER BY hm.measure_name
-            """
-            measures_df = execute_query(measures_query)
-            
-            # Remove any duplicates that might have slipped through
-            if not measures_df.empty:
-                measures_df = measures_df.drop_duplicates(subset=['measure_id'], keep='first')
-            
-            # If no measures in hedis_measures, try from interventions
-            if measures_df.empty:
-                measures_query = """
-                    SELECT DISTINCT mi.measure_id, 
-                           COALESCE(NULLIF(hm.measure_name, ''), mi.measure_id) as measure_name
-                    FROM member_interventions mi
-                    LEFT JOIN hedis_measures hm ON mi.measure_id = hm.measure_id
-                    WHERE mi.measure_id IS NOT NULL 
-                      AND mi.measure_id != ''
-                    ORDER BY measure_name
-                """
-                measures_df = execute_query(measures_query)
-                
-                # Remove duplicates
-                if not measures_df.empty:
-                    measures_df = measures_df.drop_duplicates(subset=['measure_id'], keep='first')
-            
-            if measures_df.empty:
-                st.warning("⚠️ No measures found in the database. Please check your data.")
-                st.session_state.roi_results = []
-            else:
-                results = []
-                seen_measure_ids = set()
-                
-                # First, deduplicate the DataFrame itself
-                measures_df = measures_df.drop_duplicates(subset=['measure_id'], keep='first')
-                
-                for _, row in measures_df.iterrows():
-                    measure_id = str(row['measure_id']).strip() if row['measure_id'] else None
-                    
-                    # Skip if measure_id is null, empty, or already processed
-                    if not measure_id or measure_id in seen_measure_ids:
-                        continue
-                    seen_measure_ids.add(measure_id)
-                    
-                    measure_name_from_query = str(row.get('measure_name', '')).strip() if row.get('measure_name') else None
-                    if not measure_name_from_query or measure_name_from_query == 'None' or measure_name_from_query == '':
-                        measure_name_from_query = f"Measure {measure_id}"
-                    
-                    roi = st.session_state.roi_calculator.calculate_measure_roi(
-                        measure_id,
-                        start_date_str,
-                        end_date_str,
-                        config
-                    )
-                    
-                    # Always use measure_name from query to ensure proper names
-                    roi['measure_name'] = measure_name_from_query
-                    roi['measure_id'] = measure_id  # Ensure measure_id is set
-                    
-                    results.append(roi)
-                
-                # Final deduplication pass on results by measure_id
-                # Use a dictionary keyed by measure_id to ensure uniqueness
-                unique_results = {}
-                for roi in results:
-                    measure_id = str(roi.get('measure_id', '')).strip() if roi.get('measure_id') else None
-                    
-                    # Skip if no measure_id
-                    if not measure_id:
-                        continue
-                    
-                    # If we haven't seen this measure_id, add it
-                    if measure_id not in unique_results:
-                        unique_results[measure_id] = roi
-                    else:
-                        # If duplicate, keep the one with more data (interventions)
-                        existing = unique_results[measure_id]
-                        existing_interventions = existing.get('total_interventions', 0) or 0
-                        new_interventions = roi.get('total_interventions', 0) or 0
-                        
-                        if new_interventions > existing_interventions:
-                            unique_results[measure_id] = roi
-                        # If same data, prefer the one with a better measure_name
-                        elif new_interventions == existing_interventions:
-                            existing_name = str(existing.get('measure_name', '')).strip()
-                            new_name = str(roi.get('measure_name', '')).strip()
-                            if new_name and new_name != 'Unknown' and (not existing_name or existing_name == 'Unknown'):
-                                unique_results[measure_id] = roi
-                
-                # Convert to list and ensure all have proper measure_name
-                final_results = []
-                for measure_id, roi in unique_results.items():
-                    if not roi.get('measure_name') or str(roi.get('measure_name', '')).strip() in ['', 'None', 'Unknown']:
-                        roi['measure_name'] = f"Measure {measure_id}"
-                    final_results.append(roi)
-                
-                st.session_state.roi_results = final_results
-        else:
-            if selected_measure:
-                roi = st.session_state.roi_calculator.calculate_measure_roi(
-                    selected_measure,
-                    start_date_str,
-                    end_date_str,
-                    config
-                )
-                st.session_state.roi_results = [roi]
-            else:
-                st.error("Please select a measure")
-
-# Display results
-if st.session_state.roi_results and len(st.session_state.roi_results) > 0:
-    # Check if all results have zero data
-    total_interventions_all = sum(r.get('total_interventions', 0) for r in st.session_state.roi_results)
-    if total_interventions_all == 0:
-        st.warning(f"⚠️ **No intervention data found for the selected date range ({start_date_str} to {end_date_str}).**")
-        st.info("💡 **Tip:** Try adjusting the date range. Default data is typically available from October 2024 to December 2024.")
-        st.markdown("---")
+    comparison_data = pd.DataFrame({
+        'Metric': ['Calculated ROI', 'Portfolio Average ROI'],
+        'ROI Ratio': [roi_ratio, avg_portfolio_roi]
+    })
     
-    # Portfolio summary
-    if len(st.session_state.roi_results) > 1:
-        st.header("📊 Portfolio ROI Summary")
-        
-        total_revenue = sum(r.get('total_revenue', 0) for r in st.session_state.roi_results)
-        total_bonus = sum(r.get('quality_bonus', 0) for r in st.session_state.roi_results)
-        total_costs = sum(r.get('total_costs', 0) for r in st.session_state.roi_results)
-        total_roi = sum(r.get('net_roi', 0) for r in st.session_state.roi_results)
-        
-        summary_cols = st.columns(4, gap="small")
-        with summary_cols[0]:
-            st.metric("Total Revenue", f"${total_revenue:,.0f}")
-        with summary_cols[1]:
-            st.metric("Quality Bonus", f"${total_bonus:,.0f}")
-        with summary_cols[2]:
-            st.metric("Total Costs", f"${total_costs:,.0f}")
-        with summary_cols[3]:
-            roi_class = "positive-roi" if total_roi >= 0 else "negative-roi"
-            st.markdown(f'<div class="{roi_class}">Net ROI: ${total_roi:,.0f}</div>', unsafe_allow_html=True)
-    
-    # Detailed results
-    st.markdown("---")
-    st.header("📈 Detailed ROI Analysis")
-    
-    # Results are already deduplicated before storing in session_state
-    # Just ensure measure_name is properly set for display
-    for idx, roi in enumerate(st.session_state.roi_results):
-        measure_id = str(roi.get('measure_id', '')).strip() if roi.get('measure_id') else None
-        measure_name = str(roi.get('measure_name', '')).strip() if roi.get('measure_name') else None
-        
-        # Ensure measure_name is set
-        if not measure_name or measure_name == 'None' or measure_name == '' or measure_name == 'Unknown':
-            measure_name = f"Measure {measure_id}" if measure_id else "Unknown"
-            roi['measure_name'] = measure_name
-        success_rate = roi.get('success_rate', 0)
-        total_revenue = roi.get('total_revenue', 0)
-        quality_bonus = roi.get('quality_bonus', 0)
-        total_costs = roi.get('total_costs', 0)
-        net_roi = roi.get('net_roi', 0)
-        roi_ratio = roi.get('roi_ratio', 0)
-        star_rating = roi.get('star_rating', 0)
-        
-        with st.expander(f"💰 {measure_name} - ROI Analysis", expanded=True):
-            # Key metrics
-            metric_cols = st.columns(4, gap="small")
-            with metric_cols[0]:
-                st.metric("Success Rate", f"{success_rate:.1f}%")
-                ci_lower = roi.get('success_rate_ci_lower', 0)
-                ci_upper = roi.get('success_rate_ci_upper', 0)
-                st.caption(f"95% CI: {ci_lower:.1f}% - {ci_upper:.1f}%")
-            with metric_cols[1]:
-                st.metric("Star Rating", f"{star_rating} stars")
-                st.caption(f"Quality Bonus: ${quality_bonus:,.0f}")
-            with metric_cols[2]:
-                st.metric("Total Revenue", f"${total_revenue:,.0f}")
-                revenue_ci_lower = roi.get('revenue_ci_lower', 0)
-                revenue_ci_upper = roi.get('revenue_ci_upper', 0)
-                st.caption(f"95% CI: ${revenue_ci_lower:,.0f} - ${revenue_ci_upper:,.0f}")
-            with metric_cols[3]:
-                roi_class = "positive-roi" if net_roi >= 0 else "negative-roi"
-                st.markdown(f'<div class="{roi_class}">Net ROI: ${net_roi:,.0f}</div>', unsafe_allow_html=True)
-                st.metric("ROI Ratio", f"{roi_ratio:.2f}")
-                net_roi_ci_lower = roi.get('net_roi_ci_lower', 0)
-                net_roi_ci_upper = roi.get('net_roi_ci_upper', 0)
-                st.caption(f"95% CI: ${net_roi_ci_lower:,.0f} - ${net_roi_ci_upper:,.0f}")
-            
-            # Cost breakdown
-            st.subheader("💵 Cost Breakdown")
-            cost_breakdown = roi.get('cost_breakdown', {})
-            
-            cost_cols = st.columns(4, gap="small")
-            with cost_cols[0]:
-                st.metric("Staff Costs", f"${cost_breakdown.get('staff_cost', 0):,.2f}")
-            with cost_cols[1]:
-                st.metric("Outreach Costs", f"${cost_breakdown.get('outreach_cost', 0):,.2f}")
-            with cost_cols[2]:
-                st.metric("Lab Costs", f"${cost_breakdown.get('lab_cost', 0):,.2f}")
-            with cost_cols[3]:
-                st.metric("Intervention Costs", f"${cost_breakdown.get('intervention_cost', 0):,.2f}")
-            
-            # Revenue breakdown
-            st.subheader("💵 Revenue Breakdown")
-            revenue_cols = st.columns(2, gap="small")
-            with revenue_cols[0]:
-                st.metric("Revenue from Closures", f"${total_revenue:,.2f}")
-            with revenue_cols[1]:
-                st.metric("Quality Bonus Impact", f"${quality_bonus:,.2f}")
-            
-            # Visualization
-            fig = go.Figure()
-            
-            fig.add_trace(go.Bar(
-                name='Revenue',
-                x=['Closures', 'Quality Bonus'],
-                y=[total_revenue, quality_bonus],
-                marker_color=['#00cc66', '#0066cc']
-            ))
-            
-            fig.add_trace(go.Bar(
-                name='Costs',
-                x=['Total Costs'],
-                y=[total_costs],
-                marker_color='#ff6600'
-            ))
-            
-            fig.update_layout(
-                title=f"{measure_name} - Revenue vs Costs",
-                barmode='group',
-                height=300
-            )
-            
-            st.plotly_chart(fig, use_container_width=True, key=f"roi_chart_{idx}")
-    
-    # Sensitivity analysis
-    st.markdown("---")
-    st.header("🔬 Sensitivity Analysis")
-    st.markdown("What-if scenarios: 'If closure rate is X% instead of Y%...'")
-    
-    if len(st.session_state.roi_results) == 1:
-        base_roi = st.session_state.roi_results[0]
-        
-        # Create scenarios
-        current_rate = base_roi.get('success_rate', 0)
-        
-        scenario_cols = st.columns(3, gap="small")
-        scenarios = []
-        
-        with scenario_cols[0]:
-            st.subheader("Scenario 1")
-            scenario1_rate = st.slider(
-                "Success Rate (%)",
-                min_value=0.0,
-                max_value=100.0,
-                value=current_rate - 5,
-                step=0.5,
-                key="scenario1_rate"
-            )
-            scenarios.append({
-                "name": f"Lower Rate ({scenario1_rate:.1f}%)",
-                "success_rate": scenario1_rate
-            })
-        
-        with scenario_cols[1]:
-            st.subheader("Scenario 2")
-            scenario2_rate = st.slider(
-                "Success Rate (%)",
-                min_value=0.0,
-                max_value=100.0,
-                value=current_rate,
-                step=0.5,
-                key="scenario2_rate"
-            )
-            scenarios.append({
-                "name": f"Current Rate ({scenario2_rate:.1f}%)",
-                "success_rate": scenario2_rate
-            })
-        
-        with scenario_cols[2]:
-            st.subheader("Scenario 3")
-            scenario3_rate = st.slider(
-                "Success Rate (%)",
-                min_value=0.0,
-                max_value=100.0,
-                value=current_rate + 5,
-                step=0.5,
-                key="scenario3_rate"
-            )
-            scenarios.append({
-                "name": f"Higher Rate ({scenario3_rate:.1f}%)",
-                "success_rate": scenario3_rate
-            })
-        
-        # Calculate sensitivity
-        sensitivity_df = st.session_state.roi_calculator.sensitivity_analysis(base_roi, scenarios)
-        
-        if not sensitivity_df.empty:
-            # Display comparison
-            st.subheader("Scenario Comparison")
-            st.dataframe(sensitivity_df, use_container_width=True, hide_index=True)
-            
-            # Visualization
-            fig_sens = go.Figure()
-            
-            fig_sens.add_trace(go.Bar(
-                x=sensitivity_df['scenario_name'],
-                y=sensitivity_df['net_roi'],
-                marker_color=['#cc0000' if x < 0 else '#00cc66' for x in sensitivity_df['net_roi']],
-                text=sensitivity_df['net_roi'].apply(lambda x: f"${x:,.0f}"),
-                textposition='outside'
-            ))
-            
-            fig_sens.update_layout(
-                title="Net ROI by Scenario",
-                xaxis_title="Scenario",
-                yaxis_title="Net ROI ($)",
-                height=300
-            )
-            
-            st.plotly_chart(fig_sens, use_container_width=True, key="sensitivity_analysis_chart")
-    else:
-        st.info("Select a single measure to perform sensitivity analysis")
-    
-    # Export CFO report
-    st.markdown("---")
-    st.header("📄 Export Financial Report")
-    
-    # Get portfolio summary
-    portfolio_summary = None
-    try:
-        portfolio_query = get_portfolio_summary_query(start_date_str, end_date_str)
-        portfolio_df = execute_query(portfolio_query)
-        if not portfolio_df.empty:
-            portfolio_summary = portfolio_df.iloc[0].to_dict()
-    except:
-        pass
-    
-    # Generate report
-    cfo_report = st.session_state.roi_calculator.generate_cfo_report(
-        st.session_state.roi_results,
-        portfolio_summary
+    fig_comparison = create_wow_bar_chart(
+        df=comparison_data,
+        x_col="Metric",
+        y_col="ROI Ratio",
+        title="Your Calculated ROI vs Portfolio Average",
+        x_label="Metric",
+        y_label="ROI Ratio",
+        color_palette="vibrant",
+        show_values=True
     )
+    st.plotly_chart(fig_comparison, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="roi_calc_comparison")
     
-    export_col1, export_col2 = st.columns(2, gap="small")
+    if roi_ratio > avg_portfolio_roi:
+        st.success(f"✅ Your calculated ROI ({roi_ratio:.2f}x) exceeds the portfolio average ({avg_portfolio_roi:.2f}x)!")
+    else:
+        st.info(f"💡 Your calculated ROI ({roi_ratio:.2f}x) is below the portfolio average ({avg_portfolio_roi:.2f}x). Consider optimizing your parameters.")
     
-    with export_col1:
-        st.download_button(
-            "📊 Download CFO Report (Text)",
-            cfo_report,
-            file_name=f"cfo_roi_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
+    st.divider()
     
-    with export_col2:
-        # Create Excel export
-        try:
-            excel_buffer = io.BytesIO()
-            with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
-                # ROI Summary
-                roi_summary_data = []
-                for roi in st.session_state.roi_results:
-                    roi_summary_data.append({
-                        'Measure': roi.get('measure_name', 'Unknown'),
-                        'Success Rate (%)': roi.get('success_rate', 0),
-                        'Star Rating': roi.get('star_rating', 0),
-                        'Revenue ($)': roi.get('total_revenue', 0),
-                        'Quality Bonus ($)': roi.get('quality_bonus', 0),
-                        'Total Costs ($)': roi.get('total_costs', 0),
-                        'Net ROI ($)': roi.get('net_roi', 0),
-                        'ROI Ratio': roi.get('roi_ratio', 0)
-                    })
-                
-                pd.DataFrame(roi_summary_data).to_excel(writer, sheet_name="ROI Summary", index=False)
-                
-                # Cost Breakdown
-                cost_data = []
-                for roi in st.session_state.roi_results:
-                    cost_breakdown = roi.get('cost_breakdown', {})
-                    cost_data.append({
-                        'Measure': roi.get('measure_name', 'Unknown'),
-                        'Staff Cost ($)': cost_breakdown.get('staff_cost', 0),
-                        'Outreach Cost ($)': cost_breakdown.get('outreach_cost', 0),
-                        'Lab Cost ($)': cost_breakdown.get('lab_cost', 0),
-                        'Intervention Cost ($)': cost_breakdown.get('intervention_cost', 0),
-                        'Total Cost ($)': roi.get('total_costs', 0)
-                    })
-                
-                pd.DataFrame(cost_data).to_excel(writer, sheet_name="Cost Breakdown", index=False)
-            
-            st.download_button(
-                "📊 Download CFO Report (Excel)",
-                excel_buffer.getvalue(),
-                file_name=f"cfo_roi_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True
-            )
-        except ImportError:
-            st.warning("⚠️ Excel export requires openpyxl")
-            st.info("💡 Install openpyxl for Excel export:")
-            st.code("pip install openpyxl", language="bash")
-            st.info("Then restart Streamlit to enable Excel downloads.")
-        except Exception as e:
-            st.error(f"❌ Error creating Excel export: {str(e)}")
-
-elif 'roi_results' in st.session_state and len(st.session_state.roi_results) == 0:
-    st.warning("⚠️ No ROI results found. Please check your date range and measure selection.")
+    # Visualization 4: ROI Distribution Pie Chart
+    st.subheader("💰 Investment vs Return Distribution")
+    distribution_data = pd.DataFrame({
+        'Component': ['Investment', 'Net Benefit'],
+        'Amount': [investment_amount, max(net_benefit, 1000)]
+    })
+    fig_distribution = create_wow_pie_chart(
+        df=distribution_data,
+        values_col="Amount",
+        names_col="Component",
+        title="Investment vs Net Benefit Distribution",
+        color_palette="rainbow",
+        hole=0.5
+    )
+    st.plotly_chart(fig_distribution, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="roi_calc_distribution")
 else:
-    st.info("👆 Configure settings and click 'Calculate ROI' to see results")
+    st.info("📊 No portfolio data available for comparison. Showing calculated ROI only.")
+    
+    st.divider()
+    
+    # Visualization 4: ROI Distribution Pie Chart (standalone)
+    st.subheader("💰 Investment vs Return Distribution")
+    distribution_data = pd.DataFrame({
+        'Component': ['Investment', 'Net Benefit'],
+        'Amount': [investment_amount, max(net_benefit, 1000)]
+    })
+    fig_distribution = create_wow_pie_chart(
+        df=distribution_data,
+        values_col="Amount",
+        names_col="Component",
+        title="Investment vs Net Benefit Distribution",
+        color_palette="rainbow",
+        hole=0.5
+    )
+    st.plotly_chart(fig_distribution, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="roi_calc_distribution_standalone")
 
-# Footer sections - desktop full text, mobile abbreviated
-render_page_footer()  # Main content footer
 
+# Footer
+st.markdown("---")
+st.markdown("""
+<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
+    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
+    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
+    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
+        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
+    </div>
+    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
+        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
+    </div>
+    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
+</div>
+""", unsafe_allow_html=True)
