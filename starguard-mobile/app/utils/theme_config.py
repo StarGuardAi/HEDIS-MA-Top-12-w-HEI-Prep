@@ -39,7 +39,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: #0066cc;
+    background: #7c3aed;
     padding: 0.75rem;
 }
 
@@ -59,7 +59,7 @@ body {
 }
 
 .card-header {
-    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
     color: white;
     font-weight: 600;
     padding: 1rem;
@@ -82,8 +82,8 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: #0066cc;
-    box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
 }
 
 /* Charts responsive */
@@ -183,8 +183,8 @@ input:focus, select:focus, textarea:focus {
         border-bottom-color: #444 !important;
     }
     
-    [style*="background: #f0f7ff"] {
-        background: #1a3a5a !important;
+    [style*="background: #f5f3ff"] {
+        background: #4c1d95 !important;
     }
     
     /* Self-correction event text in dark mode */
@@ -219,11 +219,159 @@ input:focus, select:focus, textarea:focus {
     }
     
     .scenario-highlight {
-        background: #1a3a5a !important;
+        background: #4c1d95 !important;
     }
     
     .scenario-detail {
         border-bottom-color: #444 !important;
+    }
+    
+    /* Risk Stratification cards in dark mode */
+    .risk-category-card, .segment-card {
+        background: #2a2a2a !important;
+        border-color: #444 !important;
+    }
+    
+    .risk-label, .hcc-label, .segment-label, .opp-label {
+        color: #b0b0b0 !important;
+    }
+    
+    .risk-value, .hcc-value, .segment-value, .opp-value {
+        color: #e0e0e0 !important;
+    }
+    
+    /* HCC category cards - bright text for dark backgrounds */
+    .hcc-category-card {
+        background: #2a2a2a !important;
+        border-left-color: #8b5cf6 !important;
+    }
+    
+    .hcc-code {
+        color: #f0f0f0 !important;
+    }
+    
+    .hcc-name {
+        color: #d0d0d0 !important;
+    }
+    
+    .hcc-metric-label {
+        color: #c0c0c0 !important;
+    }
+    
+    .hcc-metric-value {
+        color: #e0e0e0 !important;
+    }
+    
+    .hcc-prevalence {
+        color: #a78bfa !important;
+    }
+    
+    .hcc-category-card [style*="color: #7c3aed"] {
+        color: #a78bfa !important;
+    }
+    
+    .hcc-category-card [style*="color: #28a745"] {
+        color: #4ade80 !important;
+    }
+    
+    .hcc-category-card [style*="color: #1a1a1a"] {
+        color: #e0e0e0 !important;
+    }
+    
+    /* Detailed HCC Analysis title - bright in dark mode */
+    .hcc-detailed-title {
+        color: #f0f0f0 !important;
+        border-bottom-color: #8b5cf6 !important;
+    }
+    
+    /* Detailed HCC tiles STAY WHITE even in dark mode */
+    .hcc-detailed-tile {
+        background: white !important;
+        border-color: #e0e0e0 !important;
+    }
+    
+    /* Force ALL text in detailed tiles to be DARK (since bg is white) */
+    .hcc-detailed-tile,
+    .hcc-detailed-tile h4,
+    .hcc-detailed-tile strong,
+    .hcc-detailed-tile span {
+        color: #1a1a1a !important;
+    }
+    
+    /* Accent colors stay visible in detailed tiles */
+    .hcc-detailed-tile [style*="color: #7c3aed"] {
+        color: #7c3aed !important;
+    }
+    
+    .hcc-detailed-tile [style*="color: #28a745"] {
+        color: #28a745 !important;
+    }
+    
+    /* Opportunity cards in dark mode */
+    .opportunity-card {
+        background: #2a2a2a !important;
+        border-color: #444 !important;
+    }
+    
+    .opportunity-card strong {
+        color: #b0b0b0 !important;
+    }
+    
+    .opportunity-card span {
+        color: #e0e0e0 !important;
+    }
+    
+    /* ROI Portfolio Optimizer in dark mode */
+    .scenario-row {
+        background: #2a2a2a !important;
+        border-left-color: #8b5cf6 !important;
+    }
+
+    /* Care Gap Workflow cards in dark mode */
+    .member-card {
+        background: #2a2a2a !important;
+    }
+
+    .member-card strong {
+        color: #b0b0b0 !important;
+    }
+
+    .member-card span {
+        color: #e0e0e0 !important;
+    }
+
+    /* Intervention & campaign cards stay white with dark text in dark mode */
+    .intervention-card,
+    .campaign-card {
+        background: white !important;
+        border-color: #e0e0e0 !important;
+    }
+
+    .intervention-card h4,
+    .intervention-card strong,
+    .campaign-card h4,
+    .campaign-card strong {
+        color: #1a1a1a !important;
+    }
+
+    /* Force pure black on data value spans (override any card/div span rules) */
+    .intervention-card span,
+    .campaign-card span {
+        color: #000000 !important;
+    }
+
+    /* Executive Dashboard - opportunity cards stay white with dark text */
+    .opportunity-card {
+        background: white !important;
+        border-color: #e0e0e0 !important;
+    }
+
+    .opportunity-card strong {
+        color: #1a1a1a !important;
+    }
+
+    .opportunity-card span {
+        color: #000000 !important;
     }
 }
 
@@ -234,7 +382,7 @@ input:focus, select:focus, textarea:focus {
     right: 1rem;
     z-index: 2000;
     background: white;
-    border: 2px solid #0066cc;
+    border: 2px solid #7c3aed;
     border-radius: 8px;
     width: 44px;
     height: 44px;
@@ -247,7 +395,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .menu-toggle:hover {
-    background: #f0f7ff;
+    background: #f5f3ff;
     transform: scale(1.05);
 }
 
@@ -268,7 +416,7 @@ input:focus, select:focus, textarea:focus {
     display: block;
     height: 3px;
     width: 100%;
-    background: #0066cc;
+    background: #7c3aed;
     border-radius: 3px;
     transition: all 0.3s ease;
 }
@@ -323,7 +471,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .sidebar-header {
-    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
     color: white;
     padding: 1.5rem;
     position: sticky;
@@ -360,14 +508,14 @@ input:focus, select:focus, textarea:focus {
 }
 
 .sidebar-nav-item:hover {
-    background: #f0f7ff;
-    border-left-color: #0066cc;
+    background: #f5f3ff;
+    border-left-color: #7c3aed;
 }
 
 .sidebar-nav-item.active {
-    background: #e6f2ff;
-    border-left-color: #0066cc;
-    color: #0066cc;
+    background: #ede9fe;
+    border-left-color: #7c3aed;
+    color: #7c3aed;
 }
 
 /* Hide old navigation tabs container on mobile */
@@ -403,7 +551,7 @@ MOBILE_META_TAGS = """
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0066cc">
+<meta name="theme-color" content="#7c3aed">
 """
 
 

@@ -8,6 +8,10 @@ from .utils.theme_config import get_theme, get_mobile_css, get_mobile_meta
 from .pages.star_predictor import star_predictor_ui, star_predictor_server
 from .pages.hedis_analyzer import hedis_analyzer_ui, hedis_analyzer_server
 from .pages.ai_validation import ai_validation_ui, ai_validation_server
+from .pages.risk_stratification import risk_stratification_ui, risk_stratification_server
+from .pages.roi_portfolio_optimizer import roi_portfolio_optimizer_ui, roi_portfolio_optimizer_server
+from .pages.care_gap_workflow import care_gap_workflow_ui, care_gap_workflow_server
+from .pages.executive_dashboard import executive_dashboard_ui, executive_dashboard_server
 
 
 def navigation_bar():
@@ -76,6 +80,30 @@ def navigation_bar():
                     id="nav-ai",
                     onclick="navigateTo('ai')"
                 ),
+                ui.div(
+                    "📊 Risk Stratification",
+                    class_="sidebar-nav-item",
+                    id="nav-risk",
+                    onclick="navigateTo('risk')"
+                ),
+                ui.div(
+                    "💰 ROI Portfolio Optimizer",
+                    class_="sidebar-nav-item",
+                    id="nav-roi",
+                    onclick="navigateTo('roi')"
+                ),
+                ui.div(
+                    "📋 Care Gap Workflow",
+                    class_="sidebar-nav-item",
+                    id="nav-workflow",
+                    onclick="navigateTo('workflow')"
+                ),
+                ui.div(
+                    "📊 Executive Dashboard",
+                    class_="sidebar-nav-item",
+                    id="nav-dashboard",
+                    onclick="navigateTo('dashboard')"
+                ),
                 class_="sidebar-nav"
             ),
             ui.div(
@@ -99,7 +127,11 @@ def navigation_bar():
                 choices={
                     "star": "⭐ Star Ratings",
                     "hedis": "📊 HEDIS Gaps",
-                    "ai": "🤖 AI Validation"
+                    "ai": "🤖 AI Validation",
+                    "risk": "📊 Risk Strat",
+                    "roi": "💰 ROI Portfolio",
+                    "workflow": "📋 Workflow",
+                    "dashboard": "📊 Executive"
                 },
                 selected="star",
                 inline=True
@@ -140,7 +172,7 @@ def footer():
         ui.div(
             ui.markdown("""
             **StarGuard AI** | Built by Robert Reichert  
-            [LinkedIn](https://linkedin.com/in/robert-reichert) | [Portfolio](https://tinyurl.com/bdevpdz5)
+            [LinkedIn](https://www.linkedin.com/in/robertreichert-healthcareai/) | [Portfolio](https://tinyurl.com/bdevpdz5)
             """),
             style="text-align: center; padding: 1rem; color: #666; font-size: 0.875rem;"
         )
@@ -177,6 +209,10 @@ def server(input, output, session):
     star_predictor_server(input, output, session, get_current_page=get_page)
     hedis_analyzer_server(input, output, session, get_current_page=get_page)
     ai_validation_server(input, output, session, get_current_page=get_page)
+    risk_stratification_server(input, output, session, get_current_page=get_page)
+    roi_portfolio_optimizer_server(input, output, session, get_current_page=get_page)
+    care_gap_workflow_server(input, output, session, get_current_page=get_page)
+    executive_dashboard_server(input, output, session, get_current_page=get_page)
 
     @output
     @render.ui
@@ -188,6 +224,14 @@ def server(input, output, session):
             return ui.div(hedis_analyzer_ui(), id="hedis-analyzer-page")
         elif page == "ai":
             return ui.div(ai_validation_ui(), id="ai-validation-page")
+        elif page == "risk":
+            return ui.div(risk_stratification_ui(), id="risk-stratification-page")
+        elif page == "roi":
+            return ui.div(roi_portfolio_optimizer_ui(), id="roi-portfolio-page")
+        elif page == "workflow":
+            return ui.div(care_gap_workflow_ui(), id="workflow-page")
+        elif page == "dashboard":
+            return ui.div(executive_dashboard_ui(), id="dashboard-page")
         return ui.div(star_predictor_ui(), id="star-predictor-page")
 
 
