@@ -379,7 +379,7 @@ def create_bar_chart(
         # Force update to ensure it's set correctly - try multiple methods
         if is_categorical:
             # Update legend title - preserve height
-            fig.update_layout(legend_title_text=final_label, height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+            fig.update_layout(legend_title_text=final_label, height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
             if hasattr(fig.layout, 'legend') and fig.layout.legend:
                 if hasattr(fig.layout.legend, 'title'):
                     if hasattr(fig.layout.legend.title, 'text'):
@@ -495,9 +495,9 @@ def create_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     
     return fig
 
@@ -649,9 +649,9 @@ def create_scatter_plot(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     
     return fig
 
@@ -754,16 +754,7 @@ def create_line_chart(
         ),
         autosize=True,  # Make chart responsive for mobile
         height=350,  # Compact height for vertical compression
-        margin=dict(l=10, r=10, t=50, b=60),  # Mobile-friendly margins
-        title=dict(font=dict(size=12), x=0.5),
-        legend=dict(
-            orientation='h',
-            yanchor='top',
-            y=-0.2,
-            xanchor='center',
-            x=0.5,
-            font=dict(size=9)
-        )
+        margin=dict(l=10, r=10, t=50, b=60)  # Mobile-friendly margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -796,9 +787,9 @@ def create_line_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     
     return fig
 
@@ -900,23 +891,14 @@ def create_waterfall_chart(
         ),
         autosize=True,  # Make chart responsive for mobile
         height=350,  # Compact height for vertical compression
-        margin=dict(l=10, r=10, t=50, b=60),  # Mobile-friendly margins
-        title=dict(font=dict(size=12), x=0.5),
-        legend=dict(
-            orientation='h',
-            yanchor='top',
-            y=-0.2,
-            xanchor='center',
-            x=0.5,
-            font=dict(size=9)
-        )
+        margin=dict(l=10, r=10, t=50, b=60)  # Mobile-friendly margins
     )
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     
     return fig
 
@@ -1027,16 +1009,7 @@ def create_grouped_bar_chart(
         ),
         autosize=True,  # Make chart responsive for mobile
         height=350,  # Compact height for vertical compression
-        margin=dict(l=10, r=10, t=50, b=60),  # Mobile-friendly margins
-        title=dict(font=dict(size=12), x=0.5),
-        legend=dict(
-            orientation='h',
-            yanchor='top',
-            y=-0.2,
-            xanchor='center',
-            x=0.5,
-            font=dict(size=9)
-        )
+        margin=dict(l=10, r=10, t=50, b=60)  # Mobile-friendly margins
     )
     
     # Explicitly update ALL trace names to ensure proper labels - FORCE update regardless of current state
@@ -1069,9 +1042,9 @@ def create_grouped_bar_chart(
     
     # Final safety check: ensure height is always an integer, never None
     if not hasattr(fig.layout, 'height') or fig.layout.height is None:
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     elif not isinstance(fig.layout.height, int):
-        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60), title=dict(font=dict(size=12), x=0.5), legend=dict(orientation='h', yanchor='top', y=-0.2, xanchor='center', x=0.5, font=dict(size=9)))
+        fig.update_layout(height=350, autosize=True, margin=dict(l=10, r=10, t=50, b=60))
     
     return fig
 

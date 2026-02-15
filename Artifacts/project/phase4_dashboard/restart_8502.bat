@@ -23,16 +23,27 @@ if %errorlevel% == 0 (
 
 REM Kill any process using port 8502 (most reliable method)
 echo    Checking port 8502...
-for /f "tokens=5" %%a in ('netstat -ano 2^>nul ^| findstr ":8502" ^| findstr "LISTENING"') do (
-    set "pid=%%a"
-    taskkill /F /PID !pid! 2>nul >nul
-    if !errorlevel! == 0 (
-        echo    ✓ Stopped process on port 8502 (PID: !pid!)
+set "port_found=0"
+netstat -ano | findstr ":8502" | findstr "LISTENING" > "%TEMP%\port_8502_check.txt"
+if exist "%TEMP%\port_8502_check.txt" (
+    for /f "usebackq tokens=5" %%a in ("%TEMP%\port_8502_check.txt") do (
+        set "pid=%%a"
+        if not "!pid!"=="" (
+            set "port_found=1"
+            taskkill /F /PID !pid! >nul 2>&1
+            if !errorlevel! == 0 (
+                echo    ✓ Stopped process on port 8502 (PID: !pid!)
+            )
+        )
     )
+    del "%TEMP%\port_8502_check.txt" >nul 2>&1
+)
+if !port_found! == 0 (
+    echo    - No process found on port 8502
 )
 
 REM Wait for processes to fully terminate
-timeout /t 2 /nobreak >nul
+ping 127.0.0.1 -n 3 >nul
 echo    Done.
 echo.
 
@@ -40,6 +51,24 @@ REM Change to dashboard directory
 cd /d "%~dp0"
 echo [2/3] Changed to dashboard directory: %CD%
 echo.
+
+REM Verify port 8502 is free
+echo    Verifying port 8502 is free...
+set "port_free=0"
+for /l %%i in (1,1,5) do (
+    netstat -ano | findstr ":8502" | findstr "LISTENING" >nul 2>&1
+    if errorlevel 1 (
+        set "port_free=1"
+        goto :port_verified
+    )
+    ping 127.0.0.1 -n 2 >nul
+)
+:port_verified
+if !port_free! == 0 (
+    echo    WARNING: Port 8502 may still be in use!
+    echo    Attempting to start anyway...
+    echo.
+)
 
 REM Check if Streamlit is installed
 python -c "import streamlit" 2>nul

@@ -305,7 +305,7 @@ def risk_stratification_server(input, output, session, get_current_page=lambda: 
                 )
             ),
             ui.div(
-                ui.tags.h4("Rising Risk Intervention Program", style="color: #dc3545; margin: 0 0 0.75rem 0; font-size: 1rem;"),
+                ui.tags.h4("Rising Risk Intervention Program", style="color: #000000 !important; margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 700;"),
                 ui.div(
                     ui.tags.strong("Target Population: ", style="color: #1a1a1a; font-weight: 700;"),
                     ui.tags.span(f"{rising_risk['count']:,} members", style="color: #7c3aed; font-weight: 600;"),
@@ -323,17 +323,17 @@ def risk_stratification_server(input, output, session, get_current_page=lambda: 
                 ),
                 ui.div(
                     ui.div(
-                        ui.tags.strong("Annual Revenue Impact: ", style="color: #1a1a1a; font-weight: 700; display: block; margin-bottom: 0.5rem;"),
-                        ui.tags.span(f"${rising_risk_opportunity:,.0f}", style="color: #28a745; font-weight: 700; font-size: 1.5rem; display: block;"),
+                        ui.tags.strong("Annual Revenue Impact: ", style="color: #999; font-weight: 600; display: block; margin-bottom: 0.5rem;"),
+                        ui.tags.span(f"${rising_risk_opportunity:,.0f}", style="color: #999 !important; font-weight: 700 !important; font-size: 1.5rem; display: block;"),
                         style="text-align: center;"
                     ),
-                    style="padding: 0.75rem; background: #f5f3ff; border-radius: 8px; margin-top: 0.5rem;"
+                    style="padding: 0.75rem; background: #f0f7ff; border-radius: 8px; margin-top: 0.5rem;"
                 ),
                 class_="opportunity-card",
                 style="padding: 1.25rem; background: white; border: 2px solid #e0e0e0; border-radius: 12px; margin-bottom: 1rem;"
             ),
             ui.div(
-                ui.tags.h4("Preventive Wellness Program", style="color: #17a2b8; margin: 0 0 0.75rem 0; font-size: 1rem;"),
+                ui.tags.h4("Preventive Wellness Program", style="color: #000000 !important; margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 700;"),
                 ui.div(
                     ui.tags.strong("Target Population: ", style="color: #1a1a1a; font-weight: 700;"),
                     ui.tags.span(f"{MEMBER_SEGMENTS['Low Risk']['count']:,} members", style="color: #7c3aed; font-weight: 600;"),
@@ -351,11 +351,11 @@ def risk_stratification_server(input, output, session, get_current_page=lambda: 
                 ),
                 ui.div(
                     ui.div(
-                        ui.tags.strong("Annual Revenue Impact: ", style="color: #1a1a1a; font-weight: 700; display: block; margin-bottom: 0.5rem;"),
-                        ui.tags.span(f"${low_risk_wellness:,.0f}", style="color: #28a745; font-weight: 700; font-size: 1.5rem; display: block;"),
+                        ui.tags.strong("Annual Revenue Impact: ", style="color: #999; font-weight: 600; display: block; margin-bottom: 0.5rem;"),
+                        ui.tags.span(f"${low_risk_wellness:,.0f}", style="color: #999 !important; font-weight: 700 !important; font-size: 1.5rem; display: block;"),
                         style="text-align: center;"
                     ),
-                    style="padding: 0.75rem; background: #f5f3ff; border-radius: 8px; margin-top: 0.5rem;"
+                    style="padding: 0.75rem; background: #f0f7ff; border-radius: 8px; margin-top: 0.5rem;"
                 ),
                 class_="opportunity-card",
                 style="padding: 1.25rem; background: white; border: 2px solid #e0e0e0; border-radius: 12px; margin-bottom: 1rem;"

@@ -333,10 +333,4 @@ I'm excited to apply for the Healthcare Data Scientist position at [Company]. Yo
 I've architected HIPAA-compliant AI solutions specifically for Medicare Advantage analytics. My HEDIS Portfolio Optimizer demonstrates this approach: using local embeddings, on-premises vector search, and zero external API exposure, I achieved 2.8-4.1x ROI and $66K quarterly net benefit while optimizing 12 HEDIS measures. This addresses the critical challenge of implementing AI in Medicare Advantage—balancing innovation with compliance and delivering measurable business impact.
 
 My approach bridges the gap between AI innovation and healthcare compliance that [Company] needs for your Medicare Advantage analytics initiatives. I'd welcome the opportunity to discuss how secure AI deployment can accelerate your analytics capabilities while maintaining patient trust.
-```
-
-**Word Count:** 198 words
-
----
-
-**Remember**: Customize every cover letter. Use the Cursor prompt as a starting point, but always connect to the specific company, role, and pain points mentioned in the job description.
+```**Word Count:** 198 words---**Remember**: Customize every cover letter. Use the Cursor prompt as a starting point, but always connect to the specific company, role, and pain points mentioned in the job description.

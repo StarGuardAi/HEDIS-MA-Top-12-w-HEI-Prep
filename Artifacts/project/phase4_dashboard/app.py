@@ -25,8 +25,16 @@ from datetime import datetime, date, timedelta
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from utils.page_components import apply_header_spacing, add_page_footer, centered_metric
+from utils.page_components import apply_header_spacing, centered_metric
+from utils.standard_sidebar_css import STANDARD_SIDEBAR_CSS
 # add_mobile_ready_badge removed - badge no longer needed
+
+# Import sidebar styling function (same as ROI page)
+try:
+    from utils.sidebar_styling import apply_sidebar_styling
+except ImportError:
+    def apply_sidebar_styling():
+        pass
 
 st.set_page_config(
     page_title="HEDIS Portfolio Optimizer",
@@ -34,6 +42,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto"  # Auto: Let Streamlit decide based on screen size (iOS Safari optimized)
 )
+
+# Apply consistent sidebar styling (same as ROI page)
+apply_sidebar_styling()
 
 # ============================================================================
 # FINAL FIX - All Three Issues Resolved
@@ -141,8 +152,9 @@ section.main > div {
 }
 
 /* ========== SIDEBAR FIXES ========== */
-
-/* Purple Sidebar */
+/* ========== STANDARDIZED SIDEBAR CSS - IMPORTED FROM UTILITY ========== */
+/* ========== PURPLE SIDEBAR THEME ========== */
+/* Match the StarGuard AI header purple gradient */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
 }
@@ -151,58 +163,131 @@ section.main > div {
     background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
 }
 
-/* All sidebar text white */
-[data-testid="stSidebar"],
-[data-testid="stSidebar"] *,
-[data-testid="stSidebar"] span,
+/* ========== ALL SIDEBAR TEXT WHITE ========== */
+/* Force ALL text in sidebar to be white - match ROI page */
+[data-testid="stSidebar"] * {
+    color: #FFFFFF !important;
+}
+
 [data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
 [data-testid="stSidebar"] div,
 [data-testid="stSidebar"] a,
 [data-testid="stSidebar"] label,
-[data-testid="stSidebar"] button,
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] h4 {
+[data-testid="stSidebar"] button {
     color: #FFFFFF !important;
-    text-align: center !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
 }
 
-/* ========== SIDEBAR BUTTONS - UNIFORM SIZE ========== */
-/* Make all sidebar buttons the same size */
-[data-testid="stSidebar"] button[kind="secondary"],
-[data-testid="stSidebar"] button[kind="primary"],
-[data-testid="stSidebar"] .stButton > button {
-    width: 100% !important;
-    min-height: 2.5rem !important;
-    padding: 0.5rem 1rem !important;
-    font-size: 0.9rem !important;
-    font-weight: 500 !important;
+/* ========== NAVIGATION STYLING ========== */
+/* All navigation styling is handled by apply_sidebar_styling() function */
+/* No additional CSS needed here - let the function handle everything */
+
+/* ========== SIDEBAR WIDGET STYLING ========== */
+/* Sidebar selectbox and other widgets */
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stMultiSelect label,
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stRadio label {
+    color: white !important;
 }
 
-/* Ensure buttons in columns are same size */
-[data-testid="stSidebar"] [data-testid="column"] button,
-[data-testid="stSidebar"] [data-testid="column"] .stButton > button {
-    width: 100% !important;
-    min-height: 2.5rem !important;
+/* Sidebar widget backgrounds - make them visible on purple */
+[data-testid="stSidebar"] .stSelectbox > div > div,
+[data-testid="stSidebar"] .stMultiSelect > div > div {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 5px !important;
 }
 
-/* Center all subheaders in sidebar */
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] h4,
-[data-testid="stSidebar"] h5,
-[data-testid="stSidebar"] h6,
-[data-testid="stSidebar"] .stMarkdown h1,
-[data-testid="stSidebar"] .stMarkdown h2,
-[data-testid="stSidebar"] .stMarkdown h3,
-[data-testid="stSidebar"] .stMarkdown h4,
-[data-testid="stSidebar"] .stMarkdown h5,
-[data-testid="stSidebar"] .stMarkdown h6 {
-    text-align: center !important;
+[data-testid="stSidebar"] .stSelectbox > div > div *,
+[data-testid="stSidebar"] .stMultiSelect > div > div * {
+    color: #4A3D6F !important;
+}
+
+/* Success/Info boxes in sidebar - white text - match ROI page */
+[data-testid="stSidebar"] [data-testid="stSuccess"],
+[data-testid="stSidebar"] [data-testid="stInfo"] {
+    color: #FFFFFF !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSuccess"] *,
+[data-testid="stSidebar"] [data-testid="stInfo"] * {
+    color: #FFFFFF !important;
+}
+
+/* View less/more links - white - match ROI page */
+[data-testid="stSidebar"] button {
+    color: #FFFFFF !important;
+}
+
+/* CSS Backup: Add emoji via ::before for Performance Dashboard links - match ROI page */
+[data-testid="stSidebarNav"] a[href*="Performance_Dashboard"]::before {
+    content: "⚡ " !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", sans-serif !important;
+    display: inline !important;
+}
+
+/* ========== SIDEBAR SEPARATOR STYLING - SUBTLE GREEN GRADIENT ========== */
+[data-testid="stSidebar"] hr {
+    border: none !important;
+    height: 4px !important;
+    margin: 1rem 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(74, 222, 128, 0.8) 50%,
+        transparent 100%
+    ) !important;
+}
+
+/* ========== NAVIGATION FORMATTING ========== */
+/* Navigation formatting is handled by apply_sidebar_styling() function */
+/* No additional CSS needed here */
+
+/* Sidebar dimensions and padding - match ROI page */
+[data-testid="stSidebar"] {
+    min-width: 280px !important;
+}
+
+[data-testid="stSidebar"] > div:first-child {
+    padding: 1rem !important;
+}
+
+/* ========== SIDEBAR NAVIGATION CONTAINER ========== */
+/* Navigation container styling is handled by apply_sidebar_styling() function */
+/* Keep this section empty to avoid conflicts - let the function handle it */
+
+/* Sidebar collapse button */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="collapsedControl"] {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+}
+
+[data-testid="stSidebarCollapseButton"]:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #4A3D6F 0%, #6F5F96 100%) !important;
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+}
+
+/* ========== FIX PERFORMANCE DASHBOARD EMOJI ========== */
+/* CSS Backup: Add emoji via ::before for Performance Dashboard links */
+/* Only keep this minimal CSS - let apply_sidebar_styling() handle everything else */
+[data-testid="stSidebarNav"] a[href*="Performance_Dashboard"]::before {
+    content: "⚡ " !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", sans-serif !important;
+    display: inline !important;
 }
 
 /* Center subheaders in main page content */
@@ -235,89 +320,6 @@ div[data-testid="stMarkdownContainer"] h6 {
 [data-testid="stHeader"] h2,
 [data-testid="stHeader"] h3 {
     text-align: center !important;
-}
-
-/* ========== FIX "app" LABEL - CONVERT TO HOME BUTTON ========== */
-
-/* Hide the default "app" text and replace with "🏠 Home" */
-[data-testid="stSidebarNav"] ul li:first-child a {
-    font-size: 0 !important;  /* Hide original text */
-    background: rgba(255, 255, 255, 0.2) !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 8px !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    margin-bottom: 0.75rem !important;
-    transition: all 0.2s ease !important;
-}
-
-/* Add "🏠 Home" text */
-[data-testid="stSidebarNav"] ul li:first-child a::before {
-    content: "🏠 Home" !important;
-    font-size: 1.1rem !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    display: block !important;
-}
-
-/* Hover effect for Home button */
-[data-testid="stSidebarNav"] ul li:first-child a:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    transform: translateY(-2px) !important;
-}
-
-/* ========== FIX PERFORMANCE DASHBOARD EMOJI ========== */
-
-/* Enhanced font stack for emoji rendering */
-[data-testid="stSidebarNav"] a,
-[data-testid="stSidebarNav"] span,
-[data-testid="stSidebarNav"] div,
-[data-testid="stSidebarNav"] p {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-    text-rendering: optimizeLegibility !important;
-}
-
-/* Force emoji to render properly - specific targeting */
-[data-testid="stSidebarNav"] a {
-    white-space: normal !important;  /* Allow text to flow naturally */
-    word-wrap: normal !important;
-    overflow-wrap: normal !important;
-    text-overflow: clip !important;
-}
-
-/* Prevent line breaks in middle of emoji sequences */
-[data-testid="stSidebarNav"] li {
-    line-break: strict !important;
-    word-break: keep-all !important;
-}
-
-/* ========== SIDEBAR SEPARATOR STYLING - REMOVE DUPLICATES ========== */
-/* Remove extra green lines in sidebar */
-[data-testid="stSidebar"] hr {
-    display: none !important;
-}
-
-/* Show only specific separators you want */
-[data-testid="stSidebar"] .sidebar-divider {
-    display: block !important;
-    border: none !important;
-    height: 4px !important;
-    margin: 1rem 0 !important;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(74, 222, 128, 0.8) 50%,
-        transparent 100%
-    ) !important;
-}
-
-/* CSS Backup: Add emoji via ::before for Performance Dashboard links */
-[data-testid="stSidebarNav"] a[href*="Performance_Dashboard"]::before {
-    content: "⚡ " !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", sans-serif !important;
-    display: inline !important;
 }
 
 /* ========== REDUCED VERTICAL PADDING - GLOBAL ========== */
@@ -1293,36 +1295,6 @@ section.main h3 {
     align-items: center !important;
 }
 
-/* ========== CENTER SIDEBAR CONTENT ========== */
-/* Center sidebar text and labels */
-[data-testid="stSidebar"] [data-testid="stMarkdown"] {
-    text-align: center !important;
-}
-
-/* Center sidebar subheaders (h2, h3, h4) */
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] h4,
-[data-testid="stSidebar"] .stMarkdown h2,
-[data-testid="stSidebar"] .stMarkdown h3,
-[data-testid="stSidebar"] .stMarkdown h4,
-[data-testid="stSidebar"] p {
-    text-align: center !important;
-}
-
-/* Center sidebar metric cards */
-[data-testid="stSidebar"] [data-testid="stMetricLabel"],
-[data-testid="stSidebar"] [data-testid="stMetricValue"],
-[data-testid="stSidebar"] [data-testid="stMetricDelta"] {
-    justify-content: center !important;
-    text-align: center !important;
-}
-
-/* Center expander headers in sidebar */
-[data-testid="stSidebar"] .streamlit-expanderHeader {
-    justify-content: center !important;
-}
 
 /* ========== SIDEBAR FILTER STYLING ========== */
 /* Filter section header */
@@ -1423,8 +1395,74 @@ section.main h3 {
     align-items: center !important;
 }
 
+/* ===== CENTER TAB BUTTONS ===== */
+[data-testid="stTabs"] > div:first-child,
+[data-baseweb="tab-list"],
+[role="tablist"] {
+    justify-content: center !important;
+    display: flex !important;
+}
+
+/* Center all tabs globally */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+    justify-content: center !important;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    justify-content: center !important;
+}
+
+div[data-baseweb="tab-list"] {
+    justify-content: center !important;
+}
+
+/* FORCE CENTER TABS - NUCLEAR OPTION */
+[data-testid="stTabs"] [data-baseweb="tab-list"],
+[data-testid="stTabs"] > div > div[data-baseweb="tab-list"],
+.stTabs [data-baseweb="tab-list"],
+div.stTabs > div > div {
+    justify-content: center !important;
+    display: flex !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+[role="tablist"] {
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+/* ===== LEFT-ALIGN DATA TABLES ===== */
+[data-testid="stDataFrame"],
+[data-testid="stDataFrame"] table,
+[data-testid="stDataFrame"] th,
+[data-testid="stDataFrame"] td {
+    text-align: left !important;
+}
+
+/* Table header row */
+.stDataFrame thead th {
+    text-align: left !important;
+}
+
+/* Table data cells */
+.stDataFrame tbody td {
+    text-align: left !important;
+}
+
+/* Ensure table headers left-aligned */
+[data-testid="stDataFrame"] thead th {
+    text-align: left !important;
+}
+
+/* Table body cells left-aligned */
+[data-testid="stDataFrame"] tbody td {
+    text-align: left !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
+
 
 # ============================================================================
 # ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
@@ -1552,12 +1590,8 @@ st.markdown("""
 # StarGuard Header HTML (CSS already defined in Nuclear Option above)
 st.markdown("""
 <div class='starguard-header-container'>
-    <h1 class='starguard-title'>⭐ StarGuard AI</h1>
-    <p class='starguard-tagline'>Turning Data Into Stars</p>
-    <p class='starguard-subtitle'>
-        Healthcare AI Architect • $148M+ Savings<br>
-        🔒 Zero PHI • Context Engineering • Agentic RAG
-    </p>
+    <div class='starguard-title'>⭐ StarGuard AI | Turning Data Into Stars</div>
+    <div class='starguard-subtitle'>Healthcare AI Architect • $148M+ Documented Savings • HEDIS & Star Rating Expert<br>🔒 Zero PHI Exposure • Context Engineering + Agentic RAG • Production-Grade Analytics</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -2927,34 +2961,10 @@ st.markdown("""
         margin-right: auto !important;
     }
     
-    /* Sidebar styling - matches StarGuard AI header purple gradient */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(135deg, #4e2a84 0%, #6f5f96 100%);
-        padding-top: 2rem;
-    }
+    /* Sidebar styling - REMOVED: Now handled by STANDARD_SIDEBAR_CSS imported from utility */
     
-    /* Style "app" link as "Home" in sidebar navigation - show it and style it */
-    [data-testid="stSidebar"] [data-testid="stSidebarNav"] a[href="/"],
-    [data-testid="stSidebar"] [data-testid="stSidebarNav"] a[href="./"],
-    [data-testid="stSidebar"] [data-testid="stSidebarNav"] a[href*="app"],
-    [data-testid="stSidebar"] [data-testid="stSidebarNav"] ul li:first-child a,
-    [data-testid="stSidebar"] nav a[href="/"],
-    [data-testid="stSidebar"] nav a[href="./"] {
-        color: #FFFFFF !important;
-        display: flex !important;
-    }
-    
-    /* Ensure the list item containing the "app" link is visible */
-    [data-testid="stSidebar"] [data-testid="stSidebarNav"] ul li:first-child,
-    [data-testid="stSidebar"] nav ul li:first-child {
-        display: list-item !important;
-    }
-    
-    /* Additional targeting for Streamlit's navigation structure */
-    [data-testid="stSidebar"] [data-testid="stSidebarNav"] > div > ul > li:first-child,
-    [data-testid="stSidebar"] [data-testid="stSidebarNav"] > ul > li:first-child {
-        display: list-item !important;
-    }
+    /* Navigation visibility is handled by apply_sidebar_styling() function */
+    /* No additional CSS needed here */
     
     /* Sidebar text - white for contrast */
     [data-testid="stSidebar"] p,
@@ -3499,27 +3509,23 @@ st.markdown("""
         height: 3rem;
     }
 </style>
+""", unsafe_allow_html=True)
 
+st.markdown("""
 <script>
-    // Hide "app" label and mobile pages in sidebar navigation
+    // Hide mobile pages in sidebar navigation (but NOT the Home button)
     function hideAppLabel() {
         // Wait for sidebar navigation to load
         const sidebarNav = document.querySelector('[data-testid="stSidebarNav"]');
         if (sidebarNav) {
-            // Find and hide links to main app and mobile pages
+            // Find and hide links to mobile pages only (NOT the Home button)
             const links = sidebarNav.querySelectorAll('a');
             links.forEach(link => {
                 const href = link.getAttribute('href') || '';
                 const text = link.textContent.trim().toLowerCase();
                 
-                // Hide app.py links
-                if (href === '/' || href === './' || href.includes('app') || text === 'app') {
-                    link.style.display = 'none';
-                    const parent = link.closest('li');
-                    if (parent) parent.style.display = 'none';
-                }
-                
-                // Hide mobile page links - More aggressive matching
+                // DO NOT hide the Home button - it's styled via CSS as "🏠 Home"
+                // Only hide mobile page links - More aggressive matching
                 const mobilePatterns = ['mobile', '_mobile', '📱', 'mobile ai', 'mobile roi', 'mobile scenario', 'mobile test', 'mobile view'];
                 const textLower = text.toLowerCase();
                 const hrefLower = href.toLowerCase();
@@ -3553,12 +3559,6 @@ st.markdown("""
                     }
                 }
             });
-            
-            // Hide first navigation item (usually the main app)
-            const firstItem = sidebarNav.querySelector('ul > li:first-child');
-            if (firstItem && firstItem.textContent.trim().toLowerCase() === 'app') {
-                firstItem.style.display = 'none';
-            }
         }
     }
     
@@ -3581,6 +3581,9 @@ st.markdown("""
         setInterval(hideAppLabel, 500); // Also check every 500ms for first few seconds
         setTimeout(() => setInterval(hideAppLabel, 2000), 10000); // Then every 2 seconds
     }
+    
+    // Navigation container styling is handled by CSS from apply_sidebar_styling() function
+    // No JavaScript manipulation needed
     
     // Additional aggressive cleanup - remove any mobile elements from DOM
     function aggressiveMobileCleanup() {
@@ -3884,7 +3887,12 @@ st.markdown("""
 # ============================================================================
 # Sliders can now safely access raw_portfolio_data
 with st.sidebar:
-    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>🎛️ Filters</p>", unsafe_allow_html=True)
+    # ===== FILTERS SECTION - ALL CENTERED =====
+    st.markdown("""
+    <div style="text-align: center;">
+        <h4 style="color: white; margin: 0.5rem 0; font-size: 1rem; font-weight: 600;">🎛️ Filters</h4>
+    </div>
+    """, unsafe_allow_html=True)
     
     # ====================================================================
     # MEMBERSHIP SIZE CONTROL - REMOVED (CONSOLIDATED WITH PLAN SIZE FILTER)
@@ -3895,7 +3903,11 @@ with st.sidebar:
     # ====================================================================
     # DATE RANGE - Default Q4 2025
     # ====================================================================
-    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>📅 Date Range</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="text-align: center;">
+        <p style="color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;">📅 Date Range</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Quick presets
     preset_col1, preset_col2 = st.columns(2, gap="small")
@@ -3916,8 +3928,8 @@ with st.sidebar:
     date_col1, date_col2 = st.columns(2, gap="small")
     
     with date_col1:
-        # Explicitly show Start Date label
-        st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 500; margin-top: 0.75rem; margin-bottom: 0.25rem;'>Start Date</p>", unsafe_allow_html=True)
+        # Explicitly show Start Date label - CENTERED
+        st.markdown("<p style='text-align: center; color: white; font-size: 0.8rem; font-weight: 500; margin-top: 0.75rem; margin-bottom: 0.25rem;'>Start Date</p>", unsafe_allow_html=True)
         start_date = st.date_input(
             "",  # Empty label - label is shown above
             value=st.session_state.filters.get('date_range_start', date(2024, 10, 1)),
@@ -3928,8 +3940,8 @@ with st.sidebar:
         st.session_state.filters['date_range_start'] = start_date
     
     with date_col2:
-        # Explicitly show End Date label
-        st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 500; margin-top: 0.75rem; margin-bottom: 0.25rem;'>End Date</p>", unsafe_allow_html=True)
+        # Explicitly show End Date label - CENTERED
+        st.markdown("<p style='text-align: center; color: white; font-size: 0.8rem; font-weight: 500; margin-top: 0.75rem; margin-bottom: 0.25rem;'>End Date</p>", unsafe_allow_html=True)
         end_date = st.date_input(
             "",  # Empty label - label is shown above
             value=st.session_state.filters.get('date_range_end', date(2024, 12, 31)),
@@ -3939,10 +3951,14 @@ with st.sidebar:
         )
         st.session_state.filters['date_range_end'] = end_date
     
-    # Display and validate
+    # Display and validate - CENTERED
     if start_date <= end_date:
         days = (end_date - start_date).days
-        st.markdown(f"<p style='color: white; font-size: 0.85rem; margin-top: 0.5rem;'>📆 {start_date.strftime('%m/%d/%Y')} to {end_date.strftime('%m/%d/%Y')} ({days} days)</p>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style="text-align: center;">
+            <p style="color: white; font-size: 0.8rem; margin: 0.5rem 0;">📆 {start_date.strftime('%m/%d/%Y')} to {end_date.strftime('%m/%d/%Y')} ({days} days)</p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
         st.error("⚠️ Start date must be before end date")
     
@@ -3954,7 +3970,11 @@ with st.sidebar:
     # ====================================================================
     # HEDIS MEASURES - All 12 Selected by Default
     # ====================================================================
-    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>📋 HEDIS Measures</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="text-align: center;">
+        <p style="color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;">📋 HEDIS Measures</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Get measures from session state
     ALL_MEASURES = st.session_state.all_measures
@@ -3971,12 +3991,16 @@ with st.sidebar:
             st.session_state.filters['selected_measures'] = []
             st.rerun()
     
+    # Multiselect label - CENTERED
+    st.markdown("<p style='text-align: center; color: white; font-size: 0.8rem; margin: 0.5rem 0;'>Choose measures to analyze:</p>", unsafe_allow_html=True)
+    
     # Multiselect with ALL measures selected by default
     selected_measures = st.multiselect(
-        "Choose measures to analyze:",
+        "Measures",
         options=ALL_MEASURES,
         default=st.session_state.filters['selected_measures'],  # Will be all 12 by default
         key="measures_multiselect",
+        label_visibility="collapsed",
         help="Select one or more HEDIS measures to include in analysis"
     )
     
@@ -3990,12 +4014,17 @@ with st.sidebar:
     else:
         st.caption(f"✅ {len(selected_measures)} of {len(ALL_MEASURES)} measures selected")
     
-    st.markdown("---")
+    # Green separator
+    st.markdown("<hr style='border-color: #10b981; margin: 0.75rem 0;'>", unsafe_allow_html=True)
     
     # ========================================================================
     # PLAN SIZE FILTER (CONSOLIDATED - Also sets scaling membership size)
     # ========================================================================
-    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>🏥 Plan Size</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="text-align: center;">
+        <p style="color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;">🏥 Plan Size</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     PLAN_SIZE_OPTIONS = [
         "Small (< 10K)",
@@ -4012,11 +4041,15 @@ with st.sidebar:
         "Very Large (> 100K)": 150000
     }
     
+    # Plan Size multiselect label - CENTERED
+    st.markdown("<p style='text-align: center; color: white; font-size: 0.8rem; margin: 0.5rem 0;'>Select plan size categories:</p>", unsafe_allow_html=True)
+    
     selected_plan_sizes = st.multiselect(
-        "Select plan size categories:",
+        "Plan Size",
         options=PLAN_SIZE_OPTIONS,
         default=st.session_state.filters['plan_sizes'] if st.session_state.filters['plan_sizes'] else PLAN_SIZE_OPTIONS.copy(),
         key="plan_size_multiselect",
+        label_visibility="collapsed",
         help="Filter data by plan size category and set scaling membership size for calculations"
     )
     
@@ -4049,7 +4082,11 @@ with st.sidebar:
     # ====================================================================
     # THRESHOLD FILTERS - COMPLETE WORKING VERSION
     # ====================================================================
-    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>🎯 Threshold Filters</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="text-align: center;">
+        <p style="color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;">🎯 Threshold Filters</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Ensure filters dictionary exists
     if 'filters' not in st.session_state:
@@ -4209,7 +4246,11 @@ with st.sidebar:
     # ========================================================================
     # FILTER ACTIONS
     # ========================================================================
-    st.markdown("<p style='color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;'>⚙️ Actions</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="text-align: center;">
+        <p style="color: white; font-size: 0.9rem; font-weight: 600; margin: 0.5rem 0;">⚙️ Actions</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2, gap="small")
     
@@ -4572,20 +4613,37 @@ with st.expander("📋 Executive Summary", expanded=True):
 st.markdown("---")
 
 # ============================================================================
-# NAVIGATION TABS
+# NAVIGATION TABS - CENTERED RADIO BUTTONS
 # ============================================================================
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📊 Portfolio Overview",
-    "📈 Measure Deep-Dive",
-    "👥 Member Lists",
-    "💰 ROI Analysis",
-    "🔒 Secure Query Interface"
-])
+selected_tab = st.radio(
+    "Select View",
+    ["📊 Portfolio Overview", "📈 Measure Deep-Dive", "👥 Member Lists", "💰 ROI Analysis", "🔒 Secure Query Interface"],
+    horizontal=True,
+    label_visibility="collapsed",
+    key="home_tabs"
+)
+
+# CSS to center radio buttons
+st.markdown("""
+<style>
+div[data-testid="stRadio"] > div {
+    justify-content: center !important;
+    display: flex !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] {
+    justify-content: center !important;
+    display: flex !important;
+    gap: 1rem !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
 
 # ============================================================================
 # TAB 1: PORTFOLIO OVERVIEW
 # ============================================================================
-with tab1:
+if selected_tab == "📊 Portfolio Overview":
     st.markdown("### Portfolio Overview Dashboard")
     
     # Show active filters
@@ -4946,7 +5004,7 @@ with tab1:
 # ============================================================================
 # TAB 2: MEASURE DEEP-DIVE
 # ============================================================================
-with tab2:
+elif selected_tab == "📈 Measure Deep-Dive":
     st.markdown("### Measure Deep-Dive Analysis")
     st.info("📊 Detailed analysis of individual HEDIS measures with ROI breakdown and intervention effectiveness.")
     
@@ -5168,7 +5226,7 @@ with tab2:
 # ============================================================================
 # TAB 3: MEMBER LISTS
 # ============================================================================
-with tab3:
+elif selected_tab == "👥 Member Lists":
     st.markdown("### Member Lists & Segmentation")
     st.info("👥 Detailed member lists with eligibility, intervention status, and outcomes.")
     
@@ -5261,7 +5319,7 @@ with tab3:
 # ============================================================================
 # TAB 4: ROI ANALYSIS - Fixed NoneType Handling
 # ============================================================================
-with tab4:
+elif selected_tab == "💰 ROI Analysis":
     st.markdown("### ROI Analysis & Projections")
     st.info("💰 Comprehensive ROI analysis with projections and scenario modeling.")
     
@@ -5419,7 +5477,11 @@ with tab4:
     
     # Update layout
     fig_trend.update_layout(
-        title='ROI Performance Trends - 2024',
+        title=dict(
+            text='ROI Performance Trends - 2024',
+            font=dict(size=12),
+            x=0.5
+        ),
         xaxis_title='Month',
         yaxis_title='ROI Ratio',
         height=500,
@@ -5427,7 +5489,6 @@ with tab4:
         plot_bgcolor='white',
         paper_bgcolor='white',
         margin=dict(l=10, r=10, t=50, b=60),
-        title=dict(font=dict(size=12), x=0.5),
         legend=dict(
             orientation='h',
             yanchor='top',
@@ -5476,7 +5537,7 @@ with tab4:
 # ============================================================================
 # TAB 5: SECURE QUERY INTERFACE
 # ============================================================================
-with tab5:
+elif selected_tab == "🔒 Secure Query Interface":
     st.markdown("### 🔒 Secure Query Interface")
     st.markdown("#### Zero External API Exposure | On-Premises AI Processing")
     
@@ -5547,7 +5608,6 @@ with tab5:
     
     # Update layout - cleaner, more readable
     fig_flow.update_layout(
-        margin=dict(l=10, r=10, t=50, b=60),
         title=dict(
             text="<b>Secure Data Flow: Zero External API Calls</b>",
             x=0.5,
@@ -5828,58 +5888,73 @@ with tab5:
 # FOOTER
 # ============================================================================
 st.markdown("---")
+
+# Hashtags
 st.markdown("""
-<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
-    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem; text-align: center;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
-    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem; text-align: center;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
-    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: center; border-radius: 6px;'>
-        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0; text-align: center;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
-    </div>
-    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: center; border-radius: 6px;'>
-        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0; text-align: center;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
-    </div>
-    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem; text-align: center;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
+<div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+    <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;">#HealthcareAnalytics</span>
+    <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;">#MedicareAdvantage</span>
+    <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;">#HEDIS</span>
+    <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;">#DataScience</span>
+    <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;">#HealthcareAI</span>
 </div>
-<style>
-@media (max-width: 768px) {
-    /* Ensure footer is centered on mobile */
-    div[data-testid="stMarkdownContainer"]:has(> div > p:contains("HEDIS Portfolio Optimizer")) {
-        text-align: center !important;
-    }
-    
-    /* Center all footer content */
-    div[data-testid="stMarkdownContainer"] div[style*="text-align: center"] {
-        text-align: center !important;
-    }
-    
-    div[data-testid="stMarkdownContainer"] div[style*="text-align: center"] p {
-        text-align: center !important;
-    }
-    
-    /* Footer responsive text sizing */
-    div[data-testid="stMarkdownContainer"] div[style*="HEDIS Portfolio Optimizer"] p {
-        font-size: 0.95rem !important;
-        line-height: 1.4 !important;
-    }
-    
-    div[data-testid="stMarkdownContainer"] div[style*="Built with Streamlit"] p {
-        font-size: 0.8rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    div[data-testid="stMarkdownContainer"] div[style*="Secure AI Architect"] p,
-    div[data-testid="stMarkdownContainer"] div[style*="Portfolio demonstration"] p {
-        font-size: 0.8rem !important;
-        line-height: 1.4 !important;
-        text-align: center !important;
-    }
-    
-    div[data-testid="stMarkdownContainer"] div[style*="© 2024-2026"] p {
-        font-size: 0.75rem !important;
-        text-align: center !important;
-    }
-}
-</style>
+""", unsafe_allow_html=True)
+
+# Main card
+st.markdown("""
+<div style="background: linear-gradient(135deg, #4A3D6F 0%, #6F5F96 100%); border-radius: 16px; padding: 24px; margin-bottom: 16px; border-top: 4px solid #10b981;">
+    <div style="text-align: center; margin-bottom: 16px;">
+        <div style="color: white; font-size: 22px; font-weight: 700;">⭐ HEDIS Portfolio Optimizer | StarGuard AI</div>
+        <div style="color: rgba(255,255,255,0.8); font-size: 14px; font-style: italic;">Turning Data Into Stars</div>
+    </div>
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+        <span style="background: rgba(255,255,255,0.15); color: white; padding: 5px 12px; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.2);">🐍 Python</span>
+        <span style="background: rgba(255,255,255,0.15); color: white; padding: 5px 12px; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.2);">📊 Streamlit</span>
+        <span style="background: rgba(255,255,255,0.15); color: white; padding: 5px 12px; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.2);">📈 Plotly</span>
+        <span style="background: rgba(255,255,255,0.15); color: white; padding: 5px 12px; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.2);">🐘 PostgreSQL</span>
+        <span style="background: rgba(255,255,255,0.15); color: white; padding: 5px 12px; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.2);">🤖 ML/AI</span>
+    </div>
+    <div style="background: rgba(16, 185, 129, 0.15); border: 2px solid rgba(16, 185, 129, 0.5); border-radius: 12px; padding: 16px; margin: 0 auto; max-width: 600px;">
+        <div style="text-align: center; margin-bottom: 8px;">
+            <span style="color: #10b981; font-size: 18px; font-weight: 700;">🔒 Secure AI Architecture</span>
+        </div>
+        <div style="color: rgba(255,255,255,0.9); font-size: 13px; text-align: center; margin-bottom: 12px;">Healthcare AI that sees everything, exposes nothing.</div>
+        <div style="display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; margin-bottom: 12px;">
+            <div style="text-align: center;">
+                <div style="color: #10b981; font-size: 18px; font-weight: 700;">2.8-4.1x</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 11px;">ROI Delivered</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="color: #10b981; font-size: 18px; font-weight: 700;">$148M+</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 11px;">Proven Savings</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="color: #10b981; font-size: 18px; font-weight: 700;">Zero</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 11px;">PHI Exposure</div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;">
+            <span style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 20px; font-size: 11px;">🏢 On-Premises</span>
+            <span style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 20px; font-size: 11px;">🚫 Zero API Transmission</span>
+            <span style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 20px; font-size: 11px;">🏥 HIPAA-First Design</span>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Disclaimer
+st.markdown("""
+<div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; border-radius: 0 10px 10px 0; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 20px;">⚠️</span>
+    <span style="color: #92400e; font-size: 13px;"><strong>Portfolio Demonstration:</strong> Using synthetic data to showcase real methodology and production-grade analytics capabilities.</span>
+</div>
+""", unsafe_allow_html=True)
+
+# Copyright
+st.markdown("""
+<div style="text-align: center; padding: 12px 0; color: #6b7280; font-size: 13px;">
+    © 2024-2026 <span style="color: #4A3D6F; font-weight: 600;">Robert Reichert</span> | StarGuard AI™ | Healthcare AI Architect
+</div>
 """, unsafe_allow_html=True)
 
 

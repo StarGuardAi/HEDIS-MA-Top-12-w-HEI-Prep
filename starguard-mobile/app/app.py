@@ -12,6 +12,9 @@ from .pages.risk_stratification import risk_stratification_ui, risk_stratificati
 from .pages.roi_portfolio_optimizer import roi_portfolio_optimizer_ui, roi_portfolio_optimizer_server
 from .pages.care_gap_workflow import care_gap_workflow_ui, care_gap_workflow_server
 from .pages.executive_dashboard import executive_dashboard_ui, executive_dashboard_server
+from .pages.provider_scorecard import provider_scorecard_ui, provider_scorecard_server
+from .pages.model_monitor import model_monitor_ui, model_monitor_server
+from .pages.member_profile import member_profile_ui, member_profile_server
 
 
 def navigation_bar():
@@ -63,8 +66,14 @@ def navigation_bar():
             ),
             ui.div(
                 ui.div(
-                    "⭐ Star Rating Predictor",
+                    "📊 Executive Dashboard",
                     class_="sidebar-nav-item active",
+                    id="nav-dashboard",
+                    onclick="navigateTo('dashboard')"
+                ),
+                ui.div(
+                    "⭐ Star Rating Predictor",
+                    class_="sidebar-nav-item",
                     id="nav-star",
                     onclick="navigateTo('star')"
                 ),
@@ -75,13 +84,7 @@ def navigation_bar():
                     onclick="navigateTo('hedis')"
                 ),
                 ui.div(
-                    "🤖 AI Validation Dashboard",
-                    class_="sidebar-nav-item",
-                    id="nav-ai",
-                    onclick="navigateTo('ai')"
-                ),
-                ui.div(
-                    "📊 Risk Stratification",
+                    "📊 Member Risk Stratification",
                     class_="sidebar-nav-item",
                     id="nav-risk",
                     onclick="navigateTo('risk')"
@@ -93,16 +96,34 @@ def navigation_bar():
                     onclick="navigateTo('roi')"
                 ),
                 ui.div(
-                    "📋 Care Gap Workflow",
+                    "📋 Care Gap Closure Workflow",
                     class_="sidebar-nav-item",
                     id="nav-workflow",
                     onclick="navigateTo('workflow')"
                 ),
                 ui.div(
-                    "📊 Executive Dashboard",
+                    "👨‍⚕️ Provider Scorecard",
                     class_="sidebar-nav-item",
-                    id="nav-dashboard",
-                    onclick="navigateTo('dashboard')"
+                    id="nav-providers",
+                    onclick="navigateTo('providers')"
+                ),
+                ui.div(
+                    "👤 Member 360° Profile",
+                    class_="sidebar-nav-item",
+                    id="nav-profile",
+                    onclick="navigateTo('profile')"
+                ),
+                ui.div(
+                    "🤖 AI Validation Dashboard",
+                    class_="sidebar-nav-item",
+                    id="nav-ai",
+                    onclick="navigateTo('ai')"
+                ),
+                ui.div(
+                    "🤖 Model Monitor",
+                    class_="sidebar-nav-item",
+                    id="nav-monitor",
+                    onclick="navigateTo('monitor')"
                 ),
                 class_="sidebar-nav"
             ),
@@ -125,15 +146,18 @@ def navigation_bar():
                 "page_nav",
                 "",
                 choices={
+                    "dashboard": "📊 Executive",
                     "star": "⭐ Star Ratings",
                     "hedis": "📊 HEDIS Gaps",
-                    "ai": "🤖 AI Validation",
                     "risk": "📊 Risk Strat",
                     "roi": "💰 ROI Portfolio",
                     "workflow": "📋 Workflow",
-                    "dashboard": "📊 Executive"
+                    "providers": "👨‍⚕️ Providers",
+                    "profile": "👤 Member 360°",
+                    "ai": "🤖 AI Validation",
+                    "monitor": "🤖 ML Monitor"
                 },
-                selected="star",
+                selected="dashboard",
                 inline=True
             ),
             class_="nav-tabs-container"
@@ -213,6 +237,9 @@ def server(input, output, session):
     roi_portfolio_optimizer_server(input, output, session, get_current_page=get_page)
     care_gap_workflow_server(input, output, session, get_current_page=get_page)
     executive_dashboard_server(input, output, session, get_current_page=get_page)
+    provider_scorecard_server(input, output, session, get_current_page=get_page)
+    model_monitor_server(input, output, session, get_current_page=get_page)
+    member_profile_server(input, output, session, get_current_page=get_page)
 
     @output
     @render.ui
@@ -232,7 +259,13 @@ def server(input, output, session):
             return ui.div(care_gap_workflow_ui(), id="workflow-page")
         elif page == "dashboard":
             return ui.div(executive_dashboard_ui(), id="dashboard-page")
-        return ui.div(star_predictor_ui(), id="star-predictor-page")
+        elif page == "providers":
+            return ui.div(provider_scorecard_ui(), id="providers-page")
+        elif page == "monitor":
+            return ui.div(model_monitor_ui(), id="monitor-page")
+        elif page == "profile":
+            return ui.div(member_profile_ui(), id="profile-page")
+        return ui.div(executive_dashboard_ui(), id="dashboard-page")
 
 
 app = App(app_ui, server)

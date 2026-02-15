@@ -535,9 +535,29 @@ div[data-testid="stMetricContainer"] > div:nth-child(3) * {
     text-align: center !important;
 }
 
+/* Page header h1 - centered with appropriate font size */
+h1:first-of-type,
+.stMarkdown h1:first-of-type,
+div[data-testid="stMarkdownContainer"] h1:first-of-type {
+    text-align: center !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    margin: 0.5rem 0 !important;
+}
+
+/* Campaign Management header - match page title size */
+h2:first-of-type,
+.stMarkdown h2:first-of-type,
+div[data-testid="stMarkdownContainer"] h2:first-of-type {
+    text-align: center !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    margin: 0.5rem 0 !important;
+}
+
 /* Keep text content left-aligned (headings, paragraphs) for readability */
 /* Exception: h2 and h3 are centered */
-h1,   h4, h5, h6 {
+h1:not(:first-of-type), h4, h5, h6 {
     text-align: left !important;
 }
 
@@ -552,6 +572,17 @@ p, li {
 
 
 /* ========== CENTER SUMMARY HEADERS AND NOTES ========== */
+
+/* Campaign Management header - match page title size (specific rule before general h2 rule) */
+h2:first-of-type,
+.stMarkdown h2:first-of-type,
+div[data-testid="stMarkdownContainer"] h2:first-of-type,
+h2[style*="font-size: 1.8rem"] {
+    text-align: center !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    margin: 0.5rem 0 !important;
+}
 
 /* Center all h2 and h3 headers (section headers) */
 h2, h3 {
@@ -979,15 +1010,11 @@ except ImportError:
         pass
 
 try:
-    from utils.page_components_FIXED import add_page_footer
-    # add_mobile_ready_badge removed - badge no longer needed
+    from utils.page_components import render_footer
 except ImportError:
-    def add_page_footer():
+    def render_footer():
         st.markdown("---")
         st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
-    # def add_mobile_ready_badge():
-    #     st.markdown("---")
-    #     st.markdown("📱 Mobile Version Ready")
 
 # ============================================================================
 # ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
@@ -1282,11 +1309,7 @@ BASELINE_MEMBERS = 10000
 scale_factor = membership_size / BASELINE_MEMBERS
 
 # Page content
-st.markdown("""
-<div class="page-title-container">
-    <h1>📋 Campaign Builder</h1>
-</div>
-""", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-size: 1.8rem !important; font-weight: 600;'>📋 Campaign Builder</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; margin-top: 0; margin-bottom: 0.75rem; font-size: 1rem;'>Build and manage targeted HEDIS intervention campaigns</p>", unsafe_allow_html=True)
 
 # Display date range info
@@ -1300,7 +1323,7 @@ with col2:
 show_data_availability_warning(start_date, end_date)
 
 # Campaign Builder Visualizations
-st.header("📋 Campaign Management")
+st.markdown("<h2 style='text-align: center; font-size: 1.8rem !important; font-weight: 600;'>📋 Campaign Management</h2>", unsafe_allow_html=True)
 
 # Get measure data for campaign building
 from utils.queries import get_roi_by_measure_query
@@ -1350,14 +1373,16 @@ if not campaign_df.empty:
         filtered_measures = campaign_df_scaled.nlargest(3, 'roi_ratio')
     
     # Campaign Selection Interface
-    st.subheader("🎯 Select Measures for Campaign")
+    st.markdown("### 🎯 Select Measures for Campaign")
+    measure_list = campaign_df_scaled['measure_code'].tolist()
+    default_measures = filtered_measures['measure_code'].head(5).tolist()
     
-    selected_measures = st.multiselect(
-        "Choose Measures",
-        options=campaign_df_scaled['measure_code'].tolist(),
-        default=filtered_measures['measure_code'].head(5).tolist(),
-        help="Select measures to include in your campaign"
-    )
+    selected_measures = []
+    cols = st.columns(3)
+    for i, measure in enumerate(measure_list):
+        with cols[i % 3]:
+            if st.checkbox(measure, value=(measure in default_measures), key=f"measure_{measure}"):
+                selected_measures.append(measure)
     
     if selected_measures:
         campaign_measures = campaign_df_scaled[campaign_df_scaled['measure_code'].isin(selected_measures)]
@@ -1542,19 +1567,8 @@ if not campaign_df.empty:
 else:
     st.info("📊 No data available for campaign building. Please adjust filters or check data availability.")
 
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
-    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
-    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
-    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
-    </div>
-    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
-    </div>
-    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
-</div>
-""", unsafe_allow_html=True)
+# ============================================================================
+# FOOTER
+# ============================================================================
+render_footer()
 

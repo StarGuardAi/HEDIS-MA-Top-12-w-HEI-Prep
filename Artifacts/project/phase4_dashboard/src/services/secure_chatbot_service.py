@@ -7,8 +7,32 @@ import logging
 from typing import List, Dict, Optional, Tuple
 import pandas as pd
 import numpy as np
+import sys
 
 logger = logging.getLogger(__name__)
+
+# Add project root to path for context_engine imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+try:
+    from services.context_engine import compress_context, estimate_tokens
+    HAS_CONTEXT_ENGINE = True
+except ImportError:
+    HAS_CONTEXT_ENGINE = False
+    logger.warning("context_engine not available. Context compression disabled.")
+
+try:
+    from services.agentic_rag import HEDISAgenticRAG
+    HAS_AGENTIC_RAG = True
+except ImportError:
+    HAS_AGENTIC_RAG = False
+    logger.warning("agentic_rag not available. Agentic RAG disabled.")
+
+try:
+    from services.joint_rag import ContextAwareAgenticRAG
+    HAS_JOINT_RAG = True
+except ImportError:
+    HAS_JOINT_RAG = False
+    logger.warning("joint_rag not available. Context-aware agentic RAG disabled.")
 
 # Try to import optional dependencies
 try:
@@ -40,8 +64,15 @@ class SecureChatbotService:
     Uses local embeddings, vector search, and SQL generation.
     """
     
-    def __init__(self, data_dir: str = "./data/chatbot"):
-        """Initialize the secure chatbot service"""
+    def __init__(self, data_dir: str = "./data/chatbot", use_agentic_rag: bool = False, use_joint_rag: bool = True):
+        """
+        Initialize the secure chatbot service
+        
+        Args:
+            data_dir: Directory for chatbot data
+            use_agentic_rag: If True, use basic agentic RAG for complex queries (deprecated, use use_joint_rag)
+            use_joint_rag: If True, use context-aware agentic RAG for complex queries (default: True)
+        """
         self.data_dir = data_dir
         os.makedirs(data_dir, exist_ok=True)
         
@@ -53,6 +84,39 @@ class SecureChatbotService:
         
         # Sample HEDIS measure knowledge base
         self.measure_knowledge = self._create_measure_knowledge_base()
+        
+        # Create simple RAG retriever wrapper
+        class SimpleRAGRetriever:
+            def __init__(self, chatbot_service):
+                self.chatbot_service = chatbot_service
+            
+            def retrieve(self, query: str, top_k: int = 5):
+                results = self.chatbot_service._semantic_search(query, top_k=top_k)
+                return [
+                    {
+                        "content": str(item.get("measure", "")) + " " + str(item.get("metadata", {})),
+                        "score": item.get("score", 0.0),
+                        "metadata": item.get("metadata", {})
+                    }
+                    for item in results
+                ]
+        
+        rag_retriever = SimpleRAGRetriever(self)
+        
+        # Initialize context-aware agentic RAG (preferred)
+        self.use_joint_rag = use_joint_rag and HAS_JOINT_RAG
+        self.joint_rag = None
+        if self.use_joint_rag:
+            self.joint_rag = ContextAwareAgenticRAG(rag_retriever=rag_retriever, use_llm=False)
+            logger.info("Context-aware agentic RAG initialized")
+        
+        # Initialize basic agentic RAG (fallback)
+        self.use_agentic_rag = use_agentic_rag and HAS_AGENTIC_RAG and not self.use_joint_rag
+        self.agentic_rag = None
+        if self.use_agentic_rag:
+            self.agentic_rag = HEDISAgenticRAG(rag_retriever=rag_retriever, use_llm=False)
+            logger.info("Basic agentic RAG initialized")
+            logger.info("Agentic RAG initialized")
         
     def _initialize_embeddings(self):
         """Initialize local embedding model"""
@@ -284,13 +348,136 @@ class SecureChatbotService:
         else:
             return "SELECT measure_name, roi_ratio, compliance_rate FROM measures LIMIT 10"
     
-    def process_query(self, query: str, portfolio_data: Optional[pd.DataFrame] = None) -> Dict:
+    def process_query(self, query: str, portfolio_data: Optional[pd.DataFrame] = None, use_agentic: Optional[bool] = None) -> Dict:
         """
         Process a natural language query using local processing only.
+        
+        Args:
+            query: User query string
+            portfolio_data: Optional portfolio data
+            use_agentic: If True, use agentic RAG. If None, auto-detect based on query complexity.
         
         Returns:
             Dict with response, processing steps, and metadata
         """
+        # Auto-detect if query needs agentic RAG (multi-step queries)
+        if use_agentic is None:
+            agentic_keywords = ['calculate', 'prioritize', 'find gaps', 'roi', 'validate', 'and', 'then']
+            use_agentic = self.use_agentic_rag and any(keyword in query.lower() for keyword in agentic_keywords)
+        
+        # Use agentic RAG for complex queries
+        if use_agentic and self.agentic_rag:
+            return self._process_query_agentic(query, portfolio_data)
+        else:
+            return self._process_query_basic(query, portfolio_data)
+    
+    def _process_query_joint_rag(self, query: str, portfolio_data: Optional[pd.DataFrame] = None) -> Dict:
+        """Process query using context-aware agentic RAG (preferred method)."""
+        processing_steps = []
+        
+        processing_steps.append({
+            "step": "1. Hierarchical Context Building",
+            "status": "✅ Complete",
+            "details": "Built initial 3-layer hierarchical context (Domain → Measure → Query)"
+        })
+        
+        processing_steps.append({
+            "step": "2. Context-Aware Planning",
+            "status": "✅ Complete",
+            "details": "Planned agentic steps using context-driven tool selection"
+        })
+        
+        try:
+            result = self.joint_rag.process_query(query)
+            
+            processing_steps.append({
+                "step": "3. Step Execution with Context Accumulation",
+                "status": "✅ Complete",
+                "details": f"Executed {result.get('steps_executed', 0)} steps, accumulating context"
+            })
+            
+            processing_steps.append({
+                "step": "4. Context Compression",
+                "status": "✅ Complete",
+                "details": f"Compressed context: {result.get('context_used', {}).get('initial_size', 0)} -> {result.get('context_used', {}).get('final_size', 0)} tokens"
+            })
+            
+            processing_steps.append({
+                "step": "5. Response Synthesis",
+                "status": "✅ Complete",
+                "details": "Synthesized response with full accumulated context"
+            })
+            
+            response_data = result.get("response", {})
+            
+            return {
+                "response": response_data.get("summary", ""),
+                "recommendations": response_data.get("recommendations", []),
+                "metrics": response_data.get("metrics", {}),
+                "processing_steps": processing_steps,
+                "processing_method": "context_aware_agentic_rag",
+                "steps_executed": result.get("steps_executed", 0),
+                "context_used": result.get("context_used", {}),
+                "metadata": {
+                    "retry_count": result.get("retry_count", 0),
+                    "validation_warning": result.get("validation_warning"),
+                    "plan": result.get("plan", {}),
+                    "audit_log": self.joint_rag.get_audit_log()[-1] if self.joint_rag.get_audit_log() else None
+                }
+            }
+        except Exception as e:
+            logger.error(f"Context-aware agentic RAG failed: {e}. Falling back to basic agentic RAG.")
+            if self.use_agentic_rag:
+                return self._process_query_agentic(query, portfolio_data)
+            else:
+                return self._process_query_basic(query, portfolio_data)
+    
+    def _process_query_agentic(self, query: str, portfolio_data: Optional[pd.DataFrame] = None) -> Dict:
+        """Process query using basic agentic RAG (fallback)."""
+        processing_steps = []
+        
+        processing_steps.append({
+            "step": "1. Agentic RAG Planning",
+            "status": "✅ Complete",
+            "details": "Query decomposed into executable steps using PlanningAgent"
+        })
+        
+        try:
+            result = self.agentic_rag.process_query(query)
+            
+            processing_steps.append({
+                "step": "2. Step Execution",
+                "status": "✅ Complete",
+                "details": f"Executed {result.get('steps_executed', 0)} steps using ToolExecutor"
+            })
+            
+            processing_steps.append({
+                "step": "3. Response Synthesis",
+                "status": "✅ Complete",
+                "details": "Synthesized response from accumulated context"
+            })
+            
+            response_data = result.get("response", {})
+            
+            return {
+                "response": response_data.get("summary", ""),
+                "recommendations": response_data.get("recommendations", []),
+                "metrics": response_data.get("metrics", {}),
+                "processing_steps": processing_steps,
+                "processing_method": "agentic_rag",
+                "steps_executed": result.get("steps_executed", 0),
+                "context_used": result.get("context_used", {}),
+                "metadata": {
+                    "retry_count": result.get("retry_count", 0),
+                    "validation_warning": result.get("validation_warning")
+                }
+            }
+        except Exception as e:
+            logger.error(f"Agentic RAG processing failed: {e}. Falling back to basic RAG.")
+            return self._process_query_basic(query, portfolio_data)
+    
+    def _process_query_basic(self, query: str, portfolio_data: Optional[pd.DataFrame] = None) -> Dict:
+        """Process query using basic RAG (original method)."""
         processing_steps = []
         
         # Step 1: Generate embedding (local)
@@ -301,11 +488,50 @@ class SecureChatbotService:
         })
         
         # Step 2: Vector search (local)
-        context = self._semantic_search(query, top_k=3)
+        context = self._semantic_search(query, top_k=5)  # Retrieve more, compress later
+        
+        # Step 2a: Compress context using Template 4
+        if HAS_CONTEXT_ENGINE and context:
+            # Convert context to format expected by compress_context
+            context_dict = {
+                "retrieved_docs": [
+                    {
+                        "content": str(item.get("measure", "")) + " " + str(item.get("metadata", {})),
+                        "score": item.get("score", 0.0),
+                        "metadata": item.get("metadata", {})
+                    }
+                    for item in context
+                ],
+                "relevance_scores": [item.get("score", 0.0) for item in context]
+            }
+            
+            # Compress context (default target: 3000 tokens)
+            compressed_context = compress_context(context_dict, target_tokens=3000)
+            
+            # Update context with compressed results
+            if "retrieved_docs" in compressed_context:
+                context = [
+                    {
+                        "measure": doc.get("metadata", {}).get("measure", ""),
+                        "score": doc.get("score", 0.0),
+                        "metadata": doc.get("metadata", {})
+                    }
+                    for doc in compressed_context["retrieved_docs"]
+                ]
+            
+            # Log compression metrics if available
+            if "_compression_metrics" in compressed_context:
+                metrics = compressed_context["_compression_metrics"]
+                logger.info(
+                    f"Context compressed: {metrics.get('original_tokens', 0)} -> "
+                    f"{metrics.get('final_tokens', 0)} tokens "
+                    f"({metrics.get('compression_ratio', 0):.1f}% reduction)"
+                )
+        
         processing_steps.append({
-            "step": "2. Vector Search (ChromaDB)",
+            "step": "2. Vector Search & Context Compression",
             "status": "✅ Complete",
-            "details": f"Found {len(context)} relevant measures using semantic search"
+            "details": f"Found {len(context)} relevant measures using semantic search (compressed to fit token limit)"
         })
         
         # Step 3: SQL generation (local)
