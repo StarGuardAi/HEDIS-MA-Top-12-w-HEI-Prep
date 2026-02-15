@@ -16,6 +16,7 @@ from utils.measure_definitions import (
 from utils.measure_analysis import (
     get_measure_performance,
     get_gap_analysis,
+    get_gap_analysis_validated,
     get_members_with_gaps,
     get_provider_performance,
     get_geographic_performance,
@@ -1084,15 +1085,11 @@ except ImportError:
         pass
 
 try:
-    from utils.page_components_FIXED import add_page_footer
-    # add_mobile_ready_badge removed - badge no longer needed
+    from utils.page_components import render_footer
 except ImportError:
-    def add_page_footer():
+    def render_footer():
         st.markdown("---")
         st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
-    # def add_mobile_ready_badge():
-    #     st.markdown("---")
-    #     st.markdown("📱 Mobile Version Ready")
 
 # ============================================================================
 # ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
@@ -1328,7 +1325,7 @@ from utils.standard_sidebar import render_standard_sidebar, get_sidebar_date_ran
 
 # Custom filters for Measure Analysis
 def render_measure_filters():
-    st.markdown("### 📋 Analysis Filters")
+    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>📋 Analysis Filters</p>", unsafe_allow_html=True)
     
     # Measure category filter
     measure_categories = st.multiselect(
@@ -1404,14 +1401,11 @@ with col2:
 # Check data availability
 show_data_availability_warning(start_date, end_date)
 
-st.header("📋 Measure Performance")
-
 # Metrics will be displayed after data loads (see below)
 
 st.divider()
 
 # Enhanced Measure Analysis Visualizations
-st.header("📋 Comprehensive Measure Analysis")
 
 # Get measure data
 from utils.queries import get_roi_by_measure_query
@@ -1492,6 +1486,36 @@ if not measure_df.empty:
             st.metric("Total Investment", f"${measure_data['total_investment']:,.0f}")
         with col4:
             st.metric("Net Benefit", f"${measure_data['net_benefit']:,.0f}")
+        
+        st.divider()
+        
+        # Gap Analysis (Triple-Loop Validated)
+        st.subheader("🔬 Gap Analysis (Validated)")
+        start_str = start_date.strftime("%Y-%m-%d") if hasattr(start_date, "strftime") else str(start_date)
+        end_str = end_date.strftime("%Y-%m-%d") if hasattr(end_date, "strftime") else str(end_date)
+        gap_validated = get_gap_analysis_validated(selected_measure, start_str, end_str)
+        conf = gap_validated.get("confidence_score", 0)
+        n_val = gap_validated.get("validation_n_interventions", 20)
+        timeline = gap_validated.get("projected_timeline_months")
+        correction_msg = gap_validated.get("self_correction_message")
+        
+        col_g1, col_g2, col_g3 = st.columns(3)
+        with col_g1:
+            st.metric("Confidence Score", f"{conf:.0f}%", help="Validation confidence for gap recommendations")
+        with col_g2:
+            st.metric("Projected Timeline", f"{timeline:.0f} months", help="Adjusted based on historical closure rates")
+        with col_g3:
+            st.caption("Validated against 20+ historical interventions")
+            st.markdown(f"<p style='font-size:0.9rem; color:#10B981; font-weight:600;'>✓ {n_val}+ historical interventions</p>", unsafe_allow_html=True)
+        
+        if correction_msg:
+            st.warning(f"**Self-correction:** {correction_msg}")
+        
+        recs = gap_validated.get("recommendations_with_confidence", [])
+        if recs:
+            with st.expander("View gap recommendations with confidence scores"):
+                for r in recs[:5]:
+                    st.markdown(f"- **{r['intervention']}** — Confidence: {r['confidence_score']:.0f}% — {r['recommendation']}")
         
         st.divider()
         
@@ -1641,18 +1665,7 @@ else:
     st.info("📊 No measure data available. Please adjust filters or check data availability.")
 
 
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
-    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
-    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
-    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
-    </div>
-    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
-    </div>
-    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
-</div>
-""", unsafe_allow_html=True)
+# ============================================================================
+# FOOTER
+# ============================================================================
+render_footer()

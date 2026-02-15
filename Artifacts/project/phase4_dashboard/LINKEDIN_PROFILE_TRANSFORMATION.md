@@ -254,16 +254,8 @@ This is how we bridge the gap between AI innovation and healthcare compliance.
 - [ ] Added security-focused hashtags to posts
 - [ ] Included links to security architecture documentation
 
----
-
-## Key Metrics to Track
-
-- Profile views (target: 50% increase)
+---## Key Metrics to Track- Profile views (target: 50% increase)
 - Connection requests (target: 30% increase)
 - Post engagement (target: 2x increase)
 - Featured project views (target: 3x increase)
-- Inbound messages about secure AI (new metric)
-
----
-
-**Remember**: Position yourself as the expert who solves the healthcare AI security challenge, not just another data scientist. Lead with compliance, quantify impact, and demonstrate technical depth.
+- Inbound messages about secure AI (new metric)---**Remember**: Position yourself as the expert who solves the healthcare AI security challenge, not just another data scientist. Lead with compliance, quantify impact, and demonstrate technical depth.

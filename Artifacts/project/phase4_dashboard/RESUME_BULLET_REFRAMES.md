@@ -267,18 +267,10 @@ For each bullet point, ensure:
 
 ---
 
-## Quick Reference: Bullet Formula
-
-```
+## Quick Reference: Bullet Formula```
 [Strong Action Verb] + 
 [Healthcare AI Technology] + 
 [Security/Compliance Emphasis] + 
 [Quantified Business Impact]
-```
-
-**Example:**
-> "[Architected] + [HIPAA-compliant analytics platform using local LLMs] + [with zero external API exposure] + [achieving 2.8-4.1x ROI]"
-
----
-
-**Remember**: In healthcare AI resumes, security and compliance are not features—they are requirements. Lead with them, quantify impact, and demonstrate technical depth.
+```**Example:**
+> "[Architected] + [HIPAA-compliant analytics platform using local LLMs] + [with zero external API exposure] + [achieving 2.8-4.1x ROI]"---**Remember**: In healthcare AI resumes, security and compliance are not features—they are requirements. Lead with them, quantify impact, and demonstrate technical depth.

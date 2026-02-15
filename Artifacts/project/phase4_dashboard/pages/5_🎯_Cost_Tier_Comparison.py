@@ -856,15 +856,11 @@ except ImportError:
         pass
 
 try:
-    from utils.page_components_FIXED import add_page_footer
-    # add_mobile_ready_badge removed - badge no longer needed
+    from utils.page_components import render_footer
 except ImportError:
-    def add_page_footer():
+    def render_footer():
         st.markdown("---")
         st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
-    # def add_mobile_ready_badge():
-    #     st.markdown("---")
-    #     st.markdown("📱 Mobile Version Ready")
 
 # ============================================================================
 # ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
@@ -1390,9 +1386,36 @@ try:
         # Detailed Tables by Dimension
         st.header("📋 Detailed Data Tables by Dimension")
         
-        tab1, tab2, tab3, tab4 = st.tabs(["💰 Cost Analysis", "📊 Performance Analysis", "🎯 Tier Comparison", "📈 Complete Dataset"])
+        # Centered tab selection using radio buttons
+        st.markdown("<div style='display: flex; justify-content: center; margin: 1rem 0;'>", unsafe_allow_html=True)
+        selected_tab = st.radio(
+            "Select View",
+            ["💰 Cost Analysis", "📊 Performance Analysis", "🎯 Tier Comparison", "📈 Complete Dataset"],
+            horizontal=True,
+            label_visibility="collapsed",
+            key="tabs_cost_tier"
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
         
-        with tab1:
+        # CSS to center radio buttons
+        st.markdown("""
+        <style>
+        div[data-testid="stRadio"] > div {
+            justify-content: center !important;
+            display: flex !important;
+        }
+        div[data-testid="stRadio"] > div[role="radiogroup"] {
+            justify-content: center !important;
+            display: flex !important;
+            gap: 1rem !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # Display content based on selection
+        if selected_tab == "💰 Cost Analysis":
             st.subheader("Cost Analysis")
             cost_df = df_scaled[[
                 "cost_tier",
@@ -1418,7 +1441,7 @@ try:
                 key="download_cost"
             )
         
-        with tab2:
+        elif selected_tab == "📊 Performance Analysis":
             st.subheader("Performance Analysis")
             perf_df = df_scaled[[
                 "cost_tier",
@@ -1444,7 +1467,7 @@ try:
                 key="download_perf"
             )
         
-        with tab3:
+        elif selected_tab == "🎯 Tier Comparison":
             st.subheader("Tier Comparison")
             comparison_df = df_scaled.copy()
             comparison_df['efficiency_ratio'] = (comparison_df['success_rate'] / comparison_df['cost_per_closure'] * 100).round(2)
@@ -1476,7 +1499,7 @@ try:
                 key="download_comp"
             )
         
-        with tab4:
+        elif selected_tab == "📈 Complete Dataset":
             st.subheader("Complete Dataset")
             complete_df = df_scaled.copy()
             complete_df.columns = [
@@ -1533,18 +1556,8 @@ try:
 except Exception as e:
     st.error(f"Error loading data: {e}")
 
-# Footer
+# ============================================================================
+# FOOTER
+# ============================================================================
 st.markdown("---")
-st.markdown("""
-<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
-    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
-    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
-    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
-    </div>
-    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
-    </div>
-    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
-</div>
-""", unsafe_allow_html=True)
+render_footer()

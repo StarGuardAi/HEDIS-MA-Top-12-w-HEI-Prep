@@ -10,6 +10,8 @@ This document outlines how the HEDIS Portfolio Optimizer can scale to production
 
 ### Data Flow: Zero External API Exposure
 
+![Security Architecture - Zero External API Exposure](../docs/images/architecture-security.png)
+
 ```
 ┌─────────────┐
 │   User      │

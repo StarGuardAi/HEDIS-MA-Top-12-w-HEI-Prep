@@ -75,6 +75,36 @@ def apply_sidebar_styling():
         padding-right: 0.5rem;
     }
     
+    /* ========== NAVIGATION CONTAINER - MINIMAL ========== */
+    /* Only add background - don't change padding/margins/alignment */
+    [data-testid="stSidebarNav"] {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+        padding: 4px !important;
+        margin: 4px 8px !important;
+    }
+    
+    /* Home button highlight - match ROI page exactly */
+    [data-testid="stSidebarNav"] ul li:first-child a {
+        font-size: 0 !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 8px !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        margin-bottom: 0rem !important;
+    }
+    
+    /* Fix Home button label - hide "app" and show "🏠 Home" - match ROI page */
+    [data-testid="stSidebarNav"] ul li:first-child a::before {
+        content: "🏠 Home" !important;
+        font-size: 1.1rem !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        display: block !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    }
+    
     /* Style "app" link as "Home" in sidebar navigation */
     [data-testid="stSidebar"] [data-testid="stSidebarNav"] a[href="/"],
     [data-testid="stSidebar"] [data-testid="stSidebarNav"] a[href="./"],
@@ -151,6 +181,179 @@ def apply_sidebar_styling():
     [data-testid="stSidebar"] label {
         color: #ffffff !important;
         font-weight: 500;
+    }
+    
+    /* Sidebar date input fields - white text for dates */
+    [data-testid="stSidebar"] .stDateInput input,
+    [data-testid="stSidebar"] .stDateInput input[type="text"],
+    [data-testid="stSidebar"] .stDateInput input[type="date"],
+    [data-testid="stSidebar"] .stDateInput div[data-baseweb="input"] input,
+    [data-testid="stSidebar"] .stDateInput div[data-baseweb="input"] input::placeholder,
+    [data-testid="stSidebar"] .stDateInput div[data-baseweb="input"] > div input,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input[type="text"],
+    [data-testid="stSidebar"] [data-testid="stDateInput"] div input {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+    }
+    
+    /* Date input value text - ensure it's visible */
+    [data-testid="stSidebar"] .stDateInput input::value,
+    [data-testid="stSidebar"] .stDateInput input::-webkit-input-placeholder,
+    [data-testid="stSidebar"] .stDateInput input::-moz-placeholder,
+    [data-testid="stSidebar"] .stDateInput input:-ms-input-placeholder {
+        color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    
+    /* ========== FORCE DATE INPUT VISIBILITY IN SIDEBAR ========== */
+    
+    /* Date input container in sidebar */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 5px !important;
+        padding: 2px !important;
+    }
+    
+    /* Date input label - make it white on purple sidebar */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] label {
+        color: white !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Explicitly style custom date labels */
+    [data-testid="stSidebar"] p:has-text("Start Date"),
+    [data-testid="stSidebar"] p:has-text("End Date") {
+        color: white !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* The actual date input field - dark text on white background */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input {
+        color: #1f2937 !important;
+        background-color: white !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 4px !important;
+        padding: 0.5rem !important;
+        font-size: 0.9rem !important;
+        -webkit-text-fill-color: #1f2937 !important;
+    }
+    
+    /* Date input box wrapper */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] > div > div {
+        background-color: white !important;
+    }
+    
+    /* Ensure the date text is dark and visible */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] [data-baseweb="input"] {
+        background-color: white !important;
+    }
+    
+    [data-testid="stSidebar"] [data-testid="stDateInput"] [data-baseweb="input"] input {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+    }
+    
+    /* Date picker button/icon */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] button {
+        color: #4A3D6F !important;
+        background-color: white !important;
+    }
+    
+    /* Calendar icon */
+    [data-testid="stSidebar"] [data-testid="stDateInput"] svg {
+        fill: #4A3D6F !important;
+        color: #4A3D6F !important;
+    }
+    
+    /* Make the "91 days selected" caption visible */
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] {
+        color: white !important;
+    }
+    
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+        color: white !important;
+        font-size: 0.85rem !important;
+    }
+    
+    /* Section header "📅 Date Range" styling */
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] .sidebar-section-header {
+        color: white !important;
+        font-size: 1rem !important;
+        margin-top: 1rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Alternative: Target BaseWeb date input specifically */
+    [data-testid="stSidebar"] [data-baseweb="base-input"] {
+        background-color: white !important;
+    }
+    
+    [data-testid="stSidebar"] [data-baseweb="base-input"] input {
+        color: #1f2937 !important;
+        -webkit-text-fill-color: #1f2937 !important;
+    }
+    
+    /* Fix any transparent backgrounds */
+    [data-testid="stSidebar"] .stDateInput > div {
+        background-color: white !important;
+        border-radius: 5px !important;
+    }
+    
+    [data-testid="stSidebar"] .stDateInput input {
+        color: #1f2937 !important;
+        background-color: white !important;
+        -webkit-text-fill-color: #1f2937 !important;
+    }
+    
+    /* Date input labels stay white */
+    [data-testid="stSidebar"] .stDateInput label,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] label {
+        color: #ffffff !important;
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Date input container children - labels white, inputs dark */
+    [data-testid="stSidebar"] .stDateInput span:not(input),
+    [data-testid="stSidebar"] .stDateInput div:not([data-baseweb="input"]):not(input),
+    [data-testid="stSidebar"] .stDateInput p {
+        color: #ffffff !important;
+    }
+    
+    /* ========== ENSURE DATE RANGE LABELS ARE VISIBLE ========== */
+    /* Force all paragraphs in sidebar to be white (covers custom date labels) */
+    [data-testid="stSidebar"] p {
+        color: #FFFFFF !important;
+    }
+    
+    /* Specifically target custom date labels */
+    [data-testid="stSidebar"] p[style*="Start Date"],
+    [data-testid="stSidebar"] p[style*="End Date"] {
+        color: #FFFFFF !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Force white text on all date input elements - comprehensive targeting */
+    [data-testid="stSidebar"] .stDateInput input,
+    [data-testid="stSidebar"] .stDateInput input[type="text"],
+    [data-testid="stSidebar"] .stDateInput input[type="date"],
+    [data-testid="stSidebar"] .stDateInput input[readonly],
+    [data-testid="stSidebar"] .stDateInput div[data-baseweb="input"] input,
+    [data-testid="stSidebar"] .stDateInput div[data-baseweb="input"] > div input,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input,
+    [data-testid="stSidebar"] [data-testid="stDateInput"] input[type="text"],
+    [data-testid="stSidebar"] [data-testid="stDateInput"] div input,
+    [data-testid="stSidebar"] .stDateInput span,
+    [data-testid="stSidebar"] .stDateInput div,
+    [data-testid="stSidebar"] .stDateInput p {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        fill: #ffffff !important;
     }
     
     /* Sidebar help icon (?) - light font - comprehensive targeting */
@@ -329,6 +532,194 @@ def apply_sidebar_styling():
             transform: scale(0.98) !important;
         }
     }
+    
+    /* ========== CENTER TAB BUTTONS ========== */
+    /* Center the entire tab bar */
+    [data-testid="stTabs"] > div:first-child {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+    
+    [data-baseweb="tab-list"] {
+        justify-content: center !important;
+        margin: 0 auto !important;
+    }
+    
+    [role="tablist"] {
+        justify-content: center !important;
+        display: flex !important;
+        width: 100% !important;
+    }
+    
+    /* Center the tab list container */
+    [data-testid="stTabs"] [data-baseweb="tab-list"] {
+        justify-content: center !important;
+        display: flex !important;
+    }
+    
+    /* Center individual tabs */
+    [data-testid="stTabs"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    
+    /* Ensure tabs don't stretch full width */
+    [data-baseweb="tab-list"] {
+        justify-content: center !important;
+        width: auto !important;
+    }
+    
+    /* ========== LEFT-ALIGN DATA TABLES ========== */
+    /* Table container - left align */
+    [data-testid="stDataFrame"] {
+        text-align: left !important;
+    }
+    
+    [data-testid="stDataFrame"] table {
+        text-align: left !important;
+    }
+    
+    [data-testid="stDataFrame"] th {
+        text-align: left !important;
+    }
+    
+    [data-testid="stDataFrame"] td {
+        text-align: left !important;
+    }
+    
+    /* Ensure table headers left-aligned */
+    [data-testid="stDataFrame"] thead th {
+        text-align: left !important;
+    }
+    
+    /* Table body cells left-aligned */
+    [data-testid="stDataFrame"] tbody td {
+        text-align: left !important;
+    }
     </style>
+    """, unsafe_allow_html=True)
+    
+    # JavaScript to force tab centering and table alignment
+    st.markdown("""
+    <script>
+    // Enhanced function to center tabs with diagnostics
+    function fixTabsAndTables() {
+        // Find and log all tab-related elements
+        const tabSelectors = [
+            '[role="tablist"]',
+            '[data-baseweb="tab-list"]',
+            '.stTabs',
+            '[data-testid="stTabs"]',
+            '.stTabs > div',
+            '.stTabs > div > div',
+            '[class*="st-emotion-cache"] [role="tablist"]'
+        ];
+        
+        let foundElements = [];
+        
+        tabSelectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach((el, i) => {
+                if (!foundElements.includes(el)) {
+                    foundElements.push(el);
+                    console.log(`Found tab element with selector "${selector}":`, el);
+                    console.log(`Classes: ${el.className}`);
+                    console.log(`Parent classes: ${el.parentElement?.className || 'none'}`);
+                    
+                    // Apply centering styles
+                    el.style.justifyContent = 'center';
+                    el.style.display = 'flex';
+                    el.style.width = '100%';
+                    
+                    // Also try setting on parent if it's a flex container
+                    if (el.parentElement) {
+                        const parent = el.parentElement;
+                        const parentStyle = window.getComputedStyle(parent);
+                        if (parentStyle.display === 'flex' || parentStyle.display === 'inline-flex') {
+                            parent.style.justifyContent = 'center';
+                            parent.style.display = 'flex';
+                            parent.style.width = '100%';
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Specific targeting for tab lists
+        const tabLists = document.querySelectorAll('[role="tablist"]');
+        tabLists.forEach(tabList => {
+            tabList.style.justifyContent = 'center';
+            tabList.style.display = 'flex';
+            tabList.style.width = '100%';
+            tabList.style.marginLeft = 'auto';
+            tabList.style.marginRight = 'auto';
+        });
+        
+        // Also target by data-baseweb attribute
+        const basewebTabs = document.querySelectorAll('[data-baseweb="tab-list"]');
+        basewebTabs.forEach(tabList => {
+            tabList.style.justifyContent = 'center';
+            tabList.style.display = 'flex';
+            tabList.style.width = '100%';
+            tabList.style.marginLeft = 'auto';
+            tabList.style.marginRight = 'auto';
+        });
+        
+        // Target Streamlit tab containers
+        const stTabs = document.querySelectorAll('[data-testid="stTabs"]');
+        stTabs.forEach(container => {
+            const firstDiv = container.querySelector('> div');
+            if (firstDiv) {
+                firstDiv.style.justifyContent = 'center';
+                firstDiv.style.display = 'flex';
+                firstDiv.style.width = '100%';
+            }
+        });
+        
+        // Left-align all table cells
+        const tableCells = document.querySelectorAll('[data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th');
+        tableCells.forEach(cell => {
+            cell.style.textAlign = 'left';
+        });
+        
+        if (foundElements.length > 0) {
+            console.log(`✅ Applied centering to ${foundElements.length} tab element(s)`);
+        }
+    }
+    
+    // Run on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fixTabsAndTables);
+    } else {
+        fixTabsAndTables();
+    }
+    
+    // Run again after short delays (Streamlit renders async)
+    setTimeout(fixTabsAndTables, 100);
+    setTimeout(fixTabsAndTables, 500);
+    setTimeout(fixTabsAndTables, 1000);
+    setTimeout(fixTabsAndTables, 2000);
+    setTimeout(fixTabsAndTables, 3000);
+    
+    // Run when DOM changes (for tab switches and dynamic content)
+    const observer = new MutationObserver(() => {
+        setTimeout(fixTabsAndTables, 100);
+    });
+    observer.observe(document.body, { 
+        childList: true, 
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style']
+    });
+    
+    // Also run when page becomes visible
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            setTimeout(fixTabsAndTables, 100);
+        }
+    });
+    </script>
     """, unsafe_allow_html=True)
 

@@ -8,6 +8,8 @@ The application has been restructured into a production-grade, maintainable arch
 
 ### Layer Structure
 
+![Production Architecture Layers](../docs/images/architecture-production-layers.png)
+
 ```
 ┌─────────────────────────────────────────┐
 │     Presentation Layer (UI)            │

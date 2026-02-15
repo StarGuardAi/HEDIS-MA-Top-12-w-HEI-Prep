@@ -1081,15 +1081,11 @@ except ImportError:
         pass
 
 try:
-    from utils.page_components_FIXED import add_page_footer
-    # add_mobile_ready_badge removed - badge no longer needed
+    from utils.page_components import render_footer
 except ImportError:
-    def add_page_footer():
+    def render_footer():
         st.markdown("---")
         st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
-    # def add_mobile_ready_badge():
-    #     st.markdown("---")
-    #     st.markdown("📱 Mobile Version Ready")
 
 # ============================================================================
 # ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
@@ -1325,7 +1321,7 @@ from utils.standard_sidebar import render_standard_sidebar, get_sidebar_date_ran
 
 # Custom filters for Health Equity Index
 def render_equity_filters():
-    st.markdown("### ⚖️ Equity Filters")
+    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>⚖️ Equity Filters</p>", unsafe_allow_html=True)
     
     # Equity dimension focus - visible multiselect instead of dropdown
     st.markdown("**Equity Dimension Focus**")
@@ -1599,18 +1595,7 @@ else:
     st.info("📊 No equity data available. Please adjust filters or check data availability.")
 
 
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
-    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
-    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
-    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
-    </div>
-    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
-    </div>
-    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
-</div>
-""", unsafe_allow_html=True)
+# ============================================================================
+# FOOTER
+# ============================================================================
+render_footer()

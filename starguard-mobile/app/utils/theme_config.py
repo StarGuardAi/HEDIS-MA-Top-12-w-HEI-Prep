@@ -34,6 +34,76 @@ body {
     margin: 0.5rem 0;
 }
 
+/* ==================== BUTTON ANIMATIONS ==================== */
+.btn-primary, .btn-secondary {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+
+.btn-primary:active, .btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2);
+}
+
+/* Ripple effect */
+.btn-primary::after, .btn-secondary::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:active::after, .btn-secondary:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Pulse animation for primary action buttons */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.btn-primary {
+    animation: pulse 2s infinite;
+}
+
+.btn-primary:hover {
+    animation: none;
+}
+
+/* Specific animations for action buttons */
+button[id*="execute_btn"],
+button[id*="contact_btn"],
+button[id*="assign_btn"],
+button[id*="history_btn"] {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button[id*="execute_btn"]:hover,
+button[id*="contact_btn"]:hover,
+button[id*="assign_btn"]:hover,
+button[id*="history_btn"]:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5);
+}
+
 /* Mobile navigation */
 .navbar {
     position: sticky;
@@ -373,6 +443,65 @@ input:focus, select:focus, textarea:focus {
     .opportunity-card span {
         color: #000000 !important;
     }
+
+    /* Provider Scorecard cards in dark mode - keep white with dark text */
+    .provider-card {
+        background: white !important;
+        border-color: #e0e0e0 !important;
+    }
+
+    .provider-card strong,
+    .provider-card span,
+    .provider-card h4 {
+        color: #1a1a1a !important;
+    }
+
+    .provider-card [style*="color: #666"] {
+        color: #666 !important;
+    }
+
+    .provider-card [style*="color: #7c3aed"] {
+        color: #7c3aed !important;
+    }
+
+    /* Model Monitor cards in dark mode - keep white with dark text */
+    .model-component-card {
+        background: white !important;
+        border-color: #e0e0e0 !important;
+    }
+
+    .model-component-card strong,
+    .model-component-card span {
+        color: #1a1a1a !important;
+    }
+
+    .model-component-card [style*="color: #7c3aed"] {
+        color: #7c3aed !important;
+    }
+
+    .model-component-card [style*="color: #666"] {
+        color: #666 !important;
+    }
+
+    /* Member Profile cards in dark mode - keep white with dark text */
+    .member-profile-card {
+        background: white !important;
+        border-color: #e0e0e0 !important;
+    }
+
+    .member-profile-card strong,
+    .member-profile-card span,
+    .member-profile-card h4 {
+        color: #1a1a1a !important;
+    }
+
+    .member-profile-card [style*="color: #7c3aed"] {
+        color: #7c3aed !important;
+    }
+
+    .member-profile-card [style*="color: #666"] {
+        color: #666 !important;
+    }
 }
 
 /* ==================== HAMBURGER MENU & SIDEBAR ==================== */
@@ -541,6 +670,159 @@ input:focus, select:focus, textarea:focus {
     .nav-sidebar {
         display: none;
     }
+}
+
+/* ==================== iPHONE OPTIMIZATIONS ==================== */
+
+/* Prevent number wrapping on iPhone */
+@supports (-webkit-touch-callout: none) {
+    /* iPhone-specific styles */
+    
+    /* Force 7+ digit numbers to stay on single line */
+    span[style*="font-size: 1.5rem"],
+    span[style*="font-size: 1.25rem"],
+    span[style*="font-size: 1.75rem"],
+    span[style*="font-size: 2rem"] {
+        white-space: nowrap !important;
+        display: inline-block !important;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Smaller font size for very long numbers on iPhone */
+    span[style*="font-size: 2rem"] {
+        font-size: 1.75rem !important;
+    }
+    
+    span[style*="font-size: 1.75rem"] {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* iPhone Safari text rendering */
+@media only screen and (max-width: 430px) {
+    /* iPhone 14 Pro Max and smaller */
+    
+    /* Force single-line for large numbers */
+    .metric-value,
+    span[style*="font-weight: 900"],
+    span[style*="font-weight: 700"] {
+        white-space: nowrap !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ==================== CONTRAST FIXES FOR ALL PLATFORMS ==================== */
+
+/* Dark backgrounds - lighten text */
+div[style*="background: #2a2a2a"] span,
+div[style*="background: #f8f9fa"] span,
+div[style*="background: #f5f3ff"] span,
+.hcc-category-card span,
+.risk-category-card span,
+.segment-card span,
+.opportunity-card span {
+    color: #666 !important;
+}
+
+/* Purple/colored backgrounds - lighten text */
+div[style*="background: #f5f3ff"] strong,
+div[style*="background: #f5f3ff"] span,
+div[style*="background: #f0f7f0"] strong,
+div[style*="background: #f0f7f0"] span,
+div[style*="background: #fff8f0"] strong,
+div[style*="background: #fff8f0"] span {
+    color: #666 !important;
+}
+
+/* White backgrounds - darken text */
+div[style*="background: white"] h4,
+div[style*="background: white"] .hcc-code,
+div[style*="background: white"] .hcc-name {
+    color: #1a1a1a !important;
+}
+
+/* Force proper contrast on white tiles */
+.hcc-detailed-tile *,
+.intervention-card *,
+.campaign-card *,
+.opportunity-card *,
+.model-component-card *,
+.provider-card * {
+    color: #1a1a1a !important;
+}
+
+/* Exception: keep metric values visible */
+.hcc-detailed-tile span[style*="font-size: 1"],
+.intervention-card span[style*="font-size: 1"],
+.campaign-card span[style*="font-size: 1"],
+.opportunity-card span[style*="font-size: 1"],
+.model-component-card span[style*="font-size: 1"],
+.provider-card span[style*="font-size: 1"] {
+    color: #000000 !important;
+}
+
+/* Metric boxes - ensure readability */
+.metric-box {
+    white-space: nowrap;
+}
+
+.metric-box .metric-value {
+    white-space: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ==================== iPHONE SAFE AREA ==================== */
+
+@supports (padding: max(0px)) {
+    /* iPhone notch/safe area support */
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .navbar {
+        padding-top: max(1rem, env(safe-area-inset-top));
+    }
+}
+
+/* ==================== iPHONE TOUCH OPTIMIZATIONS ==================== */
+
+/* Larger touch targets for iPhone */
+@media (hover: none) and (pointer: coarse) {
+    button,
+    .btn-primary,
+    .btn-secondary,
+    .sidebar-nav-item {
+        min-height: 44px !important; /* Apple's recommended minimum */
+        padding: 0.75rem 1.5rem !important;
+    }
+    
+    /* Prevent text selection on buttons */
+    button,
+    .btn-primary,
+    .btn-secondary {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* ==================== iPHONE SCROLLING ==================== */
+
+/* Smooth scrolling on iPhone */
+.sidebar,
+.main-content {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent bounce scroll on body */
+body {
+    overscroll-behavior-y: none;
 }
 </style>
 """

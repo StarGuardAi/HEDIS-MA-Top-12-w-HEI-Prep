@@ -995,15 +995,11 @@ except ImportError:
         pass
 
 try:
-    from utils.page_components_FIXED import add_page_footer
-    # add_mobile_ready_badge removed - badge no longer needed
+    from utils.page_components import render_footer
 except ImportError:
-    def add_page_footer():
+    def render_footer():
         st.markdown("---")
         st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
-    # def add_mobile_ready_badge():
-    #     st.markdown("---")
-    #     st.markdown("📱 Mobile Version Ready")
 
 # ============================================================================
 # ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
@@ -1239,7 +1235,7 @@ from utils.standard_sidebar import render_standard_sidebar, get_sidebar_date_ran
 
 # Custom filters for ROI Calculator
 def render_roi_calc_filters():
-    st.markdown("### 💰 Calculator Filters")
+    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>💰 Calculator Filters</p>", unsafe_allow_html=True)
     
     # ROI target
     roi_target = st.slider(
@@ -1287,7 +1283,7 @@ def render_roi_calc_filters():
     st.markdown("---")
     
     # ROI Calculation Parameters
-    st.markdown("### ⚙️ ROI Calculation Parameters")
+    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>⚙️ ROI Calculation Parameters</p>", unsafe_allow_html=True)
     
     investment_amount = st.number_input(
         "Investment Amount ($)",
@@ -1450,6 +1446,38 @@ with col3:
 with col4:
     st.metric("ROI Ratio", f"{roi_ratio:.2f}x", f"{roi_percentage:.1f}%")
 
+# Compare ROI Methods (Differential ROI Methodologies)
+st.subheader("📐 Compare ROI Methods")
+with st.expander("Compare three ROI methodologies and get a recommendation", expanded=True):
+    roi_calc = ROICalculator()
+    three_methods = roi_calc.calculate_roi_three_methods(
+        investment_amount=investment_amount,
+        expected_closures=expected_closures,
+        revenue_per_closure=revenue_per_closure,
+        membership=membership_size,
+    )
+    org_type = st.selectbox("Organization type", ["payer", "provider"], key="roi_method_org_type", help="Payer vs provider context")
+    audience = st.selectbox("Primary audience", ["CFO", "CMO", "CIO"], key="roi_method_audience", help="Who will see this ROI")
+    reporting = st.selectbox("Reporting context", ["internal", "CMS", "board"], key="roi_method_reporting", help="Internal vs CMS vs board")
+    rec = roi_calc.recommend_roi_method(org_type=org_type, audience=audience, reporting=reporting)
+    
+    comp_data = []
+    for key, label in [
+        ("method_1_conservative", "Conservative (direct only)"),
+        ("method_2_comprehensive", "Comprehensive (incl. indirect)"),
+        ("method_3_cms_focused", "CMS-Focused (Star Rating)"),
+    ]:
+        m = three_methods[key]
+        comp_data.append({
+            "Method": label,
+            "Net ROI ($)": f"{m['net_roi']:,.0f}",
+            "ROI Ratio": f"{m['roi_ratio']:.2f}x",
+            "Total Benefit ($)": f"{m['total_benefit']:,.0f}",
+        })
+    comp_df = pd.DataFrame(comp_data)
+    st.dataframe(comp_df, use_container_width=True, hide_index=True)
+    st.info(f"**Recommended for you:** **{rec['label']}** — {rec['explanation']}")
+
 st.divider()
 
 # Visualizations
@@ -1586,18 +1614,7 @@ else:
     st.plotly_chart(fig_distribution, use_container_width=True, config={'responsive': True, 'displayModeBar': False}, key="roi_calc_distribution_standalone")
 
 
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
-    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
-    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
-    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
-    </div>
-    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
-    </div>
-    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
-</div>
-""", unsafe_allow_html=True)
+# ============================================================================
+# FOOTER
+# ============================================================================
+render_footer()

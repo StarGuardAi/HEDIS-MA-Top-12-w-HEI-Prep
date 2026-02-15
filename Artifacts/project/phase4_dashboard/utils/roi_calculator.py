@@ -229,6 +229,106 @@ class ROICalculator:
             "roi_ratio": 0
         }
     
+    def calculate_roi_three_methods(
+        self,
+        investment_amount: float,
+        expected_closures: int,
+        revenue_per_closure: float = 100.0,
+        membership: int = 1000,
+        quality_bonus_per_star: float = 50.0,
+    ) -> Dict:
+        """
+        Calculate ROI using three methodologies for comparison.
+        
+        Method 1 (Conservative): Only direct cost avoidance / revenue from closures.
+        Method 2 (Comprehensive): Includes indirect benefits (admin savings, quality bonus estimate).
+        Method 3 (CMS-Focused): Star Rating bonus emphasis; maximizes Star Rating impact.
+        
+        Returns:
+            Dict with method_1_conservative, method_2_comprehensive, method_3_cms_focused,
+            each containing net_roi, roi_ratio, total_benefit, description.
+        """
+        rev_direct = expected_closures * revenue_per_closure
+        inv = max(investment_amount, 1.0)
+        
+        # Method 1: Conservative - only direct revenue from closures
+        m1_benefit = rev_direct
+        m1_net = m1_benefit - inv
+        m1_ratio = m1_benefit / inv if inv else 0
+        
+        # Method 2: Comprehensive - add indirect (e.g. 15% admin savings, quality bonus proxy)
+        admin_savings = inv * 0.15  # 15% admin efficiency
+        star_bonus_proxy = membership * quality_bonus_per_star * 0.5  # half-star equivalent
+        m2_benefit = rev_direct + admin_savings + star_bonus_proxy
+        m2_net = m2_benefit - inv
+        m2_ratio = m2_benefit / inv if inv else 0
+        
+        # Method 3: CMS-Focused - Star Rating bonus emphasis (full star impact)
+        stars_equivalent = min(5, max(0, (expected_closures / max(membership * 0.01, 1)) * 10))
+        cms_bonus = membership * quality_bonus_per_star * (stars_equivalent * 0.2)  # 0.2 stars per strong closure set
+        m3_benefit = rev_direct + cms_bonus
+        m3_net = m3_benefit - inv
+        m3_ratio = m3_benefit / inv if inv else 0
+        
+        return {
+            "method_1_conservative": {
+                "net_roi": m1_net,
+                "roi_ratio": m1_ratio,
+                "total_benefit": m1_benefit,
+                "description": "Direct cost avoidance only (revenue from closures). Best for internal reporting and conservative forecasts.",
+            },
+            "method_2_comprehensive": {
+                "net_roi": m2_net,
+                "roi_ratio": m2_ratio,
+                "total_benefit": m2_benefit,
+                "description": "Includes indirect benefits (admin savings, quality bonus proxy). Best for CFO/board and full value story.",
+            },
+            "method_3_cms_focused": {
+                "net_roi": m3_net,
+                "roi_ratio": m3_ratio,
+                "total_benefit": m3_benefit,
+                "description": "Star Rating bonus emphasis. Best for CMS reporting and CMO/quality leadership.",
+            },
+        }
+    
+    def recommend_roi_method(
+        self,
+        org_type: str = "payer",
+        audience: str = "CFO",
+        reporting: str = "internal",
+    ) -> Dict:
+        """
+        Recommend which ROI method to use based on organization and audience.
+        
+        Args:
+            org_type: 'payer' or 'provider'
+            audience: 'CFO', 'CMO', 'CIO'
+            reporting: 'internal', 'CMS', 'board'
+        
+        Returns:
+            Dict with recommended_method (key), explanation, and optional alt_method.
+        """
+        if reporting == "CMS" or audience == "CMO":
+            return {
+                "recommended_method": "method_3_cms_focused",
+                "label": "CMS-Focused (Star Rating emphasis)",
+                "explanation": "Use CMS-Focused when reporting to CMS or presenting to quality/CMO stakeholders. Emphasizes Star Rating bonus impact.",
+                "alt_method": "method_2_comprehensive" if audience == "CFO" else None,
+            }
+        if audience == "CFO" or reporting == "board":
+            return {
+                "recommended_method": "method_2_comprehensive",
+                "label": "Comprehensive (includes indirect benefits)",
+                "explanation": "Use Comprehensive for CFO and board. Shows full value including admin savings and quality bonus.",
+                "alt_method": "method_1_conservative",
+            }
+        return {
+            "recommended_method": "method_1_conservative",
+            "label": "Conservative (direct cost avoidance only)",
+            "explanation": "Use Conservative for internal planning and when you need a defensible, single-number ROI.",
+            "alt_method": "method_2_comprehensive",
+        }
+    
     def generate_sample_roi_results(self, config: Dict = None) -> List[Dict]:
         """
         Generate sample ROI results for demonstration when database is empty.

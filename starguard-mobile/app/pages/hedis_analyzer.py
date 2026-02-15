@@ -126,7 +126,7 @@ def hedis_analyzer_ui():
         mobile_card(
             "Portfolio Overview",
             ui.div(
-                metric_box("Total Measures", str(len(HEDIS_MEASURES)), color="#0066cc"),
+                metric_box("Total Measures", str(len(HEDIS_MEASURES)), color="#7c3aed"),
                 metric_box("Avg Gap to Benchmark", f"{avg_gap:.1f}%", color="#ff6b00"),
                 metric_box("Total Population", f"{total_pop:,}", color="#28a745"),
                 style="display: flex; flex-direction: column; gap: 0.75rem;"
@@ -199,7 +199,7 @@ def hedis_analyzer_server(input, output, session, get_current_page=lambda: "hedi
         return ui.div(
             ui.tags.h4(
                 "Measure Overview",
-                style="color: #0066cc; margin: 1rem 0 0.75rem 0; font-size: 1.1rem;"
+                style="color: #7c3aed; margin: 1rem 0 0.75rem 0; font-size: 1.1rem;"
             ),
 
             info_row("Measure Code", measure_code),
@@ -212,7 +212,7 @@ def hedis_analyzer_server(input, output, session, get_current_page=lambda: "hedi
                 ui.tags.strong("Current Performance: ", style="color: #666;"),
                 ui.tags.span(
                     f"{measure['current_rate']}%",
-                    style="font-size: 1.5rem; font-weight: 700; color: #0066cc;"
+                    style="font-size: 1.5rem; font-weight: 700; color: #7c3aed;"
                 ),
                 style="margin-bottom: 0.5rem;"
             ),
@@ -220,7 +220,7 @@ def hedis_analyzer_server(input, output, session, get_current_page=lambda: "hedi
             progress_bar(
                 measure['current_rate'],
                 label=f"{measure['current_rate']}%",
-                color="#0066cc"
+                color="#7c3aed"
             ),
 
             info_row("Benchmark Target", f"{measure['benchmark']}%", highlight=True),
@@ -337,7 +337,7 @@ def hedis_analyzer_server(input, output, session, get_current_page=lambda: "hedi
                         ui.div(
                             ui.tags.h4(
                                 scenario['level'],
-                                style="color: #0066cc; margin: 0 0 0.75rem 0; font-size: 1rem;"
+                                style="color: #7c3aed; margin: 0 0 0.75rem 0; font-size: 1rem;"
                             ),
 
                             ui.div(
@@ -357,7 +357,7 @@ def hedis_analyzer_server(input, output, session, get_current_page=lambda: "hedi
 
                             ui.div(
                                 ui.tags.strong("New Performance Rate: ", class_="scenario-label", style="color: #333;"),
-                                ui.tags.span(f"{scenario['new_rate']:.1f}%", class_="scenario-value", style="color: #0066cc; font-weight: 600;"),
+                                ui.tags.span(f"{scenario['new_rate']:.1f}%", class_="scenario-value", style="color: #7c3aed; font-weight: 600;"),
                                 class_="scenario-detail",
                                 style="padding: 0.5rem 0; border-bottom: 1px solid #e0e0e0;"
                             ),
@@ -365,7 +365,7 @@ def hedis_analyzer_server(input, output, session, get_current_page=lambda: "hedi
                                 ui.tags.strong("Improvement: ", class_="scenario-label", style="color: #333;"),
                                 ui.tags.span(f"+{scenario['improvement_pct']:.1f}pp", class_="scenario-value", style="color: #28a745; font-weight: 600;"),
                                 class_="scenario-detail scenario-highlight",
-                                style="padding: 0.5rem 0; background: #f0f7ff; border-bottom: 1px solid #e0e0e0;"
+                                style="padding: 0.5rem 0; background: #f5f3ff; border-bottom: 1px solid #e0e0e0;"
                             ),
                             ui.div(
                                 ui.tags.strong("Effort Level: ", class_="scenario-label", style="color: #333;"),

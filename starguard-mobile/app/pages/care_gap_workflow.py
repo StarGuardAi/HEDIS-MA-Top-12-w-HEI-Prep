@@ -373,13 +373,17 @@ def care_gap_workflow_server(input, output, session, get_current_page=lambda: "s
                         style="padding: 0.5rem 0;"
                     ),
 
-                    # Action button
+                    # Action button with explanation
                     ui.div(
                         mobile_button(
                             "Assign Interventions",
                             f"assign_btn_{member['member_id']}",
                             "primary",
-                            icon=""
+                            icon="📋"
+                        ),
+                        ui.tags.div(
+                            f"💡 Assigns AI-recommended interventions for {member['open_gaps']} open gaps using member's preferred contact method ({member['preferred_contact']})",
+                            style="color: #666; font-size: 0.75rem; font-style: italic; margin-top: 0.5rem; padding: 0.5rem; background: #f5f3ff; border-radius: 4px; border-left: 3px solid #7c3aed;"
                         ),
                         style="margin-top: 0.75rem;"
                     ),

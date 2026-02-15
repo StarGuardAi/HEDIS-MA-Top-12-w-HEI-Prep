@@ -20,7 +20,7 @@ VALIDATION_METRICS = {
     "data_quality_score": 91.5,
     "validation_tests_passed": 47,
     "validation_tests_total": 50,
-    "last_updated": "2026-02-14 14:23:17 EST",
+    "last_updated": "02/14/2026 14:23:17 EST",
     "uptime_pct": 99.8,
     "avg_response_time_ms": 145
 }
@@ -225,7 +225,7 @@ def ai_validation_server(input, output, session, get_current_page=lambda: "ai"):
                 metric_box(
                     "Compliance Score",
                     f"{metrics['compliance_score']}%",
-                    color="#0066cc",
+                    color="#7c3aed",
                     subtitle="HIPAA adherence"
                 ),
                 metric_box(
@@ -272,7 +272,7 @@ def ai_validation_server(input, output, session, get_current_page=lambda: "ai"):
         return ui.div(
             # Uptime
             ui.div(
-                ui.tags.strong("System Uptime", style="display: block; margin-bottom: 0.5rem; color: #0066cc; font-size: 1rem;"),
+                ui.tags.strong("System Uptime", style="display: block; margin-bottom: 0.5rem; color: #7c3aed; font-size: 1rem;"),
                 progress_bar(
                     metrics['uptime_pct'],
                     label=f"{metrics['uptime_pct']}%",
@@ -282,7 +282,7 @@ def ai_validation_server(input, output, session, get_current_page=lambda: "ai"):
 
             # Response time
             ui.div(
-                ui.tags.strong("Avg Response Time", style="display: block; margin-bottom: 0.5rem; color: #0066cc; font-size: 1rem;"),
+                ui.tags.strong("Avg Response Time", style="display: block; margin-bottom: 0.5rem; color: #7c3aed; font-size: 1rem;"),
                 ui.div(
                     ui.tags.span(
                         f"{metrics['avg_response_time_ms']}ms",
@@ -330,12 +330,15 @@ def ai_validation_server(input, output, session, get_current_page=lambda: "ai"):
                 )
             ),
 
-            divider("Compliance Components"),
+            ui.tags.h3(
+                "Compliance Components",
+                style="color: #666 !important; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; margin: 0 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e0e0;"
+            ),
 
             # Individual component status
             ui.tags.h4(
                 "Validated Components",
-                style="color: #0066cc; margin-bottom: 1rem; font-size: 1.1rem;"
+                style="color: #7c3aed; margin-bottom: 1rem; font-size: 1.1rem;"
             ),
 
             *[
@@ -404,7 +407,7 @@ def ai_validation_server(input, output, session, get_current_page=lambda: "ai"):
                             ),
                             ui.tags.span(
                                 f"{test['score']}%",
-                                style="font-weight: 600; color: #0066cc; font-size: 1.1rem;"
+                                style="font-weight: 600; color: #7c3aed; font-size: 1.1rem;"
                             ),
                             style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; padding-left: 2.25rem;"
                         ),
@@ -464,7 +467,7 @@ def ai_validation_server(input, output, session, get_current_page=lambda: "ai"):
 
                         # Action taken
                         ui.div(
-                            ui.tags.strong("Auto-Correction:", style="color: #0066cc; display: block; margin-bottom: 0.25rem; font-weight: 700;"),
+                            ui.tags.strong("Auto-Correction:", style="color: #7c3aed; display: block; margin-bottom: 0.25rem; font-weight: 700;"),
                             ui.tags.span(event['action'], style="color: #1a1a1a; font-weight: 500;"),
                             style="margin-bottom: 0.75rem;"
                         ),

@@ -1096,15 +1096,11 @@ except ImportError:
         pass
 
 try:
-    from utils.page_components_FIXED import add_page_footer
-    # add_mobile_ready_badge removed - badge no longer needed
+    from utils.page_components import render_footer
 except ImportError:
-    def add_page_footer():
+    def render_footer():
         st.markdown("---")
         st.markdown("**HEDIS Portfolio Optimizer | StarGuard AI**")
-    # def add_mobile_ready_badge():
-    #     st.markdown("---")
-    #     st.markdown("📱 Mobile Version Ready")
 
 # ============================================================================
 # ADDITIONAL JAVASCRIPT FIX FOR PERFORMANCE DASHBOARD EMOJI
@@ -1340,7 +1336,7 @@ from utils.standard_sidebar import render_standard_sidebar, get_sidebar_date_ran
 
 # Custom filters for Compliance Reporting
 def render_compliance_filters():
-    st.markdown("### 📋 Compliance Thresholds")
+    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>📋 Compliance Thresholds</p>", unsafe_allow_html=True)
     
     st.slider(
         "ROI Threshold",
@@ -1364,7 +1360,7 @@ def render_compliance_filters():
     
     st.markdown("---")
     
-    st.markdown("### 📊 Report Count Adjustment")
+    st.markdown("<p style='color: white; font-size: 1rem; font-weight: 600;'>📊 Report Count Adjustment</p>", unsafe_allow_html=True)
     
     # Adjustment factor for report counts
     report_multiplier = st.slider(
@@ -1412,6 +1408,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; margin-top: 0; margin-bottom: 0.75rem; font-size: 1rem;'>Generate compliance reports for HEDIS measures</p>", unsafe_allow_html=True)
+try:
+    from utils.validation_badges import validation_badge_html
+    st.markdown(validation_badge_html("Validated against 18 months historical compliance data", compact=True), unsafe_allow_html=True)
+except ImportError:
+    st.markdown("<div style='background:#f0fdf4;border:1px solid #10B981;border-radius:6px;padding:0.35rem 0.75rem;margin:0.5rem 0;font-size:0.85rem;'><span style='color:#065f46;font-weight:600;'>✓ Validated against 18 months historical</span></div>", unsafe_allow_html=True)
 
 # Display date range info
 col1, col2 = st.columns([1, 1], gap="small")
@@ -1498,8 +1499,6 @@ with col3:
 st.divider()
 
 # Enhanced Compliance Reporting Visualizations
-st.header("📋 Compliance Reporting Dashboard")
-
 # Use already processed compliance_df_scaled if available
 if not compliance_df_scaled.empty:
     # Scale data
@@ -1643,18 +1642,7 @@ else:
     st.info("📊 No compliance data available. Please adjust filters or check data availability.")
 
 
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; padding: 1.5rem; margin-top: 1.5rem; background: #f8f9fa;'>
-    <p style='font-weight: 700; font-size: 1.1rem; color: #333; margin-bottom: 0.8rem;'>HEDIS Portfolio Optimizer | StarGuard AI</p>
-    <p style='color: #666; font-size: 0.9rem; margin-bottom: 1.2rem;'>Built with Streamlit • Plotly • PostgreSQL | Development: 2024-2026</p>
-    <div style='background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #1565c0; font-size: 0.9rem; line-height: 1.5; margin: 0;'>🔒 <strong>Secure AI Architect</strong> | Healthcare AI that sees everything, exposes nothing. On-premises architecture delivers 2.8-4.1x ROI and $148M+ proven savings while keeping PHI locked down. Zero API transmission • HIPAA-first design.</p>
-    </div>
-    <div style='background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 12px auto; max-width: 1200px; text-align: left; border-radius: 6px;'>
-        <p style='color: #d84315; font-size: 0.9rem; line-height: 1.5; margin: 0;'>⚠️ <strong>Portfolio demonstration</strong> using synthetic data to showcase real methodology.</p>
-    </div>
-    <p style='color: #999; font-size: 0.85rem; margin-top: 1.2rem;'>© 2024-2026 Robert Reichert | StarGuard AI™</p>
-</div>
-""", unsafe_allow_html=True)
+# ============================================================================
+# FOOTER
+# ============================================================================
+render_footer()

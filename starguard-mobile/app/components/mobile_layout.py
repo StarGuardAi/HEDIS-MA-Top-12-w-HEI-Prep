@@ -62,14 +62,21 @@ def mobile_button(text: str, id: str, style: str = "primary", icon: Optional[str
     )
 
 
-def metric_box(label: str, value: str, color: str = "#0066cc", subtitle: Optional[str] = None):
+def metric_box(label: str, value: str, color: str = "#7c3aed", subtitle: Optional[str] = None, dark_labels: bool = False):
     """Create a metric display box."""
+    label_color = "#000000" if dark_labels else "#666"
+    subtitle_color = "#333" if dark_labels else "#999"
     return ui.div(
         ui.div(
-            ui.tags.div(label, style="font-size: 0.875rem; color: #666; margin-bottom: 0.25rem;"),
-            ui.tags.div(value, style=f"font-size: 2rem; font-weight: 700; color: {color};"),
-            ui.tags.div(subtitle, style="font-size: 0.75rem; color: #999; margin-top: 0.25rem;") if subtitle else None,
+            ui.tags.div(label, style=f"font-size: 0.875rem; color: {label_color}; font-weight: 700; margin-bottom: 0.25rem;"),
+            ui.tags.div(
+                value,
+                class_="metric-value",
+                style=f"font-size: 2rem; font-weight: 700; color: {color}; white-space: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;"
+            ),
+            ui.tags.div(subtitle, style=f"font-size: 0.75rem; color: {subtitle_color}; margin-top: 0.25rem;") if subtitle else None,
         ),
+        class_="metric-box",
         style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px; margin-bottom: 1rem;"
     )
 
@@ -147,7 +154,7 @@ def progress_bar(
     value: float,
     max_value: float = 100.0,
     label: Optional[str] = None,
-    color: str = "#0066cc"
+    color: str = "#7c3aed"
 ):
     """Create a horizontal progress bar (0-100%)."""
     pct = min(100, max(0, (value / max_value) * 100))
@@ -162,3 +169,41 @@ def progress_bar(
         style="height: 12px; background: #e0e0e0; border-radius: 6px; overflow: hidden;"
     )
     return ui.div(header, bar, style="margin-bottom: 1rem;")
+
+
+def responsive_number(value: float, format_type: str = "currency"):
+    """
+    Format numbers to prevent wrapping on iPhone.
+
+    Args:
+        value: Number to format
+        format_type: 'currency', 'percent', or 'number'
+
+    Returns:
+        Formatted number with nowrap styling
+    """
+    if format_type == "currency":
+        formatted = f"${value:,.0f}" if value >= 1 else f"${value:,.2f}"
+    elif format_type == "percent":
+        formatted = f"{value:.1f}%"
+    else:
+        formatted = f"{value:,}" if isinstance(value, int) else f"{value:,.1f}"
+
+    return ui.tags.span(
+        formatted,
+        style="white-space: nowrap; display: inline-block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;"
+    )
+
+
+__all__ = [
+    'mobile_page',
+    'mobile_card',
+    'mobile_input_group',
+    'mobile_button',
+    'metric_box',
+    'info_row',
+    'alert_box',
+    'divider',
+    'progress_bar',
+    'responsive_number'
+]

@@ -21,6 +21,8 @@
 
 ### High-Level Architecture
 
+![High-Level System Architecture](../docs/images/architecture-high-level.png)
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         PRESENTATION LAYER                              │

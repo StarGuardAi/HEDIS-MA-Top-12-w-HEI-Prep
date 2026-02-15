@@ -176,7 +176,7 @@ def executive_dashboard_server(input, output, session, get_current_page=lambda: 
             ui.div(
                 ui.tags.p(
                     f"Achieving 4.0 stars unlocks ${EXECUTIVE_METRICS['revenue_opportunity']:,} in bonus revenue",
-                    style="text-align: center; color: #000000 !important; margin: 1rem 0 0 0; font-weight: 700; font-size: 1rem;"
+                    style="text-align: center; color: #999 !important; margin: 1rem 0 0 0; font-weight: 600; font-size: 1rem;"
                 )
             )
         )
@@ -296,8 +296,8 @@ def executive_dashboard_server(input, output, session, get_current_page=lambda: 
                     ui.div(
                         ui.tags.span(alert_icons[alert["type"]], style="font-size: 1.5rem; margin-right: 0.75rem;"),
                         ui.tags.div(
-                            ui.tags.div(alert["message"], style="font-weight: 600; color: #000000 !important; margin-bottom: 0.25rem;"),
-                            ui.tags.div(alert["action"], style="color: #7c3aed; font-size: 0.875rem; font-weight: 600; cursor: pointer;"),
+                            ui.tags.div(alert["message"], style="font-weight: 600; color: #666; margin-bottom: 0.25rem;"),
+                            ui.tags.div(alert["action"], style="color: #999; font-size: 0.875rem; font-weight: 500; cursor: pointer;"),
                             ui.tags.div(alert["time"], style="color: #999; font-size: 0.75rem; margin-top: 0.25rem;"),
                             style="flex: 1;"
                         ),
@@ -334,10 +334,10 @@ def executive_dashboard_server(input, output, session, get_current_page=lambda: 
                 style="padding: 1.25rem; background: #f0f7f0; border-radius: 12px; margin-bottom: 1rem;"
             ),
             ui.div(
-                ui.tags.strong("Gap Closure Rate", style="color: #000000 !important; font-weight: 700; display: block; margin-bottom: 0.5rem;"),
+                ui.tags.strong("Gap Closure Rate", style="color: #666; font-weight: 600; display: block; margin-bottom: 0.5rem;"),
                 ui.tags.div(
                     f"{gap_closure_rate:.1f}%",
-                    style="color: #000000 !important; font-weight: 900 !important; font-size: 2rem; display: block; margin-bottom: 0.5rem;"
+                    style="color: #999 !important; font-weight: 700 !important; font-size: 2rem; display: block; margin-bottom: 0.5rem;"
                 ),
                 progress_bar(gap_closure_rate, label=f"{gaps_closed:,} of {total_gaps:,} gaps closed", color="#7c3aed"),
                 style="padding: 1.25rem; background: #f5f3ff; border-radius: 12px;"

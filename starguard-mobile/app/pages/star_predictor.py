@@ -119,7 +119,7 @@ def star_predictor_server(input, output, session, get_current_page=lambda: "star
         return ui.div(
             ui.tags.h4(
                 "Contract Details",
-                style="color: #0066cc; margin: 1rem 0 0.75rem 0; font-size: 1.1rem;"
+                style="color: #7c3aed; margin: 1rem 0 0.75rem 0; font-size: 1.1rem;"
             ),
             info_row("Contract ID", contract_id),
             info_row("Plan Name", contract["name"]),
@@ -222,12 +222,15 @@ def star_predictor_server(input, output, session, get_current_page=lambda: "star
                     style="text-align: center; margin-bottom: 1.5rem;"
                 ),
                 
-                divider("Confidence Analysis"),
+                ui.tags.h3(
+                    "Confidence Interval",
+                    style="color: #666 !important; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; margin: 1.5rem 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e0e0;"
+                ),
                 
                 ui.div(
                     ui.tags.h4(
                         "95% Confidence Interval",
-                        style="color: #0066cc; margin-bottom: 0.75rem; font-size: 1rem;"
+                        style="color: #7c3aed; margin-bottom: 0.75rem; font-size: 1rem;"
                     ),
                     ui.tags.p(
                         f"{confidence_low} - {confidence_high} stars",
@@ -236,12 +239,15 @@ def star_predictor_server(input, output, session, get_current_page=lambda: "star
                     style="margin-bottom: 1.5rem;"
                 ),
                 
-                divider("Financial Impact"),
+                ui.tags.h3(
+                    "Financial Impact",
+                    style="color: #666 !important; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; margin: 1.5rem 0 1rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid #e0e0e0;"
+                ),
                 
                 ui.div(
                     ui.tags.h4(
                         "Projected Quality Bonus Revenue",
-                        style="color: #0066cc; margin-bottom: 0.75rem; font-size: 1rem;"
+                        style="color: #7c3aed; margin-bottom: 0.75rem; font-size: 1rem;"
                     ),
                     ui.tags.p(
                         f"${total_bonus:,}",

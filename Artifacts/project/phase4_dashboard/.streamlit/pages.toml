@@ -1,0 +1,7 @@
+# Streamlit Pages Configuration
+# Configure custom names and icons for navigation pages
+
+[[pages]]
+path = "app.py"
+name = "Home"
+icon = "🏠"
