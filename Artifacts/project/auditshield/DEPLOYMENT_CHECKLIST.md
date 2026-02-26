@@ -525,6 +525,40 @@ ls *.py | wc -l   # Should show 15+ Python files
 # Phase 3: database_phase3_schema.py, realtime_validation.py, hcc_reconciliation.py, compliance_forecasting.py, regulatory_intelligence.py, emr_rule_builder.py, dashboard_manager.py
 ```
 
+### Exclude Database from Git (If Push Fails on File Size)
+
+Database files shouldn't be in the repo—they're auto-generated on HuggingFace.
+
+**Step 1: Add to .gitignore** (run from project root)
+```powershell
+Add-Content .gitignore "`nauditshield.db`nauditshield.db.bak`n*.db"
+```
+
+**Step 2: Remove from tracking**
+```powershell
+git rm --cached Artifacts/project/auditshield/auditshield.db
+git rm --cached Artifacts/project/auditshield/auditshield.db.bak
+```
+
+**Step 3: Commit**
+```powershell
+git add .gitignore
+git commit -m "Remove database files - will auto-generate on HuggingFace"
+```
+
+**Step 4: Push again**
+```powershell
+git push space main --force
+```
+
+**What you'll see:**
+```
+Writing objects: 100% ...
+To https://huggingface.co/spaces/rreichert/auditshield-live
+ + abc123...def456 main -> main (forced update)
+```
+**Success:** No file size error. Database auto-generates on first Space run.
+
 ### Update Troubleshooting
 - **Still showing old version?** → Settings → Factory reboot
 - **Build failed - can't find module?** → `git add .` and push missing files
