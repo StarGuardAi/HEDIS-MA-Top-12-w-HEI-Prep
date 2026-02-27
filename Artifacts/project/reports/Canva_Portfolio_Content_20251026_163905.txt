@@ -1,0 +1,258 @@
+🎨 CANVA PORTFOLIO CONTENT
+================================
+
+📄 PAGE 1: HERO SECTION (Above-the-Fold)
+-----------------------------------------
+
+HEADLINE (Large, Bold):
+Robert Reichert
+Healthcare AI Specialist | HEDIS Data Scientist
+
+SUBHEADLINE (Medium):
+$13M-$27M Healthcare Portfolio Value | 91% ML Accuracy | Open to Work
+
+VALUE PROPOSITION (Large):
+I prevent $150-200M Star Rating crises for Medicare Advantage health plans using AI-powered predictive analytics.
+
+CTA BUTTONS (Prominent):
+[📧 CONTACT ME] → mailto:reichert.starguardai@gmail.com
+[🚀 VIEW LIVE DEMO] → https://hedis-ma-top-12-w-hei-prep.streamlit.app/
+
+---
+
+📊 PAGE 2: METRICS DASHBOARD
+------------------------------
+
+4-BOX GRID LAYOUT:
+
+┌─────────────┬─────────────┐
+│ $13M-$27M      │ 91%       │
+│ Annual      │ ML          │
+│ Value       │ Accuracy    │
+├─────────────┼─────────────┤
+│ <100ms     │ $200M+      │
+│ API         │ Total       │
+│ Response    │ Impact      │
+└─────────────┴─────────────┘
+
+SUPPORTING TEXT:
+"Delivering measurable business value through production AI systems"
+
+---
+
+🚀 PAGE 3: PROJECT 1 - HEDIS STAR RATING SYSTEM
+-------------------------------------------------
+
+TITLE:
+HEDIS Star Rating Crisis Prevention System
+
+IMPACT CALLOUT (Large, Colored Box):
+$150-200M crisis prevention value
+
+PROBLEM:
+Health plans lose $150-200M when Star Ratings drop (Humana 2024 example)
+
+SOLUTION:
+AI system predicting HEDIS measure gaps 6-12 months early
+→ 12 quality measures
+→ 91% accuracy
+→ Production API
+
+RESULTS (Icon + Text):
+✅ 91% AUC-ROC accuracy across all models
+✅ $13M-$27M annual portfolio value (100K members)
+✅ <100ms API response time, production-ready
+✅ 196% ROI over 5 years, 2.3-year payback
+
+TECH STACK:
+Python, Scikit-learn, LightGBM, FastAPI, Docker, HIPAA-compliant
+
+CTA:
+[TRY LIVE DEMO] → https://hedis-ma-top-12-w-hei-prep.streamlit.app/
+
+---
+
+💼 PAGE 4: PROJECT 2 - SQL DATA INTEGRATION
+---------------------------------------------
+
+TITLE:
+Enterprise SQL Data Integration
+
+IMPACT CALLOUT:
+$200M+ documented savings
+
+QUICK FACTS:
+• 34% program performance improvement
+• 40% reduction in hospital readmissions
+• $60M penalties prevented
+• 1M+ records processed daily
+
+TECH STACK:
+SQL Server, ETL, Healthcare Coding (ICD-10, CPT, DRG)
+
+---
+
+📊 PAGE 5: PROJECT 3 - DASHBOARD SUITE
+----------------------------------------
+
+TITLE:
+Executive Dashboard Suite
+
+IMPACT CALLOUT:
+22% satisfaction gain | $32M bonuses supported
+
+QUICK FACTS:
+• 800+ sites served
+• 4,500 monthly reports automated
+• 14 hours/week saved
+• Real-time ML monitoring
+
+TECH STACK:
+Tableau, Power BI, Plotly, Real-time Analytics
+
+CTA:
+[VIEW DASHBOARDS] → https://hedis-ma-top-12-w-hei-prep.streamlit.app/
+
+---
+
+💡 PAGE 6: SKILLS GRID
+------------------------
+
+4-COLUMN LAYOUT:
+
+HEALTHCARE DOMAIN    | AI/ML ENGINEERING  | SOFTWARE ENGINEERING | BUSINESS INTELLIGENCE
+---------------------|--------------------|--------------------- |----------------------
+HEDIS MY2025       | Scikit-learn       | Python               | Tableau           
+Star Ratings       | LightGBM           | FastAPI              | Power BI          
+CMS Compliance     | XGBoost            | Docker               | SQL Server        
+HIPAA              | SHAP               | CI/CD                | Plotly            
+
+---
+
+📞 PAGE 7: CONTACT (Final Page)
+---------------------------------
+
+HEADLINE:
+Let's Connect
+
+SUBHEADLINE:
+Response guaranteed within 24 hours
+
+CONTACT GRID (2x2):
+┌──────────────────┬──────────────────┐
+│ 📧 Email         │ 🔗 LinkedIn      │
+│ reichert.starguardai@gmail.com │ linkedin.com/in/rreichert-HEDIS-Data-Science-AI │
+├──────────────────┼──────────────────┤
+│ 💻 GitHub        │ 📍 Location      │
+│ github.com/StarGuardAi │ Pittsburgh, PA   │
+└──────────────────┴──────────────────┘
+
+AVAILABILITY BADGE (Large, Green):
+✅ OPEN TO WORK - AVAILABLE IMMEDIATELY
+
+SALARY RANGE:
+$90K-$130K (negotiable based on role)
+
+---
+
+🎨 DESIGN RECOMMENDATIONS
+--------------------------
+
+COLOR PALETTE:
+- Primary: #0066cc (Blue - professional, trustworthy)
+- Secondary: #00b894 (Teal - healthcare, growth)
+- Accent: #fdcb6e (Yellow - attention, optimism)
+- Text: #2d3436 (Dark gray - readable)
+- Background: #f8f9fa (Light gray - clean)
+
+FONTS:
+- Headers: Montserrat Bold (modern, professional)
+- Body: Open Sans Regular (readable, friendly)
+- Accent: Roboto Mono (tech-focused elements)
+
+LAYOUT PRINCIPLES:
+- White space: 30-40% of each page
+- Visual hierarchy: Business impact > Technical details
+- F-pattern reading: Most important content top-left
+- Mobile-first: Ensure readability on phones
+
+IMAGERY:
+- Dashboard screenshots (annotated with arrows/callouts)
+- Before/after comparisons
+- Process flow diagrams
+- Icon-based feature lists
+
+---
+
+📱 MOBILE OPTIMIZATION
+-----------------------
+
+CRITICAL ELEMENTS:
+- Hero section: Single column, large text
+- Metrics: 2x2 grid (not 4 columns)
+- Projects: One per screen/scroll
+- Contact: Buttons 48px minimum height
+- Font size: 16px minimum (no zoom needed)
+
+---
+
+🔗 HYPERLINKS TO INCLUDE
+--------------------------
+
+Primary CTAs:
+- Email: reichert.starguardai@gmail.com
+- Live Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
+- GitHub: github.com/StarGuardAi
+- LinkedIn: linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+- Portfolio Site: bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep
+
+Secondary Links:
+- Project 1 Demo: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
+- Project 3 Dashboards: https://hedis-ma-top-12-w-hei-prep.streamlit.app/
+
+---
+
+📊 ANALYTICS TRACKING
+----------------------
+
+Add UTM parameters to links:
+bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep?utm_source=canva&utm_medium=portfolio&utm_campaign=job_search
+
+Track conversions:
+- Email clicks
+- Demo visits
+- GitHub visits
+- LinkedIn profile views
+
+---
+
+✅ CANVA IMPLEMENTATION CHECKLIST
+-----------------------------------
+
+[ ] Import this content to Canva
+[ ] Apply color palette
+[ ] Add professional headshot (page 1)
+[ ] Insert project screenshots
+[ ] Create metric visualizations
+[ ] Add icon graphics
+[ ] Ensure mobile responsiveness
+[ ] Test all hyperlinks
+[ ] Export as PDF for sharing
+[ ] Publish to custom Canva domain
+
+---
+
+🎯 SUCCESS METRICS
+-------------------
+
+Target Engagement:
+- Page views: 500+ per month
+- Email clicks: 15%+ conversion
+- Demo visits: 30%+ of viewers
+- Average time: 3+ minutes
+
+---
+
+CONTACT INFORMATION (Footer on every page):
+📧 reichert.starguardai@gmail.com | 📞 480-767-1337 | 🔗 linkedin.com/in/rreichert-HEDIS-Data-Science-AI
+💻 github.com/StarGuardAi | 🌐 bobareichert.github.io/HEDIS-MA-Top-12-w-HEI-Prep

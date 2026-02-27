@@ -1,0 +1,139 @@
+# HEDIS GSD Prediction Engine - Production Configuration
+
+# Production Environment Overrides
+# This file extends config.yaml with production-specific settings
+
+# Data Configuration (Production)
+data:
+  raw_data_path: "/data/cms/raw"
+  processed_data_path: "/data/cms/processed"
+  measurement_year: 2008
+  # No sample size limit for production
+
+# Model Configuration (Production)
+model:
+  target_variable: "poor_glycemic_control"
+  age_range:
+    min: 18
+    max: 75
+
+# Training Configuration (Production)
+training:
+  test_size: 0.2
+  random_state: 42
+  cv_folds: 5
+  models:
+    logistic_regression:
+      C: 1.0
+      max_iter: 1000
+      random_state: 42
+    random_forest:
+      n_estimators: 100
+      max_depth: 10
+      random_state: 42
+      n_jobs: -1  # Use all available cores
+
+# Feature Engineering Configuration (Production)
+features:
+  demographic_features: true
+  comorbidity_features: true
+  utilization_features: true
+  diabetes_specific_features: true
+
+# KPI analytics overrides for production
+analytics:
+  financial:
+    qbp_per_member: 372
+    default_gap_closure_rate: 0.30
+    intervention_cost_per_gap: 175
+    retention_value_per_member: 1500
+    churn_risk_multiplier: 0.20
+  operational:
+    velocity_window_weeks: 6
+    resample_rule: "W"
+    default_days_to_close: 30
+  hei:
+    disparity_threshold: 4.0
+    reward_factor_projection: 0.05
+  provider:
+    top_provider_limit: 15
+    outlier_min_panel: 250
+  competitive:
+    default_market_share: 0.15
+    star_gain_value_per_member: 150.0
+
+# Evaluation Configuration (Production)
+evaluation:
+  threshold: 0.5
+  demographic_groups:
+    - "age_group"
+    - "sex"
+    - "race"
+  clinical_thresholds:
+    high_risk: 0.7
+    medium_risk: 0.3
+    low_risk: 0.1
+  bias_metrics:
+    - "demographic_parity"
+    - "equalized_odds"
+
+# Prediction Configuration (Production)
+prediction:
+  default_model: "logistic_regression"
+  model_path: "/models/production"
+  risk_thresholds:
+    high: 0.7
+    medium: 0.3
+    low: 0.1
+
+# Logging Configuration (Production)
+logging:
+  level: "INFO"  # Less verbose logging for production
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_logging: true
+  log_file: "/var/log/hedis-gsd/app.log"
+  log_rotation: true
+  max_log_size: "100MB"
+  backup_count: 10
+
+# Security Configuration (Production)
+security:
+  phi_logging: false  # Never log PHI
+  audit_logging: true
+  hash_identifiers: true
+  debug_mode: false  # Disable debug features
+  encryption_at_rest: true
+  encryption_in_transit: true
+
+# Performance Configuration (Production)
+performance:
+  batch_size: 10000  # Larger batches for production
+  max_memory_usage: "8GB"
+  parallel_processing: true
+  cache_enabled: true
+  cache_size: "2GB"
+
+# Production-Specific Settings
+production:
+  enable_profiling: false
+  enable_debugging: false
+  mock_data: false
+  fast_training: false
+  verbose_output: false
+  monitoring_enabled: true
+  alerting_enabled: true
+  
+# Monitoring Configuration
+monitoring:
+  metrics_endpoint: "/metrics"
+  health_check_endpoint: "/health"
+  performance_monitoring: true
+  error_tracking: true
+  
+# Alerting Configuration
+alerting:
+  error_threshold: 0.05  # 5% error rate threshold
+  performance_threshold: 1000  # 1000ms response time threshold
+  notification_channels:
+    - "email"
+    - "slack"

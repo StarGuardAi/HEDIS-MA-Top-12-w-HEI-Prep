@@ -1,0 +1,149 @@
+{
+  "last_updated": "2024-01-01T00:00:00",
+  "test_combinations": [
+    {
+      "device": "Windows 10/11",
+      "resolution": "1920x1080",
+      "browser": "Chrome",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "Windows 10/11",
+      "resolution": "1920x1080",
+      "browser": "Edge",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "Windows 10/11",
+      "resolution": "1920x1080",
+      "browser": "Firefox",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "macOS",
+      "resolution": "2560x1440",
+      "browser": "Chrome",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "macOS",
+      "resolution": "2560x1440",
+      "browser": "Safari",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "macOS",
+      "resolution": "2560x1440",
+      "browser": "Firefox",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "iPad Pro",
+      "resolution": "1024x1366",
+      "browser": "Safari",
+      "version": "iOS 15+",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "iPad",
+      "resolution": "810x1080",
+      "browser": "Safari",
+      "version": "iOS 15+",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "Samsung Tab",
+      "resolution": "800x1280",
+      "browser": "Chrome",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "iPhone 14 Pro",
+      "resolution": "393x852",
+      "browser": "Safari",
+      "version": "iOS 15+",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "iPhone SE",
+      "resolution": "375x667",
+      "browser": "Safari",
+      "version": "iOS 15+",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "Samsung Galaxy",
+      "resolution": "360x800",
+      "browser": "Chrome",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    },
+    {
+      "device": "Pixel 7",
+      "resolution": "412x915",
+      "browser": "Chrome",
+      "version": "Latest",
+      "status": "pending",
+      "issues": [],
+      "tested_date": null,
+      "tester": null,
+      "notes": ""
+    }
+  ]
+}
+

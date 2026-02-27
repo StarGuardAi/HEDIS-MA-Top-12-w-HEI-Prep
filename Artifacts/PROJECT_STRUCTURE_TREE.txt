@@ -1,0 +1,140 @@
+PROJECT REORGANIZATION - TREE DIAGRAM
+=====================================
+
+BEFORE REORGANIZATION (Current Structure)
+------------------------------------------
+C:\Users\reich\Projects\
+└── HEDIS-MA-Top-12-w-HEI-Prep\
+    ├── data\
+    │   └── processed\
+    ├── docs\
+    ├── project\
+    │   ├── repo-cipher\              ⚠️ Intelligence-Security (nested 2 levels)
+    │   ├── repo-foresight\           ⚠️ Intelligence-Security (nested 2 levels)
+    │   ├── repo-guardian\            ⚠️ Intelligence-Security (nested 2 levels)
+    │   └── ... (HEDIS project files)
+    ├── repo_configs\                 ⚠️ Intelligence-Security
+    │   ├── cipher.json
+    │   ├── foresight.json
+    │   └── guardian.json
+    ├── SENTINEL_SETUP_README.md      ⚠️ Intelligence-Security
+    ├── ARCHITECTURE_SPECS.md         ⚠️ Intelligence-Security
+    ├── FEATURE_SPECIFICATIONS.md     ⚠️ Intelligence-Security
+    ├── DATA_ACQUISITION_GUIDE.md     ⚠️ Intelligence-Security
+    ├── SETUP_GUIDE.md                ⚠️ Intelligence-Security
+    ├── SECURITY_REPOS_COMPLETION_SUMMARY.md  ⚠️ Intelligence-Security
+    ├── test_ioc_quick.ps1            ⚠️ Intelligence-Security
+    ├── test_ioc_search.ps1           ⚠️ Intelligence-Security
+    ├── CHAT_SEGMENTATION_*.md        ⚠️ Intelligence-Security
+    ├── SPRINT_C2_*.md                ⚠️ Intelligence-Security
+    ├── SPRINT_C3_*.md                ⚠️ Intelligence-Security
+    ├── README.md                     ✓ HEDIS
+    └── ... (other HEDIS files)
+
+
+AFTER REORGANIZATION (Proposed Structure)
+------------------------------------------
+C:\Users\reich\Projects\
+├── HEDIS-MA-Top-12-w-HEI-Prep\          ✓ HEDIS Project (cleaned)
+│   ├── data\
+│   │   └── processed\
+│   ├── docs\
+│   │   └── architecture-decisions\
+│   ├── project\                         ✓ HEDIS project files only
+│   │   ├── src\
+│   │   ├── models\
+│   │   ├── streamlit_app.py
+│   │   └── ... (HEDIS-specific files)
+│   ├── scripts\
+│   │   ├── create_demo_data.py
+│   │   ├── generate_synthetic_data.py
+│   │   └── ... (HEDIS scripts)
+│   ├── github\
+│   ├── linkedin\
+│   ├── resume\
+│   ├── README.md
+│   ├── CHAT_*.md                        ✓ HEDIS chat logs
+│   ├── PHASE_*.md                       ✓ HEDIS phase docs
+│   └── ... (HEDIS-related files only)
+│
+└── intelligence-security\                ✓ NEW: Intelligence-Security Project
+    ├── README.md                         (from SENTINEL_SETUP_README.md)
+    ├── org_config.json
+    ├── repo_configs\
+    │   ├── cipher.json
+    │   ├── foresight.json
+    │   └── guardian.json
+    ├── repos\                            ✓ Better organization (not nested)
+    │   ├── cipher\                       (from project/repo-cipher)
+    │   │   ├── src\
+    │   │   ├── frontend\
+    │   │   ├── docs\
+    │   │   ├── data\
+    │   │   ├── scripts\
+    │   │   ├── tests\
+    │   │   ├── README.md
+    │   │   ├── requirements.txt
+    │   │   └── ...
+    │   ├── foresight\                    (from project/repo-foresight)
+    │   │   ├── src\
+    │   │   ├── frontend\
+    │   │   ├── docs\
+    │   │   ├── data\
+    │   │   ├── scripts\
+    │   │   ├── tests\
+    │   │   ├── README.md
+    │   │   ├── requirements.txt
+    │   │   └── ...
+    │   └── guardian\                     (from project/repo-guardian)
+    │       ├── src\
+    │       ├── frontend\
+    │       ├── docs\
+    │       ├── data\
+    │       ├── scripts\
+    │       ├── tests\
+    │       ├── README.md
+    │       ├── requirements.txt
+    │       └── ...
+    ├── docs\
+    │   ├── ARCHITECTURE_SPECS.md
+    │   ├── FEATURE_SPECIFICATIONS.md
+    │   ├── DATA_ACQUISITION_GUIDE.md
+    │   ├── SETUP_GUIDE.md
+    │   ├── CANVA_PORTFOLIO_GUIDE.md
+    │   ├── VISUALIZATION_EXPORT_GUIDE.md
+    │   ├── SECURITY_REPOS_COMPLETION_SUMMARY.md
+    │   ├── CHAT_SEGMENTATION_PLAN.md
+    │   ├── CHAT_SEGMENTATION_COMPLETE.md
+    │   ├── CHAT_SEGMENTATION_EXECUTIVE_SUMMARY.md
+    │   ├── CHAT_SEGMENTATION_README.md
+    │   ├── CHAT_SEGMENTATION_TASK_COMPLETE.md
+    │   ├── MULTI_CHAT_SEGMENTATION_PLAN.md
+    │   ├── SEGMENTATION_DOCUMENTS_INDEX.md
+    │   ├── SEGMENTATION_UPDATES_SUMMARY.md
+    │   └── sprints\
+    │       ├── SPRINT_C2_FIXES.md
+    │       ├── SPRINT_C2_TEST_RESULTS.md
+    │       ├── SPRINT_C2_TESTING_GUIDE.md
+    │       └── SPRINT_C3_MITRE_ATTACK_COMPLETE.md
+    └── scripts\
+        ├── test_ioc_quick.ps1
+        └── test_ioc_search.ps1
+
+
+KEY IMPROVEMENTS
+----------------
+✓ Intelligence-Security repos moved from 2 levels deep to 1 level
+✓ Clear separation between HEDIS and Intelligence-Security projects
+✓ Better organization with logical directory structure
+✓ Easier to navigate and maintain
+✓ Independent project development possible
+✓ Improved Git repository management
+
+
+LEGEND
+------
+✓ Keep/Correct location
+⚠️ Needs to be moved
+→ Indicates move direction
+
+
