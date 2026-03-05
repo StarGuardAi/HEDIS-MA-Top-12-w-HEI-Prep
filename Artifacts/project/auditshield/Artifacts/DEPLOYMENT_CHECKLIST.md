@@ -579,6 +579,52 @@ git push space clean-deploy:main --force
 - **Success:** "Pushed successfully - no file size error! Build starting at HuggingFace."
 - **Issue:** "Got error: [paste error]"
 
+### Solution C: Fresh Repo in Auditshield Folder (Standalone Deploy)
+
+**Use when:** auditshield is a standalone deployment; creates new repo with only auditshield content.
+
+```powershell
+cd C:\Users\reich\Projects\HEDIS-MA-Top-12-w-HEI-Prep\Artifacts\project\auditshield
+
+Remove-Item -Recurse -Force .git 2>$null
+git init
+
+@"
+*.db
+*.db-shm
+*.db-wal
+__pycache__/
+*.py[cod]
+*`$py.class
+.env
+.env.local
+.DS_Store
+Thumbs.db
+"@ | Out-File -FilePath .gitignore -Encoding utf8
+
+git remote add space https://huggingface.co/spaces/rreichert/auditshield-live
+git add .
+git commit -m "Deploy AuditShield Phase 1+2+3 - Clean code-only deployment"
+git push space main --force
+```
+
+**What you'll see (success):**
+```
+Writing objects: 100% (38/38), 125.43 KiB | 8.36 MiB/s, done.
+To https://huggingface.co/spaces/rreichert/auditshield-live
+ + f112ac1...a2b3c4d main -> main
+```
+**Success indicators:** ~125 KB (not 44+ MB), ~38 objects (not 1,745), no binary/file size errors.
+
+**After successful push:**
+1. **Monitor build** (~10 min): https://huggingface.co/spaces/rreichert/auditshield-live
+2. **Add API key:** Settings → Repository secrets → `ANTHROPIC_API_KEY` → Factory reboot
+3. **Test 3 tabs:** Provider Scorecard (Refresh Data), Mock Audit (Run), Compliance Forecast (Generate)
+
+**Report back:**
+- **Success:** "Pushed successfully! No binary files error. File size: ~125 KB. Build starting."
+- **Issue:** "Error: [paste full error]"
+
 ---
 
 **Step 1: Verify .gitignore exists and has database exclusions**
@@ -1011,6 +1057,46 @@ compliance automation.
 - [ ] Add new features
 
 ## Updating Dependencies
+
+### Push from clean-final Branch
+
+**When on `clean-final` branch** (e.g. after Anthropic version update):
+
+```powershell
+cd C:\Users\reich\Projects\HEDIS-MA-Top-12-w-HEI-Prep\Artifacts\project\auditshield
+
+git add requirements.txt
+git commit -m "Update Anthropic to v0.39.0 to fix proxies error"
+git push space clean-final:main --force
+```
+
+**Note:** Use `clean-final:main` to push local `clean-final` branch to remote `main`.
+
+**What you'll see:**
+```
+[clean-final abc123] Update Anthropic to v0.39.0...
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To https://huggingface.co/spaces/rreichert/auditshield-live
+   72a2990...def456 clean-final -> main
+```
+
+**After push:** Monitor build (~10 min) at https://huggingface.co/spaces/rreichert/auditshield-live → Check Logs for initialization steps → No more proxies error.
+
+### Reduce Demo Data (If Stuck at Step 4 - Seeding)
+
+**Problem:** 50 providers × 15 months × 15 encounters = 11,250 records is too heavy for HuggingFace free tier. Container hits memory/time limits.
+
+**Solution:** `init_complete_system.py` uses reduced defaults (10 providers, 6 months, ~900 encounters) for faster initialization (~15 sec instead of 2+ min). If you need to reduce further, edit `num_providers` and `months_history` at top of `seed_comprehensive_demo_data()`.
+
+```powershell
+git add init_complete_system.py
+git commit -m "Reduce demo data for faster HuggingFace initialization"
+git push space clean-final:main --force
+```
+
+---
+
+### Add Missing Package
 
 When you need to add a missing package and redeploy:
 

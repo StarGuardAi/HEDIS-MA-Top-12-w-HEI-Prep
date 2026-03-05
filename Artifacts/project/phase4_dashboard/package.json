@@ -1,0 +1,9 @@
+{
+  "name": "phase4-dashboard",
+  "version": "1.0.0",
+  "description": "HEDIS Portfolio Optimizer",
+  "scripts": {},
+  "devDependencies": {
+    "playwright": "^1.40.0"
+  }
+}

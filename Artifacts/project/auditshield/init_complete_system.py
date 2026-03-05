@@ -55,15 +55,62 @@ def initialize_complete_system():
     print("\n[Step 4] Seeding Demo Data (this may take a minute)...")
     seed_comprehensive_demo_data(db)
 
-    # Step 5: Create Phase 2 demo audit
-    print("\n[Step 5] Creating Demo RADV Audit...")
-    from radv_command_center import seed_demo_audit
-
+    # Step 5: Create 3 demo RADV audits
+    print("\n[Step 5] Creating Demo RADV Audits...")
     try:
-        audit_id = seed_demo_audit()
-        print(f"   [OK] Demo audit created (ID: {audit_id})")
+        # Clear existing to ensure exactly 3 demo audits (SQLite: no FK cascade)
+        db.execute_query("DELETE FROM radv_audits", fetch="none")
+        # Radv schema: audit_notice_id, contract_id, contract_name, audit_year,
+        # notification_date, medical_record_due_date, sample_size, audit_status
+        audits = [
+            {
+                'notice_id': 'RADV-2026-H1234-204125',
+                'contract_id': 'H1234',
+                'contract': 'H1234 - HealthPlan Medicare Advantage',
+                'sample': 100,
+                'due': '2026-07-09'
+            },
+            {
+                'notice_id': 'RADV-2026-H5678-204126',
+                'contract_id': 'H5678',
+                'contract': 'H5678 - Large Plan (50K+ enrollees)',
+                'sample': 200,
+                'due': '2026-08-15'
+            },
+            {
+                'notice_id': 'RADV-2026-H9012-204127',
+                'contract_id': 'H9012',
+                'contract': 'H9012 - Small Plan (0-10K enrollees)',
+                'sample': 50,
+                'due': '2026-06-30'
+            }
+        ]
+        ph = '?' if db.db_type != 'postgresql' else '%s'
+        created_count = 0
+        for audit in audits:
+            # notification_date = due - 25 weeks
+            due_dt = datetime.strptime(audit['due'], '%Y-%m-%d')
+            notif_dt = due_dt - timedelta(weeks=25)
+            notif_str = notif_dt.strftime('%Y-%m-%d')
+            insert_cmd = "INSERT OR IGNORE" if db.db_type != "postgresql" else "INSERT"
+            q = f"""
+                {insert_cmd} INTO radv_audits (
+                    audit_notice_id, contract_id, contract_name,
+                    audit_year, notification_date, medical_record_due_date,
+                    sample_size, audit_status
+                ) VALUES ({ph}, {ph}, {ph}, 2026, {ph}, {ph}, {ph}, 'ACTIVE')
+            """
+            db.execute_query(
+                q,
+                (audit['notice_id'], audit['contract_id'], audit['contract'],
+                 notif_str, audit['due'], audit['sample']),
+                fetch="none"
+            )
+            created_count += 1
+            print(f"   Created audit {created_count}: {audit['notice_id']}")
+        print(f"   [OK] Demo audits created ({created_count} audits)")
     except Exception as e:
-        print(f"   [WARN] Could not create demo audit: {e}")
+        print(f"   [WARN] Could not create demo audits: {e}")
 
     # Step 6: Create EMR validation rules
     print("\n[Step 6] Creating EMR Validation Rules...")
@@ -104,16 +151,16 @@ def initialize_complete_system():
     except Exception as e:
         print(f"   [WARN] Could not generate forecast: {e}")
 
-    # Step 9: Scan regulatory sources
+    # Step 9: Scan regulatory sources (skip during init to avoid API dependency)
     print("\n[Step 9] Scanning Regulatory Sources...")
-    from regulatory_intelligence import RegulatoryIntelligence
-
-    reg_intel = RegulatoryIntelligence()
-    try:
-        updates = reg_intel.scan_regulatory_sources(days_back=30)
-        print(f"   [OK] Found {len(updates)} regulatory updates")
-    except Exception as e:
-        print(f"   [WARN] Could not scan regulatory sources: {e}")
+    print("   [SKIP] Regulatory intelligence will load on first use")
+    # from regulatory_intelligence import RegulatoryIntelligence
+    # reg_intel = RegulatoryIntelligence()
+    # try:
+    #     updates = reg_intel.scan_regulatory_sources(days_back=30)
+    #     print(f"   [OK] Found {len(updates)} regulatory updates")
+    # except Exception as e:
+    #     print(f"   [WARN] Could not scan regulatory sources: {e}")
 
     # Step 10: Run system validation
     print("\n[Step 10] Validating System Components...")
@@ -125,7 +172,7 @@ def initialize_complete_system():
     print("=" * 80)
     print("\nSystem Status:")
     print("   [OK] All database schemas installed")
-    print("   [OK] Demo data loaded (50 providers, 12+ months history)")
+    print("   [OK] Demo data loaded (10 providers, 6 months history)")
     print("   [OK] RADV audit created")
     print("   [OK] Validation rules deployed")
     print("   [OK] Dashboards configured")
@@ -193,12 +240,15 @@ def seed_comprehensive_demo_data(db):
         "History of lung cancer",
     ]
 
-    print("   Creating 50 providers with 12+ months of encounter history...")
+    # Reduced for HuggingFace free tier (was 50 providers, 15 months)
+    num_providers = 10
+    months_history = 6
+    print(f"   Creating {num_providers} providers with {months_history} months of encounter history...")
 
     param_placeholder = "%s" if db.db_type == "postgresql" else "?"
 
     # Create providers
-    for i in range(50):
+    for i in range(num_providers):
         provider_id = f"PRV{i+1:04d}"
         provider_name = f"Dr. {fake.last_name()}, {fake.first_name()}"
         specialty = random.choice(specialties)
@@ -236,9 +286,8 @@ def seed_comprehensive_demo_data(db):
         else:  # 30% struggling performers
             pass_rate = random.uniform(0.60, 0.80)
 
-        # Generate encounters across 12+ months (we'll create 15 months for good measure)
-        months_history = 15
-        encounters_per_month = random.randint(10, 20)
+        # Generate encounters (reduced for HuggingFace resource limits)
+        encounters_per_month = random.randint(10, 15)
 
         for month_offset in range(months_history):
             for _ in range(encounters_per_month):
@@ -335,13 +384,14 @@ def seed_comprehensive_demo_data(db):
         # Update provider scores
         db.update_provider_scores(provider_id, lookback_months=12)
 
-        if (i + 1) % 10 == 0:
-            print(f"   Progress: {i + 1}/50 providers created")
+        if (i + 1) % 5 == 0 or (i + 1) == num_providers:
+            print(f"   Progress: {i + 1}/{num_providers} providers created")
 
+    total_encounters = num_providers * months_history * 12  # ~12 avg encounters/month
     print("   [OK] Demo data seeding complete!")
-    print(f"      - 50 providers")
-    print(f"      - 15 months of encounter history")
-    print(f"      - ~{50 * 15 * 15:,} total encounters")
+    print(f"      - {num_providers} providers")
+    print(f"      - {months_history} months of encounter history")
+    print(f"      - ~{total_encounters:,} total encounters")
 
 
 def validate_system(db):

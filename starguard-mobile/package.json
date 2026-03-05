@@ -1,0 +1,12 @@
+{
+  "name": "starguard-mobile-demo",
+  "version": "1.0.0",
+  "description": "Demo video recording for StarGuard AI Mobile",
+  "scripts": {
+    "record": "node record-demo-video.js",
+    "discover": "node discover-navigation.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.40.0"
+  }
+}

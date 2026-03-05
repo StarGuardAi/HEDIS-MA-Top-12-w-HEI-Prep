@@ -26,6 +26,12 @@ Thumbs.db
 test_output.txt
 *.log
 
+# Demo video recordings
+recordings/
+
+# Node.js (for Playwright demo recording)
+node_modules/
+
 # Large data files (if any)
 *.csv
 *.xlsx
@@ -33,4 +39,11 @@ test_output.txt
 *.pkl
 *.h5
 
+# Database files (auto-generated on HuggingFace)
+auditshield.db
+auditshield.db.bak
+*.db
+
+# GCP service account key (never commit)
+service_account.json
 
