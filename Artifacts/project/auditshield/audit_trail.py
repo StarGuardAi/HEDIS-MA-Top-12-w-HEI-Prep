@@ -83,10 +83,7 @@ class AuditTrailDB:
             self.client = gspread.authorize(creds)
 
             # ── Open sheet by env var or default name ──
-            sheet_id = os.environ.get(
-                "AUDIT_SHEET_ID",
-                "AuditShield_RADV_Audit_Trail"
-            )
+            sheet_id = os.environ.get("AUDIT_SHEET", "AuditShield_RADV_Audit_Trail")
 
             try:
                 workbook = self.client.open(sheet_id)
