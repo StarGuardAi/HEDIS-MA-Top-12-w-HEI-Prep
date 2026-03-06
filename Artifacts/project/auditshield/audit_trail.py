@@ -10,7 +10,7 @@ import os
 import json
 import gspread
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 from google.oauth2.service_account import Credentials
 
@@ -109,7 +109,7 @@ class AuditTrailDB:
         return {
             "connected": self.connected,
             "error": self.last_error,
-            "timestamp": datetime.now().strftime("%H:%M:%S EST")
+            "timestamp": datetime.now(timezone(timedelta(hours=-5))).strftime("%I:%M:%S %p EST")
         }
 
 
@@ -135,7 +135,7 @@ def push_audit_record(db: AuditTrailDB, record: dict) -> dict:
         }
 
     try:
-        now = datetime.now()
+        now = datetime.now(timezone(timedelta(hours=-5)))
         audit_id = f"AUD-{now.strftime('%Y%m%d-%H%M%S')}"
 
         row = [
@@ -158,7 +158,7 @@ def push_audit_record(db: AuditTrailDB, record: dict) -> dict:
         return {
             "success": True,
             "audit_id": audit_id,
-            "timestamp": now.strftime("%H:%M:%S EST"),
+            "timestamp": now.strftime("%I:%M:%S %p EST"),
             "error": None
         }
 

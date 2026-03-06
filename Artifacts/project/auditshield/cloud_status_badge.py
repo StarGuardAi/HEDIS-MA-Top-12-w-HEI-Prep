@@ -7,7 +7,7 @@
 # ─────────────────────────────────────────────────────────────
 
 from shiny import ui
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import os
 
 # ── Config: set per-app in app.py via environment or direct ──
@@ -130,7 +130,8 @@ def cloud_status_badge(app_variant: str = "auditshield", layout: str = "sidebar"
     app_variant: 'auditshield' | 'starguard'
     layout: 'sidebar' (default, stacked rows) | 'strip' (compact horizontal bar)
     """
-    now = datetime.now().strftime("%H:%M:%S EST")
+    EST = timezone(timedelta(hours=-5))
+    now = datetime.now(EST).strftime("%I:%M:%S %p EST")
 
     if app_variant == "auditshield":
         services = [
