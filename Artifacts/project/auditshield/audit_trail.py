@@ -1,8 +1,8 @@
 # audit_trail.py
 # ─────────────────────────────────────────────────────────────
-# RADV Audit Trail — Google Sheets Cloud Persistence
+# RADV Audit Trail — Google Sheets + Supabase Parallel Write
 # AuditShield-Live | reichert-science-intelligence
-# Stores every audit session to Google Sheets as a live log
+# Phase 1: Writes to both backends when SUPABASE_URL/ANON_KEY set
 # Brand: Purple #4A3E8F | Gold #D4AF37 | Green #10b981
 # ─────────────────────────────────────────────────────────────
 
@@ -13,6 +13,13 @@ import pandas as pd
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 from google.oauth2.service_account import Credentials
+
+# Supabase parallel write (Phase 1) — optional if env vars set
+try:
+    from supabase import create_client
+    _SUPABASE_AVAILABLE = True
+except ImportError:
+    _SUPABASE_AVAILABLE = False
 
 # ── Google Sheets Scopes ──────────────────────────────────────
 SCOPES = [
@@ -155,6 +162,9 @@ def push_audit_record(db: AuditTrailDB, record: dict) -> dict:
 
         db.sheet.append_row(row)
 
+        # Phase 1: Supabase parallel write (fire-and-forget)
+        _push_audit_to_supabase(audit_id, row)
+
         return {
             "success": True,
             "audit_id": audit_id,
@@ -164,6 +174,33 @@ def push_audit_record(db: AuditTrailDB, record: dict) -> dict:
 
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+
+def _push_audit_to_supabase(audit_id: str, row: list) -> None:
+    """Parallel write to Supabase if configured. Silent on failure."""
+    if not _SUPABASE_AVAILABLE:
+        return
+    url, key = os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_ANON_KEY")
+    if not url or not key:
+        return
+    try:
+        client = create_client(url, key)
+        client.table("audit_trail").insert({
+            "audit_id": audit_id,
+            "timestamp": row[1],
+            "session_user": row[2],
+            "measure_code": row[3],
+            "measure_name": row[4],
+            "hcc_codes": row[5],
+            "gaps_flagged": row[6],
+            "meat_status": row[7],
+            "radv_risk_score": row[8],
+            "claude_summary": row[9],
+            "audit_status": row[10],
+            "last_updated": row[11],
+        }).execute()
+    except Exception:
+        pass  # non-blocking; Sheets is source of truth
 
 
 def fetch_recent_audits(db: AuditTrailDB, n: int = 10) -> pd.DataFrame:
@@ -190,10 +227,85 @@ def fetch_recent_audits(db: AuditTrailDB, n: int = 10) -> pd.DataFrame:
             "gaps_flagged", "meat_status",
             "radv_risk_score", "audit_status"
         ]
-        return df[display_cols].reset_index(drop=True)
+        out = df[display_cols].reset_index(drop=True)
+        # Phase 2: apply suppression filter
+        out = apply_audit_suppression_filter(out)
+        return out
 
     except Exception as e:
         return pd.DataFrame({"Error": [str(e)]})
+
+
+# ─────────────────────────────────────────────────────────────
+# PHASE 2: SUPPRESSION (Active — no stubs)
+# ─────────────────────────────────────────────────────────────
+
+_SUPPRESSION_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    os.environ.get("AUDIT_SUPPRESSION_FILE", ".audit_suppressions.json")
+)
+_AUDIT_SUPPRESSIONS_CACHE: Optional[list] = None
+
+
+def _load_audit_suppressions() -> list:
+    """Load suppression rules from JSON file."""
+    global _AUDIT_SUPPRESSIONS_CACHE
+    if os.path.exists(_SUPPRESSION_FILE):
+        try:
+            with open(_SUPPRESSION_FILE, "r", encoding="utf-8") as f:
+                _AUDIT_SUPPRESSIONS_CACHE = json.load(f)
+        except Exception:
+            _AUDIT_SUPPRESSIONS_CACHE = []
+    else:
+        _AUDIT_SUPPRESSIONS_CACHE = []
+    return _AUDIT_SUPPRESSIONS_CACHE
+
+
+def _save_audit_suppressions(rules: list) -> None:
+    """Persist suppression rules to JSON."""
+    global _AUDIT_SUPPRESSIONS_CACHE
+    _AUDIT_SUPPRESSIONS_CACHE = rules
+    try:
+        with open(_SUPPRESSION_FILE, "w", encoding="utf-8") as f:
+            json.dump(rules, f, indent=2)
+    except Exception:
+        pass
+
+
+def get_audit_suppressions() -> list:
+    """Return all active audit suppression rules."""
+    return list(_load_audit_suppressions())
+
+
+def add_audit_suppression(audit_id: str, reason: str = "") -> dict:
+    """Add a suppression rule for an audit. Returns {success, error}."""
+    rules = _load_audit_suppressions()
+    if any(r.get("audit_id") == audit_id for r in rules):
+        return {"success": False, "error": "Already suppressed"}
+    rules.append({
+        "audit_id": audit_id,
+        "reason": reason or "Manual suppression",
+        "created": datetime.now(timezone(timedelta(hours=-5))).isoformat()
+    })
+    _save_audit_suppressions(rules)
+    return {"success": True, "audit_id": audit_id}
+
+
+def remove_audit_suppression(audit_id: str) -> dict:
+    """Remove suppression for an audit. Returns {success, error}."""
+    rules = [r for r in _load_audit_suppressions() if r.get("audit_id") != audit_id]
+    _save_audit_suppressions(rules)
+    return {"success": True, "audit_id": audit_id}
+
+
+def apply_audit_suppression_filter(df: pd.DataFrame) -> pd.DataFrame:
+    """Filter out suppressed audits from DataFrame. Uses 'audit_id' column."""
+    if df.empty or "audit_id" not in df.columns:
+        return df
+    suppressed_ids = {r["audit_id"] for r in get_audit_suppressions()}
+    if not suppressed_ids:
+        return df
+    return df[~df["audit_id"].isin(suppressed_ids)].reset_index(drop=True)
 
 
 def update_audit_status(

@@ -47,3 +47,7 @@ auditshield.db.bak
 # GCP service account key (never commit)
 service_account.json
 
+# Phase 2 suppression rules (local)
+.audit_suppressions.json
+.gap_suppressions.json
+

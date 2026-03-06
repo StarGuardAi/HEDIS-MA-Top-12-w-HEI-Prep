@@ -81,7 +81,7 @@ from dashboard_manager import DashboardManager
 from avatar_base64 import AVATAR_BASE64
 from cloud_status_badge import (
     cloud_status_css,
-    cloud_status_badge,
+    auditshield_badge,
     provenance_footer,
 )
 from audit_trail import (
@@ -89,8 +89,13 @@ from audit_trail import (
     push_audit_record,
     fetch_recent_audits,
     update_audit_status,
+    get_audit_suppressions,
+    add_audit_suppression,
+    remove_audit_suppression,
 )
 from audit_trail_ui import audit_trail_panel
+from suppression_banner import suppression_banner
+from hitl_admin_view import hitl_admin_panel
 
 # Add Phase 2 & Phase 3 schema to database
 from database_phase2_schema import add_phase2_schema
@@ -208,7 +213,7 @@ app_ui = ui.page_fluid(
         cloud_status_css(),
     ),
     ui.div(
-        cloud_status_badge(app_variant="auditshield", layout="strip"),
+        auditshield_badge(mode="strip"),
         style="margin: 16px 20px 0 20px;",
     ),
     ui.page_navbar(
@@ -320,13 +325,20 @@ app_ui = ui.page_fluid(
             )
         ),
 
-        # Tab 4: RADV Audit Trail (Google Sheets cloud persistence)
+        # Tab 4: RADV Audit Trail (Google Sheets cloud persistence + Phase 2 suppression)
         ui.nav_panel(
             "📋 Audit Trail",
             ui.div(
+                suppression_banner(app_type="audit"),
                 audit_trail_panel(),
                 style="padding: 20px;"
             )
+        ),
+
+        # Tab 4b: HITL Admin View (Phase 2)
+        ui.nav_panel(
+            "Admin View",
+            ui.div(hitl_admin_panel(app_type="audit"), style="padding: 20px;")
         ),
 
         # Tab 5: Mock Audit
@@ -644,6 +656,9 @@ def server(input, output, session):
     # RADV Audit Trail — Google Sheets cloud persistence
     _audit_push_result = reactive.Value(None)
     _audit_update_result = reactive.Value(None)
+    # HITL Admin (Phase 2)
+    _hitl_audit_add_result = reactive.Value(None)
+    _hitl_audit_remove_result = reactive.Value(None)
 
     # Diagnostic: simple reactive test to verify reactive system works
     diagnostic_status = reactive.Value("Checking...")
@@ -1331,6 +1346,64 @@ Write a professional summary suitable for audit documentation. Be specific and c
                 class_="audit-push-success"
             )
         return ui.div(f"❌ {r.get('error', '')}", class_="audit-push-error")
+
+    # HITL Admin — Audit Suppressions (Phase 2)
+    @reactive.Effect
+    @reactive.event(input.btn_add_audit_suppression)
+    def _hitl_add_audit_suppression():
+        aid = (input.hitl_audit_id() or "").strip()
+        reason = (input.hitl_audit_reason() or "Manual").strip()
+        if not aid:
+            return
+        r = add_audit_suppression(aid, reason)
+        _hitl_audit_add_result.set(r)
+
+    @render.ui
+    def hitl_audit_add_result():
+        r = _hitl_audit_add_result()
+        if r is None:
+            return ui.div()
+        if r.get("success"):
+            return ui.div("✅ Added suppression", class_="audit-push-success")
+        return ui.div(f"❌ {r.get('error', '')}", class_="audit-push-error")
+
+    @reactive.Effect
+    @reactive.event(input.btn_remove_audit_suppression)
+    def _hitl_remove_audit_suppression():
+        aid = (input.hitl_audit_remove_id() or "").strip()
+        if not aid:
+            return
+        r = remove_audit_suppression(aid)
+        _hitl_audit_remove_result.set(r)
+
+    @render.ui
+    def hitl_audit_remove_result():
+        r = _hitl_audit_remove_result()
+        if r is None:
+            return ui.div()
+        if r.get("success"):
+            return ui.div("✅ Removed suppression", class_="audit-push-success")
+        return ui.div(f"❌ {r.get('error', '')}", class_="audit-push-error")
+
+    @render.ui
+    def hitl_audit_rules_list():
+        input.btn_refresh_hitl_audit()
+        input.btn_add_audit_suppression()
+        input.btn_remove_audit_suppression()
+        rules = get_audit_suppressions()
+        if not rules:
+            return ui.p("No suppression rules.", class_="text-muted")
+        return ui.div(
+            *[
+                ui.div(
+                    ui.strong(r.get("audit_id", "")),
+                    " — ",
+                    r.get("reason", ""),
+                    class_="hitl-rule-row"
+                )
+                for r in rules
+            ]
+        )
 
     # Financial Impact
     @output

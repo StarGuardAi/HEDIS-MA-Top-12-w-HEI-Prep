@@ -1,7 +1,7 @@
 # cloud_status_badge.py
 # ─────────────────────────────────────────────────────────────
-# Drop-in Cloud Status Badge for AuditShield-Live & StarGuard
-# Author: Robert Reichert | reichert-science-intelligence
+# Drop-in Cloud Status Badge — 4-badge layout (Phase 1)
+# AuditShield-Live & StarGuard | reichert-science-intelligence
 # Brand: Purple #4A3E8F | Gold #D4AF37 | Green #10b981
 # Layout: layout="strip" = compact horizontal bar | default = stacked sidebar
 # ─────────────────────────────────────────────────────────────
@@ -139,14 +139,12 @@ def cloud_status_badge(app_variant: str = "auditshield", layout: str = "sidebar"
             ("dot-green",  "Agentic RAG Pipeline — Live"),
             ("dot-gold",   "M.E.A.T. Validator — Ready"),
             ("dot-purple", "HuggingFace Spaces — Deployed"),
-            ("dot-green",  "RADV Audit Engine — Online"),
         ]
         strip_items = [
             ("dot-green",  "Claude API"),
             ("dot-green",  "Agentic RAG"),
             ("dot-gold",   "M.E.A.T."),
             ("dot-purple", "HuggingFace"),
-            ("dot-green",  "RADV Engine"),
         ]
         hf_url = "https://tinyurl.com/2vj79bem"
 
@@ -156,14 +154,12 @@ def cloud_status_badge(app_variant: str = "auditshield", layout: str = "sidebar"
             ("dot-green",  "HEDIS Analytics Engine — Live"),
             ("dot-gold",   "HCC Risk Model — Ready"),
             ("dot-purple", "HuggingFace Spaces — Deployed"),
-            ("dot-green",  "Star Rating Forecaster — Online"),
         ]
         strip_items = [
             ("dot-green",  "Claude API"),
             ("dot-green",  "HEDIS Analytics"),
             ("dot-gold",   "HCC Risk"),
             ("dot-purple", "HuggingFace"),
-            ("dot-green",  "Star Forecaster"),
         ]
         hf_url = "https://rreichert-starguard-desktop.hf.space"
 
@@ -206,6 +202,74 @@ def cloud_status_badge(app_variant: str = "auditshield", layout: str = "sidebar"
             class_="cloud-badge-footer"
         ),
         class_="cloud-badge-panel"
+    )
+
+
+def auditshield_badge(mode: str = "strip") -> ui.div:
+    """4-badge infrastructure strip: GCP, Sheets, Supabase, Claude API."""
+    return _infra_badge_strip(
+        strip_items=[
+            ("dot-green",  "GCP"),
+            ("dot-green",  "Sheets"),
+            ("dot-green",  "Supabase"),
+            ("dot-green",  "Claude API"),
+        ],
+        hf_url="https://tinyurl.com/2vj79bem",
+        mode=mode,
+    )
+
+
+def starguard_desktop_badge(mode: str = "strip") -> ui.div:
+    """4-badge infrastructure strip: GCP, Sheets, Supabase, Claude API."""
+    return _infra_badge_strip(
+        strip_items=[
+            ("dot-green",  "GCP"),
+            ("dot-green",  "Sheets"),
+            ("dot-green",  "Supabase"),
+            ("dot-green",  "Claude API"),
+        ],
+        hf_url="https://rreichert-starguard-desktop.hf.space",
+        mode=mode,
+    )
+
+
+def starguard_mobile_badge(mode: str = "strip") -> ui.div:
+    """4-badge infrastructure strip: GCP, Sheets, Supabase, Claude API."""
+    return _infra_badge_strip(
+        strip_items=[
+            ("dot-green",  "GCP"),
+            ("dot-green",  "Sheets"),
+            ("dot-green",  "Supabase"),
+            ("dot-green",  "Claude API"),
+        ],
+        hf_url="https://rreichert-starguardai.hf.space",
+        mode=mode,
+    )
+
+
+def _infra_badge_strip(
+    strip_items: list, hf_url: str, mode: str = "strip"
+) -> ui.div:
+    """Render 4-badge infrastructure strip."""
+    EST = timezone(timedelta(hours=-5))
+    now = datetime.now(EST).strftime("%I:%M:%S %p EST")
+    parts = [ui.span("☁ Cloud Services", class_="cloud-badge-strip-title")]
+    for i, (dot_class, label) in enumerate(strip_items):
+        if i > 0:
+            parts.append(ui.span("·", class_="cloud-badge-strip-sep"))
+        parts.append(ui.span(
+            ui.span(class_=dot_class),
+            ui.span(label),
+            class_="cloud-badge-strip-item"
+        ))
+    return ui.div(
+        ui.div(*parts, class_="cloud-badge-strip-left"),
+        ui.div(
+            ui.span("Last sync: ", ui.span(now, class_="sync-time")),
+            ui.tags.a("🔗 Live Demo", href=hf_url, target="_blank"),
+            class_="cloud-badge-strip-right"
+        ),
+        class_="cloud-badge-panel cloud-badge-strip"
     )
 
 
