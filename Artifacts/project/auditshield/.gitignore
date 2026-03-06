@@ -1,4 +1,13 @@
-
-auditshield.db
-auditshield.db.bak
 *.db
+*.db-shm
+*.db-wal
+*.bak
+__pycache__/
+*.py[cod]
+*.class
+.env
+.env.local
+service_account.json
+.DS_Store
+Thumbs.db
+.coverage
