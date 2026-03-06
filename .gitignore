@@ -33,4 +33,8 @@ test_output.txt
 *.pkl
 *.h5
 
+# Database files (auto-generated on HuggingFace)
+auditshield.db
+*.db
+
 
