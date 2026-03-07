@@ -62,8 +62,8 @@ def main():
     # Executive Summary
     add_heading(doc, "Executive Summary", 1)
     add_para(doc, "Sprint scope: Active suppression, HITL Admin View, Intervention Optimizer, and hardening artifacts (pyproject.toml, tests, docs) across AuditShield, StarGuard Desktop, and StarGuard Mobile.")
-    add_para(doc, "Current gate status: OPEN", bold=True)
-    add_para(doc, "Gate closes when all six Phase 2 criteria are met for each app.")
+    add_para(doc, "Current gate status: CLOSED", bold=True)
+    add_para(doc, "All six Phase 2 criteria met for each app. Gate closed.")
     doc.add_paragraph()
 
     # Portfolio Overview
@@ -96,11 +96,11 @@ def main():
     add_heading(doc, "Per-App Status Tables", 1)
     status_headers = ["Artifact", "AuditShield", "Desktop", "Mobile"]
     status_rows = [
-        ("pyproject.toml", "⏳ PENDING", "⏳ PENDING", "⏳ PENDING"),
-        ("Type hints & separation", "⏳ PENDING", "⏳ PENDING", "⏳ PENDING"),
-        ("Unit tests (min 3/module)", "⏳ PENDING", "⏳ PENDING", "⏳ PENDING"),
-        ("ARCHITECTURE.md / README", "⏳ PENDING", "⏳ PENDING", "⏳ PENDING"),
-        ("Pre-phase gate", "⏳ PENDING", "⏳ PENDING", "⏳ PENDING"),
+        ("pyproject.toml", "✓ DONE", "✓ DONE", "✓ DONE"),
+        ("Type hints & separation", "✓ DONE", "✓ DONE", "✓ DONE"),
+        ("Unit tests (min 3/module)", "✓ DONE", "✓ DONE", "✓ DONE"),
+        ("ARCHITECTURE.md / README", "✓ DONE", "✓ DONE", "✓ DONE"),
+        ("Pre-phase gate", "✓ DONE", "✓ DONE", "✓ DONE"),
     ]
     add_table(doc, status_headers, status_rows, col_widths=[1.8, 1.2, 1.2, 1.2])
     doc.add_paragraph()
@@ -140,11 +140,9 @@ def main():
     # Commit Instructions
     add_heading(doc, "Commit Instructions", 1)
     add_para(doc, "Report path: Artifacts/project/PHASE2_COMPLETION_REPORT.docx")
-    add_para(doc, "Commit message: chore: add Phase 2 Completion Report (hardening sprint gate)")
+    add_para(doc, "Gate-close commit: chore: close Phase 2 gate — all hardening tasks complete")
     add_para(doc, "Repos: Main HEDIS-MA-Top-12-w-HEI-Prep (report lives here). Desktop and Mobile are submodules with separate repos.")
-    add_para(doc, "When the five hardening artifacts are generated per app, update the status tables to ✓ DONE and re-commit as the gate-close record.")
-    doc.add_paragraph()
-    add_para(doc, "Ready to start generating the actual artifacts (pyproject.toml first) whenever you are.")
+    add_para(doc, "Phase 2 gate closed. All five hardening artifacts complete per app. Ready for Phase 3 (starguard-core).")
 
     doc.save(out_path)
     print(f"Created: {out_path}")
