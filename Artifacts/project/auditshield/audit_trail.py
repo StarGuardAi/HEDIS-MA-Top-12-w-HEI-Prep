@@ -230,10 +230,28 @@ def fetch_recent_audits(db: AuditTrailDB, n: int = 10) -> pd.DataFrame:
         out = df[display_cols].reset_index(drop=True)
         # Phase 2: apply suppression filter
         out = apply_audit_suppression_filter(out)
+        # Format timestamp as MM/DD/YYYY 12-hour
+        if "timestamp" in out.columns and not out.empty:
+            out = out.copy()
+            out["timestamp"] = out["timestamp"].apply(_format_timestamp_display)
         return out
 
     except Exception as e:
         return pd.DataFrame({"Error": [str(e)]})
+
+
+def _format_timestamp_display(val) -> str:
+    """Format timestamp for display: MM/DD/YYYY 12-hour (e.g. 03/06/2026 02:30 PM)."""
+    if val is None or (isinstance(val, float) and pd.isna(val)):
+        return ""
+    s = str(val).strip()[:19]
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%m/%d/%Y %H:%M:%S", "%m/%d/%Y %I:%M %p"):
+        try:
+            dt = datetime.strptime(s, fmt)
+            return dt.strftime("%m/%d/%Y %I:%M %p")
+        except (ValueError, TypeError):
+            continue
+    return str(val)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -293,7 +311,11 @@ def add_audit_suppression(audit_id: str, reason: str = "") -> dict:
 
 def remove_audit_suppression(audit_id: str) -> dict:
     """Remove suppression for an audit. Returns {success, error}."""
-    rules = [r for r in _load_audit_suppressions() if r.get("audit_id") != audit_id]
+    rules = _load_audit_suppressions()
+    before = len(rules)
+    rules = [r for r in rules if r.get("audit_id") != audit_id]
+    if len(rules) == before:
+        return {"success": False, "error": f"{audit_id} not found in suppression rules"}
     _save_audit_suppressions(rules)
     return {"success": True, "audit_id": audit_id}
 

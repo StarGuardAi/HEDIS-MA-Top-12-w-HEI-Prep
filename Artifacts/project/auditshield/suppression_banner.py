@@ -22,6 +22,9 @@ def suppression_banner_css() -> ui.tags.style:
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .suppression-banner-icon { font-size: 18px; }
         .suppression-banner-text { color: #D4AF37; font-weight: 600; font-size: 13px; }

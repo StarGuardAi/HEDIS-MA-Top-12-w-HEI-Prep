@@ -1390,6 +1390,7 @@ Write a professional summary suitable for audit documentation. Be specific and c
         input.btn_refresh_hitl_audit()
         input.btn_add_audit_suppression()
         input.btn_remove_audit_suppression()
+        _hitl_audit_remove_result()  # refresh list after remove
         rules = get_audit_suppressions()
         if not rules:
             return ui.p("No suppression rules.", class_="text-muted")
