@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Literal
 
 from dotenv import load_dotenv
@@ -14,7 +15,11 @@ from dotenv import load_dotenv
 from .planner import PlannerResult
 from .worker import WorkerResult
 
-load_dotenv()
+_root = Path(__file__).resolve().parents[4]
+_env_candidates = [_root / ".env", _root.parent / "sovereignshield" / ".env"]
+for _p in _env_candidates:
+    if _p.is_file():
+        load_dotenv(dotenv_path=_p)
 
 
 @dataclass

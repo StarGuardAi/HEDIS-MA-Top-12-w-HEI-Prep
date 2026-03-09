@@ -8,11 +8,16 @@ import json
 import re
 import uuid
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Literal
 
 from dotenv import load_dotenv
 
-load_dotenv()
+_root = Path(__file__).resolve().parents[4]
+_env_candidates = [_root / ".env", _root.parent / "sovereignshield" / ".env"]
+for _p in _env_candidates:
+    if _p.is_file():
+        load_dotenv(dotenv_path=_p)
 
 # RAG: guard with try/except — rag/retriever.py doesn't exist until Chat 7
 try:
