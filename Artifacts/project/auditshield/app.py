@@ -5,15 +5,15 @@ Integrates Phase 1 (Provider Scorecard, Mock Audit, Financial Impact),
 Phase 2 (RADV Command Center, Chart Selection AI, Education Tracker), and
 Phase 3 (Real-Time Validation, HCC Reconciliation, Compliance Forecast, Regulatory Intel, EMR Rules, Executive View).
 """
+import json
+from datetime import datetime, timedelta
 from pathlib import Path
-from shiny import App, render, ui, reactive
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from datetime import datetime, timedelta
-from textwrap import dedent
-import json
+from shiny import App, reactive, render, ui
 
 
 def format_date_mdy(date_value):
@@ -48,6 +48,8 @@ def create_footer():
             " | ",
             ui.a("Services", href="/starguard_services.html", target="_blank", style="color: #40B5AD; text-decoration: none;"),
             " | ",
+            ui.a("Request Trial", href="/request_trial.html", target="_blank", style="color: #40B5AD; text-decoration: none;"),
+            " | ",
             ui.a("GitHub", href="https://github.com/StarGuardAi", target="_blank", style="color: #40B5AD; text-decoration: none;"),
             " | ",
             ui.a("LinkedIn", href="https://www.linkedin.com/in/robert-reichert-423023302/", target="_blank", style="color: #40B5AD; text-decoration: none;"),
@@ -61,45 +63,82 @@ def create_footer():
 
 
 # Phase 1 Imports
-from meat_validator import MEATValidator
-from database import get_db_manager
-from mock_audit_simulator import MockAuditSimulator
-from financial_calculator import FinancialImpactCalculator
-
-# Phase 2 Imports
-from radv_command_center import RADVCommandCenter
 from chart_selection_ai import ChartSelectionAI
-from education_automation import EducationAutomation
-
-# Phase 3 Imports
-from realtime_validation import RealtimeValidationEngine
-from hcc_reconciliation import HCCReconciliation
 from compliance_forecasting import ComplianceForecaster
-from regulatory_intelligence import RegulatoryIntelligence
-from emr_rule_builder import EMRRuleBuilder
 from dashboard_manager import DashboardManager
-from avatar_base64 import AVATAR_BASE64
-from cloud_status_badge import (
-    cloud_status_css,
-    auditshield_badge,
-    provenance_footer,
-)
-from audit_trail import (
-    AuditTrailDB,
-    push_audit_record,
-    fetch_recent_audits,
-    update_audit_status,
-    get_audit_suppressions,
-    add_audit_suppression,
-    remove_audit_suppression,
-)
-from audit_trail_ui import audit_trail_panel
-from suppression_banner import suppression_banner
-from hitl_admin_view import hitl_admin_panel
+from database import get_db_manager
 
 # Add Phase 2 & Phase 3 schema to database
 from database_phase2_schema import add_phase2_schema
 from database_phase3_schema import add_phase3_schema
+from education_automation import EducationAutomation
+from emr_rule_builder import EMRRuleBuilder
+from financial_calculator import FinancialImpactCalculator
+from hcc_reconciliation import HCCReconciliation
+from meat_validator import MEATValidator
+from mock_audit_simulator import MockAuditSimulator
+
+# Phase 2 Imports
+from radv_command_center import RADVCommandCenter
+
+# Phase 3 Imports
+from realtime_validation import RealtimeValidationEngine
+from regulatory_intelligence import RegulatoryIntelligence
+
+# Stage 4: starguard-core auth + HCC (Week 3) — Phase 17: async in production
+from starguard_core.auth import (
+    UPGRADE_URL,
+    capture_lead,
+    get_tier_config,
+    increment_usage,
+    is_feature_enabled,
+    validate_api_key,
+)
+from starguard_core.hcc import run_compound_analysis
+
+APP_NAME = "AuditShield-Live"
+
+# Feature name for RADV gating (radv_calculator = Pro tier - Week 2)
+RADV_FEATURE = "radv_calculator"
+# Feature name for HCC scoring (hcc_scoring = Pro tier - Week 3)
+HCC_FEATURE = "hcc_scoring"
+
+
+async def check_access(api_key: str | None, feature: str) -> dict:
+    result = await validate_api_key(api_key)
+    tier_config = get_tier_config(api_key)
+    if not is_feature_enabled(feature, tier_config):
+        return {
+            "allowed": False,
+            "tier": result.tier.value,
+            "message": f"{feature} requires Pro tier or higher.",
+            "upgrade_url": UPGRADE_URL,
+        }
+    increment_usage(api_key, feature, APP_NAME)
+    return {
+        "allowed": True,
+        "tier": result.tier.value,
+        "message": getattr(result, "message", "Authorized"),
+    }
+
+
+async def handle_radv_request(api_key: str | None, user_email: str | None = None) -> dict:
+    """AuditShield-specific: Anonymous RADV requests route to capture, not hard wall."""
+    access = await check_access(api_key, RADV_FEATURE)
+    if not access["allowed"]:
+        if user_email:
+            capture_lead(email=user_email, source="auditshield_radv")
+        return {"status": "upgrade_required", "upgrade_url": UPGRADE_URL}
+    return {"status": "allowed", "tier": access["tier"]}
+
+
+async def handle_hcc_request(api_key: str | None) -> dict:
+    """Check HCC scoring (compound view) access. Pro tier required."""
+    access = await check_access(api_key, HCC_FEATURE)
+    if not access["allowed"]:
+        return {"status": "upgrade_required", "upgrade_url": UPGRADE_URL}
+    return {"status": "allowed", "tier": access["tier"]}
+
 
 # Initialize all components
 db = get_db_manager()
@@ -120,9 +159,6 @@ forecaster = ComplianceForecaster()
 reg_intel = RegulatoryIntelligence()
 emr_builder = EMRRuleBuilder()
 dashboard_mgr = DashboardManager()
-
-# RADV Audit Trail — Google Sheets cloud persistence
-audit_trail_db = AuditTrailDB()
 
 # ==================== UI DEFINITION ====================
 
@@ -193,28 +229,7 @@ app_ui = ui.page_fluid(
                 setTimeout(setupAll, 1000);
                 setTimeout(setupAll, 3000);
             })();
-        """),
-        ui.tags.script("""
-            (function(){
-                if (typeof Shiny !== 'undefined') {
-                    Shiny.addCustomMessageHandler('audit_show_loading', function(msg) {
-                        var ta = document.getElementById('aud_claude_summary') || document.querySelector('textarea[id$="aud_claude_summary"]');
-                        if (ta) ta.value = '⏳ Claude is generating...';
-                    });
-                    Shiny.addCustomMessageHandler('audit_set_summary', function(msg) {
-                        var v = (msg && msg.value) || msg || '';
-                        var ta = document.getElementById('aud_claude_summary') || document.querySelector('textarea[id$="aud_claude_summary"]');
-                        if (ta) ta.value = v;
-                        try { Shiny.setInputValue('aud_claude_summary', v); } catch(e) {}
-                    });
-                }
-            })();
-        """),
-        cloud_status_css(),
-    ),
-    ui.div(
-        auditshield_badge(mode="strip"),
-        style="margin: 16px 20px 0 20px;",
+        """)
     ),
     ui.page_navbar(
         # ==================== EXECUTIVE / STRATEGIC ====================
@@ -222,6 +237,12 @@ app_ui = ui.page_fluid(
         ui.nav_panel(
             "Executive View",
             ui.div(
+                ui.card(
+                    ui.card_header("Pro / Enterprise Access"),
+                    ui.input_text("api_key", "API Key", placeholder="pro-xxx or ent-xxx"),
+                    ui.p("Enter your API key to unlock RADV Command Center and Mock Audit.", class_="text-muted small"),
+                    class_="mb-3",
+                ),
                 ui.h2("Executive Dashboard"),
                 ui.p("High-level strategic metrics", class_="text-muted"),
                 ui.row(
@@ -238,6 +259,11 @@ app_ui = ui.page_fluid(
                 ui.card(
                     ui.card_header("Strategic Action Items"),
                     ui.output_ui("exec_action_items")
+                ),
+                ui.hr(),
+                ui.card(
+                    ui.card_header("HCC Compound View (Pro)"),
+                    ui.output_ui("exec_compound_view")
                 )
             )
         ),
@@ -325,23 +351,7 @@ app_ui = ui.page_fluid(
             )
         ),
 
-        # Tab 4: RADV Audit Trail (Google Sheets cloud persistence + Phase 2 suppression)
-        ui.nav_panel(
-            "📋 Audit Trail",
-            ui.div(
-                suppression_banner(app_type="audit"),
-                audit_trail_panel(),
-                style="padding: 20px;"
-            )
-        ),
-
-        # Tab 4b: HITL Admin View (Phase 2)
-        ui.nav_panel(
-            "Admin View",
-            ui.div(hitl_admin_panel(app_type="audit"), style="padding: 20px;")
-        ),
-
-        # Tab 5: Mock Audit
+        # Tab 4: Mock Audit
         ui.nav_panel(
             "Mock Audit",
             ui.layout_sidebar(
@@ -618,8 +628,7 @@ app_ui = ui.page_fluid(
         id="main_nav",
         # navbar_options removed for HuggingFace Shiny compatibility (older version)
     ),
-    create_footer(),
-    provenance_footer(app_variant="auditshield"),
+    create_footer()
 )
 
 # ==================== SERVER LOGIC ====================
@@ -645,6 +654,7 @@ def server(input, output, session):
     exposure_data = reactive.Value({})
     scenario_results_data = reactive.Value({})
     executive_dashboard_data = reactive.Value({})
+    compound_analysis_data = reactive.Value(None)
     audit_status_data = reactive.Value(None)
     regulatory_updates = reactive.Value([])
     realtime_metrics = reactive.Value({})
@@ -653,15 +663,51 @@ def server(input, output, session):
     rules_created = reactive.Value([])
     rule_test_violations = reactive.Value(None)
 
-    # RADV Audit Trail — Google Sheets cloud persistence
-    _audit_push_result = reactive.Value(None)
-    _audit_update_result = reactive.Value(None)
-    # HITL Admin (Phase 2)
-    _hitl_audit_add_result = reactive.Value(None)
-    _hitl_audit_remove_result = reactive.Value(None)
-
     # Diagnostic: simple reactive test to verify reactive system works
     diagnostic_status = reactive.Value("Checking...")
+
+    # Stage 4: RADV lead capture state
+    _radv_lead_captured = reactive.Value(False)
+
+    def _get_api_key():
+        key = None
+        try:
+            key = (input.api_key() or "").strip() or None
+        except Exception:
+            pass
+        if not key and hasattr(session, "request") and session.request:
+            key = session.request.headers.get("X-API-Key") or session.request.query_params.get("api_key")
+        return key
+
+    def _radv_upgrade_ui(upgrade_url: str):
+        captured = _radv_lead_captured.get()
+        if captured:
+            return ui.div(
+                ui.p("Thanks! We'll be in touch.", class_="text-success"),
+                ui.a("Upgrade now", href=upgrade_url, target="_blank", class_="btn btn-primary mt-2"),
+                class_="audit-warning p-4 rounded",
+            )
+        return ui.div(
+            ui.h4("RADV requires Pro or Enterprise"),
+            ui.p("Enter your API key in Executive View, or request access below.", class_="text-muted"),
+            ui.a("Upgrade", href=upgrade_url, target="_blank", class_="btn btn-primary"),
+            ui.hr(),
+            ui.p("Request access:", class_="small"),
+            ui.input_text("radv_lead_email", "Email", placeholder="you@company.com"),
+            ui.input_action_button("radv_request_access", "Request Access", class_="btn btn-outline-primary mt-2"),
+            class_="audit-warning p-4 rounded",
+        )
+
+    @reactive.Effect
+    @reactive.event(input.radv_request_access)
+    def _capture_radv_lead():
+        try:
+            email = (input.radv_lead_email() or "").strip()
+            if email:
+                capture_lead(email=email, source="auditshield_radv")
+            _radv_lead_captured.set(True)
+        except Exception as e:
+            print(f"[RADV] Lead capture: {e}")
 
     def _refresh_active_audits():
         try:
@@ -1147,7 +1193,10 @@ def server(input, output, session):
     # Mock Audit - dynamic results based on contract size and year
     @reactive.Effect
     @reactive.event(input.run_mock_audit)
-    def run_audit_simulation():
+    async def run_audit_simulation():
+        radv_result = await handle_radv_request(_get_api_key())
+        if radv_result.get("status") == "upgrade_required":
+            return
         try:
             import random
             size = input.contract_size() or "medium_contract"
@@ -1201,7 +1250,10 @@ def server(input, output, session):
 
     @output
     @render.ui
-    def mock_audit_results():
+    async def mock_audit_results():
+        radv_result = await handle_radv_request(_get_api_key())
+        if radv_result.get("status") == "upgrade_required":
+            return _radv_upgrade_ui(radv_result.get("upgrade_url", UPGRADE_URL))
         try:
             results = mock_audit_results_data.get()
             summary = (results or {}).get("audit_summary") or {}
@@ -1247,164 +1299,6 @@ def server(input, output, session):
             fig = go.Figure()
             fig.update_layout(height=400)
             return ui.HTML(fig.to_html(include_plotlyjs=True))
-
-    # ── RADV Audit Trail (Google Sheets cloud persistence) ──
-    @render.text
-    def audit_sync_status():
-        s = audit_trail_db.status()
-        if s["connected"]:
-            return f"☁ Cloud Sync Live — {s['timestamp']}"
-        return f"⚠ Disconnected — {s.get('error', 'No credentials')}"
-
-
-    @reactive.Effect
-    @reactive.event(input.btn_generate_summary)
-    def _audit_generate_summary():
-        session.send_custom_message("audit_show_loading", {})  # immediate; ui.update_* batches
-        try:
-            from app_config import get_anthropic_client
-            client = get_anthropic_client()
-            measure_code = input.aud_measure_code() or "N/A"
-            measure_name = input.aud_measure_name() or "N/A"
-            hcc_codes = (input.aud_hcc_codes() or "").strip() or "N/A"
-            meat_status = input.aud_meat_status() or "PENDING"
-            risk_score = input.aud_risk_score() or 0.0
-            prompt = f"""Generate a concise RADV compliance-grade audit summary (2-4 sentences) for:
-Measure: {measure_code} — {measure_name}
-HCC Codes: {hcc_codes}
-M.E.A.T. Status: {meat_status}
-RADV Risk Score: {risk_score}
-
-Write a professional summary suitable for audit documentation. Be specific and compliance-focused. Return only the summary text, no preamble."""
-            resp = client.messages.create(
-                model="claude-sonnet-4-20250514",
-                max_tokens=300,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            summary = resp.content[0].text.strip() if resp.content else ""
-            ui.update_text_area("aud_claude_summary", value=summary)
-        except Exception as e:
-            err_msg = f"Error: {str(e)}"
-            if "ANTHROPIC_API_KEY" in str(e) or "api_key" in str(e).lower():
-                err_msg = "ANTHROPIC_API_KEY not set. Add to .env or Space secrets."
-            ui.update_text_area("aud_claude_summary", value=err_msg)
-
-    @reactive.Effect
-    @reactive.event(input.btn_push_audit)
-    def _audit_trail_push():
-        record = {
-            "session_user": "Robert Reichert",
-            "measure_code": input.aud_measure_code() or "",
-            "measure_name": input.aud_measure_name() or "",
-            "hcc_codes": [c.strip() for c in (input.aud_hcc_codes() or "").split(",") if c.strip()],
-            "gaps_flagged": input.aud_gaps() or 0,
-            "meat_status": input.aud_meat_status() or "PENDING",
-            "radv_risk_score": input.aud_risk_score() or 0.0,
-            "claude_summary": input.aud_claude_summary() or "",
-            "audit_status": "OPEN",
-        }
-        result = push_audit_record(audit_trail_db, record)
-        _audit_push_result.set(result)
-
-    @render.ui
-    def audit_push_result():
-        r = _audit_push_result()
-        if r is None:
-            return ui.div()
-        if r.get("success"):
-            return ui.div(
-                f"✅ Pushed — {r.get('audit_id', '')} at {r.get('timestamp', '')}",
-                class_="audit-push-success"
-            )
-        return ui.div(f"❌ Error: {r.get('error', 'Unknown')}", class_="audit-push-error")
-
-    @render.data_frame
-    def audit_trail_table():
-        input.btn_refresh_audits()
-        input.btn_push_audit()
-        df = fetch_recent_audits(audit_trail_db, n=10)
-        return render.DataGrid(df, width="100%", height="300px")
-
-    @reactive.Effect
-    @reactive.event(input.btn_update_status)
-    def _audit_trail_update():
-        r = update_audit_status(
-            audit_trail_db,
-            input.aud_id_update() or "",
-            input.aud_new_status() or "OPEN"
-        )
-        _audit_update_result.set(r)
-
-    @render.ui
-    def audit_update_result():
-        r = _audit_update_result()
-        if r is None:
-            return ui.div()
-        if r.get("success"):
-            return ui.div(
-                f"✅ {r.get('audit_id', '')} → {r.get('status', '')}",
-                class_="audit-push-success"
-            )
-        return ui.div(f"❌ {r.get('error', '')}", class_="audit-push-error")
-
-    # HITL Admin — Audit Suppressions (Phase 2)
-    @reactive.Effect
-    @reactive.event(input.btn_add_audit_suppression)
-    def _hitl_add_audit_suppression():
-        aid = (input.hitl_audit_id() or "").strip()
-        reason = (input.hitl_audit_reason() or "Manual").strip()
-        if not aid:
-            return
-        r = add_audit_suppression(aid, reason)
-        _hitl_audit_add_result.set(r)
-
-    @render.ui
-    def hitl_audit_add_result():
-        r = _hitl_audit_add_result()
-        if r is None:
-            return ui.div()
-        if r.get("success"):
-            return ui.div("✅ Added suppression", class_="audit-push-success")
-        return ui.div(f"❌ {r.get('error', '')}", class_="audit-push-error")
-
-    @reactive.Effect
-    @reactive.event(input.btn_remove_audit_suppression)
-    def _hitl_remove_audit_suppression():
-        aid = (input.hitl_audit_remove_id() or "").strip()
-        if not aid:
-            return
-        r = remove_audit_suppression(aid)
-        _hitl_audit_remove_result.set(r)
-
-    @render.ui
-    def hitl_audit_remove_result():
-        r = _hitl_audit_remove_result()
-        if r is None:
-            return ui.div()
-        if r.get("success"):
-            return ui.div("✅ Removed suppression", class_="audit-push-success")
-        return ui.div(f"❌ {r.get('error', '')}", class_="audit-push-error")
-
-    @render.ui
-    def hitl_audit_rules_list():
-        input.btn_refresh_hitl_audit()
-        input.btn_add_audit_suppression()
-        input.btn_remove_audit_suppression()
-        _hitl_audit_remove_result()  # refresh list after remove
-        rules = get_audit_suppressions()
-        if not rules:
-            return ui.p("No suppression rules.", class_="text-muted")
-        return ui.div(
-            *[
-                ui.div(
-                    ui.strong(r.get("audit_id", "")),
-                    " — ",
-                    r.get("reason", ""),
-                    class_="hitl-rule-row"
-                )
-                for r in rules
-            ]
-        )
 
     # Financial Impact
     @output
@@ -1587,8 +1481,11 @@ Write a professional summary suitable for audit documentation. Be specific and c
 
     @reactive.Effect
     @reactive.event(input.create_audit)
-    def create_new_audit():
+    async def create_new_audit():
         if not input.new_audit_notice_id() or not input.new_contract_id():
+            return
+        radv_result = await handle_radv_request(_get_api_key())
+        if radv_result.get("status") == "upgrade_required":
             return
         sample_size = max(35, min(200, int(input.sample_size_input() or 100)))
         sample_enrollees = []
@@ -1615,7 +1512,10 @@ Write a professional summary suitable for audit documentation. Be specific and c
 
     @output
     @render.ui
-    def audit_status_display():
+    async def audit_status_display():
+        radv_result = await handle_radv_request(_get_api_key())
+        if radv_result.get("status") == "upgrade_required":
+            return _radv_upgrade_ui(radv_result.get("upgrade_url", UPGRADE_URL))
         audits = active_audits.get()
         if not audits:
             return ui.div(ui.p("Create an audit or select one", class_="text-muted text-center p-5"))
@@ -2372,6 +2272,27 @@ Write a professional summary suitable for audit documentation. Be specific and c
         if not actions:
             actions.append("All metrics within acceptable ranges. Continue current monitoring.")
         return ui.div(ui.tags.ul(*[ui.tags.li(a) for a in actions]))
+
+    @output
+    @render.ui
+    async def exec_compound_view():
+        """HCC Compound View — RADV exposure × RAF gap rate → $2.3M prospect story (Pro tier)."""
+        hcc_result = await handle_hcc_request(_get_api_key())
+        if hcc_result.get("status") == "upgrade_required":
+            return ui.div(
+                ui.p("Enter a Pro API key above to unlock HCC Compound View.", class_="text-muted"),
+                ui.p("Compound score = RADV exposure × RAF documentation gap rate → $2.3M prospect opportunity.", class_="small text-muted"),
+            )
+        exp = exposure_data.get() or {}
+        annualized = exp.get("annualized_exposure", 850000) or 850000
+        val_rate = exp.get("current_validation_rate", 85.2) or 85.2
+        radv_score = annualized / 500_000
+        raf_gap_rate = (100 - val_rate) / 100
+        out = run_compound_analysis(radv_exposure_score=radv_score, raf_documentation_gap_rate=raf_gap_rate)
+        return ui.div(
+            ui.p(out["demo_narrative"], class_="mb-2"),
+            ui.p(f"Compound score: {out['compound_score']:.2f}", class_="small text-muted"),
+        )
 
 
 app_dir = Path(__file__).resolve().parent

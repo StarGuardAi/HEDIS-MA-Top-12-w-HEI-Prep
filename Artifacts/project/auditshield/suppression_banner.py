@@ -5,11 +5,13 @@
 # Brand: Purple #4A3E8F | Gold #D4AF37
 # ─────────────────────────────────────────────────────────────
 
+from htmltools import Tag
 from shiny import ui
+
 from audit_trail import get_audit_suppressions
 
 
-def suppression_banner_base_css() -> ui.tags.style:
+def suppression_banner_base_css() -> Tag:
     return ui.tags.style("""
         .suppression-banner {
             border-radius: 8px;
@@ -30,7 +32,7 @@ def suppression_banner_base_css() -> ui.tags.style:
     """)
 
 
-def suppression_banner(app_type: str = "audit") -> ui.div:
+def suppression_banner(app_type: str = "audit") -> Tag:
     """
     Banner showing suppression status. Color reacts to state:
     - Amber when suppressions exist

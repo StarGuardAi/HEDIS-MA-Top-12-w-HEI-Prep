@@ -13,6 +13,7 @@ def evaluate(resources: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "violation_type": "data_residency",
                 "severity": "HIGH",
                 "regulation_cited": "GDPR Art. 44 / CCPA",
+                "detail": f"data_residency for {rid}: GDPR Art. 44 / CCPA",
             })
     if not violations:
         # Ensure at least one HIGH for sanity check
@@ -21,5 +22,6 @@ def evaluate(resources: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "violation_type": "data_residency",
             "severity": "HIGH",
             "regulation_cited": "GDPR Art. 44",
+            "detail": "data_residency for s3-staging-analytics: GDPR Art. 44",
         })
     return violations

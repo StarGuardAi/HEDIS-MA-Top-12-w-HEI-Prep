@@ -2,17 +2,193 @@
 
 After every feature phase ships, run the Hardening Sprint before starting the next phase.
 
-ALWAYS:
+---
+
+## ALWAYS
+
 - Use pyproject.toml, not requirements.txt alone
 - Add type hints to all public functions
 - Separate business logic from Shiny reactive logic
 - Write minimum 3 unit tests per new module
 - Keep ARCHITECTURE.md current
+- **Import shared logic from starguard-core — never re-implement locally**
+- **Use typed MemberRecord / GapRecord — never inline dicts**
 
-NEVER:
+---
+
+## NEVER
+
 - Embed structural refactoring inside a feature sprint
 - Merge Supabase schema changes without updating ARCHITECTURE.md
 - Ship a new module without at least one unit test
 - Use relative import hacks — fix the package structure instead
+- **Don't duplicate HEDIS rules, gap trail, audit trail, or badge logic across repos**
+- **Don't import shiny inside starguard-core except badge/ (optional dep)**
+- **Don't create logic/hedis_rules.py, logic/hedis_gap_trail.py, or logic/audit_trail.py in consuming repos**
+- **Don't use `from cloud_status_badge import ...` — use `from starguard_core.badge.cloud_status import ...`**
 
-Reference: Phase2-to-Hardening-Sprint-Checklist.md in repo root
+---
+
+## Architecture Patterns
+
+### Four-Repo Layout
+
+| Repo | Path | Purpose |
+|------|------|---------|
+| starguard-core | (external package) | Shared library: audit trail, HEDIS rules, gap trail, badge |
+| auditshield | Artifacts/project/auditshield/ | RADV Audit Defense Platform |
+| starguard-desktop | Artifacts/project/auditshield/starguard-desktop/ | MA Intelligence (Desktop) |
+| starguard-mobile | Artifacts/project/auditshield/starguard-mobile/ | MA Intelligence (Mobile) |
+
+### starguard-core Import Patterns
+
+**AuditShield:**
+```python
+from starguard_core.audit.trail import (
+    AUDIT_COLUMNS, AuditTrailDB,
+    get_audit_suppressions, add_audit_suppression, remove_audit_suppression,
+    push_audit_record, fetch_recent_audits, update_audit_status,
+)
+from starguard_core.badge.cloud_status import (
+    cloud_status_css, cloud_status_badge, auditshield_badge, provenance_footer,
+)
+```
+
+**Desktop / Mobile:**
+```python
+from starguard_core.hedis.gap_trail import push_hedis_gap, fetch_hedis_gaps
+from starguard_core.hedis.rules import HEDIS_MEASURES
+from starguard_core.badge.cloud_status import (
+    cloud_status_css, cloud_status_badge, starguard_mobile_badge, provenance_footer,
+)
+```
+
+**Install:** `pip install starguard-core` (AuditShield: `starguard-core[badge]` for Shiny badge)
+
+### starguard-core Ownership Rules
+
+| Belongs in starguard-core | Stays per-repo |
+|---------------------------|----------------|
+| HEDIS_MEASURES, measure definitions | app.py, nav, pages |
+| Audit trail CRUD, suppression | audit_trail_ui, hedis_gap_ui |
+| Gap trail CRUD, suppression | compound_framework, modules |
+| Cloud status badge (4-badge strip) | UI layout, theme |
+| MemberRecord, GapRecord types | Shiny reactive handlers |
+
+### starguard-core Feature Flags (Spec Template)
+
+- **Pattern:** `validator.py` with `_FEATURE_TIERS` dict — not `tiers.py` with `TierConfig.radv_enabled`
+- **All future week specs** reference `_FEATURE_TIERS` when adding new feature flags
+- **Example:** `"radv_calculator": {Tier.PRO}`, `"hcc_scoring": {Tier.PRO, Tier.ENTERPRISE}`
+
+### starguard-core Development Rules
+
+- **No Shiny imports** in starguard-core except `badge/` (optional `[badge]` dep)
+- **mypy strict gate** — all public APIs typed
+- **AuditShield env:** `SUPABASE_KEY`, `GSHEETS_CREDS_JSON`, `AUDIT_SHEET`
+- **Desktop/Mobile env:** `SUPABASE_ANON_KEY`, `GOOGLE_CREDENTIALS_JSON`, `GOOGLE_SHEETS_KEY`
+
+### Env Var Reference
+
+| Purpose | AuditShield | Desktop / Mobile |
+|---------|-------------|------------------|
+| Supabase key | `SUPABASE_KEY` | `SUPABASE_ANON_KEY` |
+| Sheets creds | `GSHEETS_CREDS_JSON` | `GOOGLE_CREDENTIALS_JSON` |
+| Sheets target | `AUDIT_SHEET` | `GOOGLE_SHEETS_KEY` |
+
+### Migration Shim Protocol
+
+When extracting logic to starguard-core:
+
+1. **Implement** in starguard-core with full API surface
+2. **Create shim** in consuming repo that re-exports from starguard_core
+3. **Replace** full implementation with shim (preserve import paths)
+4. **Update** pyproject.toml with starguard-core dep
+5. **Verify** with migration verifier script
+
+### Shiny Module Requirements
+
+- **app.py** is the main entry; all modules are imported and wired in server/ui
+- **Business logic** lives in starguard-core or thin shims; reactive logic in server handlers
+- **Module pattern**: `module_ui()` for UI, `module_server()` for server, `module_server` id for `@module_ui`
+- **State**: Use `@reactive.Calc` for derived data; avoid global mutable state
+
+### Supabase Standards
+
+- **Source of truth**: Google Sheets. Supabase is parallel write only (fire-and-forget).
+- **Env vars**: AuditShield uses `SUPABASE_KEY`; Desktop/Mobile use `SUPABASE_ANON_KEY`. Silent on missing/failure.
+- **Tables**: `audit_trail` (AuditShield), `hedis_gap_trail` (Desktop/Mobile shared).
+- **Never** merge schema changes without updating ARCHITECTURE.md.
+
+### Recruiter Review Standards
+
+- **README**: Recruiter-facing summary, live demo link, tech stack, test badge.
+- **Cloud status badge**: 4-badge strip (GCP, Sheets, Supabase, Claude API) signals production readiness.
+- **About tab**: Professional bio, contact, portfolio links.
+- **No placeholder URLs**: Use real HuggingFace Space URLs in production.
+
+---
+
+## Live URLs (Production)
+
+| App | Demo | GitHub |
+|-----|------|--------|
+| AuditShield-Live | https://huggingface.co/spaces/rreichert/auditshield-live | https://github.com/reichert-science-intelligence/auditshield |
+| StarGuard Desktop | https://rreichert-starguard-desktop.hf.space | https://github.com/reichert-science-intelligence/starguard-desktop |
+| StarGuard Mobile | https://rreichert-starguardai.hf.space | https://github.com/reichert-science-intelligence/starguard-mobile |
+
+Short links: tinyurl.com/2vj79bem (AuditShield), tinyurl.com/24523hmy (LinkedIn).
+
+---
+
+## Phase 4 Complete (Weeks 1–6)
+
+### Feature Flags (_FEATURE_TIERS)
+
+| Flag | Tiers | Purpose |
+|------|-------|---------|
+| `hedis_summary` | FREE, PRO | Gap summary (free tier) |
+| `hedis_predictions` | PRO | ML predictions, intervention plans |
+| `radv_calculator` | PRO | RADV exposure scoring |
+| `hcc_scoring` | PRO | RAF, gaps, revenue |
+| `stars_calculator` | PRO | QBP threshold, trajectory, command center |
+
+### starguard-core Modules
+
+| Module | Key APIs |
+|--------|----------|
+| RADV | `default_scenario`, `score_exposure` |
+| HCC | `default_hcc_scenario`, `compute_raf_batch`, `identify_chronic_gaps`, `compute_revenue_opportunity` |
+| HEDIS | `default_hedis_scenario`, `predict_closure_batch`, `build_intervention_plan` |
+| Stars | `default_stars_scenario`, `compute_bonus_threshold_impact`, `project_stars` |
+| Command Center | `run_command_center()` — wires all four |
+
+### CI/CD (deploy.yml)
+
+- **Test job**: Always runs (push + PR). Ruff, mypy, pytest.
+- **Deploy job**: Only on push to main. Uses `HF_TOKEN` to sync to HuggingFace Space.
+- **Mobile**: Pytest runs with `PYTHONPATH=Artifacts/app`; deploy uploads `Artifacts/app/` to Space.
+- **Rollback**: `git revert` → push → auto-redeploy. No manual HF intervention.
+
+### Phase 4 Demo Numbers (Locked)
+
+| Metric | Value | Scale |
+|--------|-------|-------|
+| HCC recapture | $27,625 | Synthetic; scales to plan level |
+| HEDIS revenue | $0.66M | 8 gaps; ~$4M+ at 50K members |
+| QBP on 3.5→4.0 | $6M+ | 50K members crossing threshold |
+| Star points | 17 | From 8 HEDIS gaps |
+
+### Phase 4 Close Gate
+
+```bash
+cd starguard-core && python verify_phase4_close_gate.py
+```
+
+Expected: All four modules + command center print `[OK]`; exit 0.
+
+---
+
+## Reference
+
+Phase2-to-Hardening-Sprint-Checklist.md in repo root

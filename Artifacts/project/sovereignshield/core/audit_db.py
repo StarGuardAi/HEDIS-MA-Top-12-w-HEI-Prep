@@ -8,20 +8,29 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from dotenv import load_dotenv
 
-_root = Path(__file__).resolve().parents[4]
-_env_candidates = [_root / ".env", _root.parent / "sovereignshield" / ".env"]
+_path = Path(__file__).resolve()
+_pkg = _path.parents[1]
+_env_candidates: list[Path] = [_pkg / ".env"]
+if len(_path.parts) >= 6:
+    _env_candidates.extend([
+        _path.parents[4] / ".env",
+        _path.parents[4].parent / "sovereignshield" / ".env",
+    ])
 for _p in _env_candidates:
     if _p.is_file():
         load_dotenv(dotenv_path=_p)
 
+_rag_kb_count: Callable[[], int] | None = None
 try:
-    from ..rag.retriever import kb_count as _rag_kb_count
+    from ..rag.retriever import kb_count
+
+    _rag_kb_count = kb_count
 except ImportError:
-    _rag_kb_count = None
+    pass
 
 _SUPABASE_AVAILABLE = False
 _client: Any = None
@@ -83,6 +92,7 @@ class AuditDB:
                     "mttr_seconds": event.get("mttr_seconds"),
                     "tokens_used": event.get("tokens_used", 0),
                     "rag_hit": event.get("rag_hit", False),
+                    "severity": event.get("severity"),
                 }
                 _client.table(_TABLE).insert(row).execute()
                 return True

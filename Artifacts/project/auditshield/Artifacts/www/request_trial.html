@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Free Trial | StarGuard AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;600;700&family=Spectral:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2B5F8C; --accent: #40B5AD; --navy: #1A3A52; --gray: #4A5568; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Spectral', serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 16px; padding: 40px; max-width: 440px; box-shadow: 0 20px 60px rgba(27,58,82,0.15); }
+        h1 { font-family: 'Darker Grotesque', sans-serif; font-size: 1.8rem; color: var(--navy); margin-bottom: 12px; }
+        p { color: var(--gray); margin-bottom: 24px; font-size: 1.05rem; }
+        input { width: 100%; padding: 14px 18px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 1rem; margin-bottom: 16px; }
+        input:focus { outline: none; border-color: var(--accent); }
+        button { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 8px; font-family: 'Darker Grotesque'; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #36a39d; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .msg { margin-top: 16px; padding: 12px; border-radius: 8px; display: none; }
+        .msg.success { background: #d4edda; color: #155724; display: block; }
+        .msg.error { background: #f8d7da; color: #721c24; display: block; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Request Free Trial</h1>
+        <p>Get a 7-day Pro trial key. We'll email it to you instantly.</p>
+        <form id="trialForm">
+            <input type="email" name="email" placeholder="your@email.com" required>
+            <button type="submit" id="btn">Get Trial Key</button>
+        </form>
+        <div id="msg" class="msg"></div>
+        <p style="margin-top: 20px; font-size: 0.9rem;"><a href="/">← Back to AuditShield</a></p>
+    </div>
+    <script>
+        document.getElementById('trialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn');
+            const msg = document.getElementById('msg');
+            const email = document.querySelector('input[name="email"]').value.trim();
+            btn.disabled = true;
+            msg.className = 'msg';
+            msg.textContent = '';
+            try {
+                const r = await fetch('/request-trial', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await r.json();
+                if (data.ok) {
+                    msg.className = 'msg success';
+                    msg.textContent = data.message || 'Check your email for your trial key.';
+                } else {
+                    msg.className = 'msg error';
+                    msg.textContent = data.error || 'Something went wrong. Please try again.';
+                }
+            } catch (err) {
+                msg.className = 'msg error';
+                msg.textContent = 'Network error. Please try again.';
+            }
+            btn.disabled = false;
+        });
+    </script>
+</body>
+</html>

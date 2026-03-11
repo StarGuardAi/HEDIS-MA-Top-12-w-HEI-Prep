@@ -125,6 +125,12 @@ def navigation_bar():
                     id="nav-monitor",
                     onclick="navigateTo('monitor')"
                 ),
+                ui.div(
+                    "ℹ️ About",
+                    class_="sidebar-nav-item",
+                    id="nav-about",
+                    onclick="navigateTo('about')"
+                ),
                 class_="sidebar-nav"
             ),
             ui.div(
@@ -155,7 +161,8 @@ def navigation_bar():
                     "providers": "👨‍⚕️ Providers",
                     "profile": "👤 Member 360°",
                     "ai": "🤖 AI Validation",
-                    "monitor": "🤖 ML Monitor"
+                    "monitor": "🤖 ML Monitor",
+                    "about": "ℹ️ About"
                 },
                 selected="dashboard",
                 inline=True
@@ -189,13 +196,48 @@ def navigation_bar():
     )
 
 
+# Portfolio Apps list for About tab
+_PORTFOLIO_APPS = [
+    ("AuditShield Live", "https://rreichert-auditshield-live.hf.space"),
+    ("StarGuard Desktop", "https://rreichert-starguard-desktop.hf.space"),
+    ("StarGuard Mobile", "https://rreichert-starguardai.hf.space"),
+    ("SovereignShield Desktop", "https://rreichert-sovereignshield.hf.space"),
+    ("SovereignShield Mobile", "https://rreichert-sovereignshield-mobile.hf.space"),
+]
+
+
+def about_ui():
+    """About tab with Portfolio Apps and contact info."""
+    items = []
+    for name, url in _PORTFOLIO_APPS:
+        items.append(
+            ui.div(
+                ui.a(name, href=url, target="_blank", style="color: #7c3aed; font-weight: 600; text-decoration: none;"),
+                ui.p(url, class_="text-muted small mb-2"),
+                class_="p-3 mb-2 rounded",
+                style="background: #f8f9fa; border-left: 4px solid #7c3aed;",
+            )
+        )
+    return ui.div(
+        ui.h4("Portfolio Apps", style="margin-bottom: 1rem;"),
+        ui.div(*items),
+        ui.tags.hr(style="margin: 1.5rem 0;"),
+        ui.h6("Contact"),
+        ui.p("📧 reichert.starguardai@gmail.com"),
+        ui.p("📞 +1 (480) 767-1337"),
+        ui.p("Available March 2026"),
+        ui.div(ui.markdown("[LinkedIn](https://www.linkedin.com/in/robertreichert-healthcareai/) | [Portfolio](https://tinyurl.com/bdevpdz5)"), class_="mt-2"),
+        class_="p-4",
+    )
+
+
 def footer():
     """Footer with contact info."""
     return ui.div(
         ui.tags.hr(style="margin: 2rem 0 1rem 0; border-color: #e0e0e0;"),
         ui.div(
             ui.markdown("""
-            **StarGuard AI** | Built by Robert Reichert  
+            **StarGuard AI** | Built by Robert Reichert | 📞 +1 (480) 767-1337 | Available March 2026  
             [LinkedIn](https://www.linkedin.com/in/robertreichert-healthcareai/) | [Portfolio](https://tinyurl.com/bdevpdz5)
             """),
             style="text-align: center; padding: 1rem; color: #666; font-size: 0.875rem;"
@@ -265,6 +307,8 @@ def server(input, output, session):
             return ui.div(model_monitor_ui(), id="monitor-page")
         elif page == "profile":
             return ui.div(member_profile_ui(), id="profile-page")
+        elif page == "about":
+            return ui.div(about_ui(), id="about-page")
         return ui.div(executive_dashboard_ui(), id="dashboard-page")
 
 

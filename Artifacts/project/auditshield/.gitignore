@@ -1,4 +1,4 @@
-*.db
+﻿*.db
 *.db-shm
 *.db-wal
 *.bak
@@ -7,7 +7,6 @@ __pycache__/
 *.class
 .env
 .env.local
-service_account.json
 .DS_Store
 Thumbs.db
 .coverage

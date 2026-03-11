@@ -15,8 +15,14 @@ from dotenv import load_dotenv
 from .planner import PlannerResult
 from .worker import WorkerResult
 
-_root = Path(__file__).resolve().parents[4]
-_env_candidates = [_root / ".env", _root.parent / "sovereignshield" / ".env"]
+_path = Path(__file__).resolve()
+_pkg = _path.parents[1]
+_env_candidates: list[Path] = [_pkg / ".env"]
+if len(_path.parts) >= 6:
+    _env_candidates.extend([
+        _path.parents[4] / ".env",
+        _path.parents[4].parent / "sovereignshield" / ".env",
+    ])
 for _p in _env_candidates:
     if _p.is_file():
         load_dotenv(dotenv_path=_p)

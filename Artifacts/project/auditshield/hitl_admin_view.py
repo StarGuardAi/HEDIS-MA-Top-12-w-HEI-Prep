@@ -5,22 +5,18 @@
 # Brand: Purple #4A3E8F | Gold #D4AF37
 # ─────────────────────────────────────────────────────────────
 
+from htmltools import Tag
 from shiny import ui
-from audit_trail import (
-    get_audit_suppressions,
-    add_audit_suppression,
-    remove_audit_suppression,
-)
 
 
-def hitl_admin_css() -> ui.tags.style:
+def hitl_admin_css() -> Tag:
     return ui.tags.style("""
         .hitl-admin { padding: 20px; }
         .hitl-rule-row { margin-bottom: 10px; padding: 10px; background: #1a1240; border-radius: 6px; }
     """)
 
 
-def hitl_admin_panel(app_type: str = "audit") -> ui.div:
+def hitl_admin_panel(app_type: str = "audit") -> Tag:
     """
     HITL Admin View panel.
     app_type: "audit" (AuditShield) | "gap" (StarGuard)
@@ -30,7 +26,7 @@ def hitl_admin_panel(app_type: str = "audit") -> ui.div:
     return _gap_hitl_panel()
 
 
-def _audit_hitl_panel() -> ui.div:
+def _audit_hitl_panel() -> Tag:
     return ui.div(
         hitl_admin_css(),
         ui.h4("[Admin] HITL Admin View - Audit Suppressions"),
@@ -63,10 +59,9 @@ def _audit_hitl_panel() -> ui.div:
     )
 
 
-def _gap_hitl_panel() -> ui.div:
-    try:
-        from hedis_gap_trail import get_gap_suppressions, add_gap_suppression, remove_gap_suppression
-    except ImportError:
+def _gap_hitl_panel() -> Tag:
+    import importlib.util
+    if importlib.util.find_spec("hedis_gap_trail") is None:
         return ui.div(ui.p("hedis_gap_trail not available.", class_="text-muted"))
 
     return ui.div(

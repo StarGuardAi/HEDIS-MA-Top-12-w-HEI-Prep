@@ -187,7 +187,8 @@ def violation_donut(runs: list[dict[str, Any]]) -> Any:
     if data.empty:
         data = pd.DataFrame({"severity": ["INFO"], "count": [0]})
 
-    from plotnine import aes, coord_polar, geom_bar, ggplot, scale_fill_manual, theme_void
+    from plotnine import aes, geom_bar, ggplot, scale_fill_manual, theme_void
+    from plotnine.coords import coord_polar
 
     severity_colors = {"HIGH": "#dc3545", "MEDIUM": "#ffc107", "LOW": "#28a745", "INFO": "#6c757d"}
     p = (

@@ -123,3 +123,13 @@ def retrieve_similar(
         return (None, 0.0)
     except Exception:
         return (None, 0.0)
+
+
+def kb_count() -> int:
+    """Return the number of documents in the RAG knowledge base."""
+    if _collection is None:
+        return 0
+    try:
+        return _collection.count()
+    except Exception:
+        return 0
