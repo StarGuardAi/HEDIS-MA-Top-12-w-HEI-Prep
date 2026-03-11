@@ -1034,7 +1034,7 @@ def server(input: Any, output: Any, session: Any) -> None:
                 ui.column(
                     4,
                     ui.card(
-                        ui.card_header("Sovereign Cloud Compliance Audit — $150/hr"),
+                        ui.card_header("Sovereign Cloud Compliance Audit — Senior Consultant Rate"),
                         ui.card_body(
                         ui.p(
                             "End-to-end OPA policy evaluation of your AWS/Azure "
@@ -1054,7 +1054,7 @@ def server(input: Any, output: Any, session: Any) -> None:
                 ui.column(
                     4,
                     ui.card(
-                        ui.card_header("Agentic AI System Design — $125/hr"),
+                        ui.card_header("Agentic AI System Design — Senior Consultant Rate"),
                         ui.card_body(
                             ui.p(
                                 "Architecture and implementation of Compound AI systems with "
@@ -1074,7 +1074,7 @@ def server(input: Any, output: Any, session: Any) -> None:
                 ui.column(
                     4,
                     ui.card(
-                        ui.card_header("HEDIS/RADV Analytics Consulting — $100/hr"),
+                        ui.card_header("HEDIS/RADV Analytics Consulting — Consulting Rate"),
                         ui.card_body(
                             ui.p(
                                 "Medicare Advantage analytics from gap closure to RADV audit "
@@ -1096,7 +1096,7 @@ def server(input: Any, output: Any, session: Any) -> None:
                 ui.p("Available March 2026 | Contract | Remote", class_="mb-2"),
                 ui.input_action_button(
                     "contact_btn",
-                    "Contact: reichert.starguardai@email.com",
+                    "Discuss Engagement: reichert.starguardai@email.com",
                     class_="btn",
                     style=f"background-color:{_BRAND_GOLD}; color:#000;",
                 ),
