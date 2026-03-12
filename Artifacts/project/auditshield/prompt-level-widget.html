@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt Level Recommendation Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f12;
+      --surface: #18181c;
+      --border: #2a2a30;
+      --text: #e4e4e7;
+      --muted: #71717a;
+      --high: #f87171;
+      --med: #fbbf24;
+      --low: #34d399;
+      --accent: #a78bfa;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 1.5rem; }
+    h1 { font-size: 1.1rem; font-weight: 600; margin: 0 0 1rem 0; letter-spacing: 0.05em; }
+    .container { max-width: 560px; margin: 0 auto; }
+    label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    textarea { width: 100%; min-height: 100px; padding: 0.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; resize: vertical; }
+    textarea:focus { outline: none; border-color: var(--accent); }
+    .row { display: flex; gap: 0.75rem; margin-bottom: 1rem; align-items: center; }
+    select { padding: 0.5rem 0.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: inherit; font-size: 0.9rem; }
+    button { padding: 0.5rem 1rem; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    .output { margin-top: 1rem; padding: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; line-height: 1.5; min-height: 80px; }
+    .output.empty { color: var(--muted); font-style: italic; }
+    .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+    .badge-high { background: rgba(248,113,113,0.2); color: var(--high); }
+    .badge-med { background: rgba(251,191,36,0.2); color: var(--med); }
+    .badge-low { background: rgba(52,211,153,0.2); color: var(--low); }
+    .header-rec { margin: 0.5rem 0; padding: 0.5rem 0.75rem; background: rgba(167,139,250,0.15); border-left: 3px solid var(--accent); border-radius: 4px; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Prompt Level Recommendation Engine</h1>
+    <label>User prefix</label>
+    <div class="row">
+      <select id="prefix">
+        <option value="">No prefix</option>
+        <option value="LOW">[LOW]</option>
+        <option value="MED">[MED]</option>
+        <option value="HIGH">[HIGH]</option>
+      </select>
+      <button id="run">Run</button>
+    </div>
+    <label>Prompt content</label>
+    <textarea id="prompt" placeholder="Paste your prompt here..."></textarea>
+    <label style="margin-top: 1rem;">Output</label>
+    <div class="output empty" id="output">Run to see recommendation.</div>
+  </div>
+
+  <script>
+    const HIGH_SIG = ['sql','schema','migrate','rls','auth','opa','rego','terraform','supabase','batch remediation','huggingface','reactive chain','@reactive','credentials','api key','token','policy engine','compliance rule','audit trail','gap trail'];
+    const MED_SIG  = ['refactor','new module','pyproject','dependency','test suite','ci/cd','workflow'];
+    const LOW_SIG  = ['css','color','font','padding','margin','layout','style','button','modal','ui-only','copy change','typos'];
+
+    function detectLevel(text) {
+      const t = text.toLowerCase();
+      if (HIGH_SIG.some(s => t.includes(s))) return 'HIGH';
+      if (MED_SIG.some(s => t.includes(s))) return 'MED';
+      if (LOW_SIG.some(s => t.includes(s))) return 'LOW';
+      return 'LOW'; // default
+    }
+
+    function run() {
+      const prefix = document.getElementById('prefix').value;
+      const text = document.getElementById('prompt').value.trim() || 'Change the primary button color to blue';
+      const detected = detectLevel(text);
+      const out = document.getElementById('output');
+      out.classList.remove('empty');
+      out.innerHTML = '';
+
+      const add = (tag, cls, txt) => {
+        const el = document.createElement(tag);
+        if (cls) el.className = cls;
+        el.textContent = txt;
+        out.appendChild(el);
+      };
+
+      add('div', 'badge badge-' + detected.toLowerCase(), 'Detected: ' + detected);
+
+      if (!prefix) {
+        add('p', '', 'Detected level: ' + detected + '. Proceeding with task.');
+      } else if (prefix === 'LOW') {
+        if (detected === 'LOW') {
+          add('p', '', 'Silent — levels match. Proceed.');
+        } else if (detected === 'MED') {
+          add('div', 'header-rec', 'You should be at MED, not LOW.');
+          add('p', '', 'Proceed or offer escalate.');
+        } else if (detected === 'HIGH') {
+          add('div', 'header-rec', 'You sent LOW, this reads as HIGH — consider escalating for safety.');
+          add('p', '', 'Proceed or offer y/escalate.');
+        }
+      } else if (prefix === 'HIGH' && detected === 'LOW') {
+        add('div', 'header-rec', 'Downgrade to LOW recommended — saves tokens.');
+        add('p', '', 'Proceed.');
+      } else if (prefix === 'HIGH') {
+        add('p', '', 'Levels match or HIGH justified. Proceed.');
+      } else if (prefix === 'MED') {
+        add('p', '', 'Detected: ' + detected + '. Proceed.');
+      }
+    }
+
+    document.getElementById('run').addEventListener('click', run);
+    document.getElementById('prompt').addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') run(); });
+  </script>
+</body>
+</html>
