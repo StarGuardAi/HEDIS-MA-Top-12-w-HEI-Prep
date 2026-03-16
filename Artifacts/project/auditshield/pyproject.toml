@@ -26,6 +26,7 @@ dev = [
     "pytest>=7.0.0",
     "ruff>=0.1.0",
     "mypy>=1.0.0",
+    "pytest-playwright>=0.4.0",
 ]
 
 # Entry: app:app (shiny run app.py) or api:app (uvicorn api:app) for /request-trial

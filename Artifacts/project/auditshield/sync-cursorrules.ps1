@@ -1,58 +1,103 @@
-# Sync .cursorrules + Phase2-to-Hardening-Sprint-Checklist.md to all four portfolio repo roots
+# Sync .cursorrules, Phase2-to-Hardening-Sprint-Checklist.md, INSTALL-REFERENCE.md,
+# and app-specific CURSORRULES-*.md to all five portfolio repo roots.
 # Run from auditshield root. Keeps Engineering Standards identical across repos.
 # Usage: .\sync-cursorrules.ps1
 #
-# Targets: starguard-desktop, starguard-mobile (nested under auditshield), sovereignshield (sibling under Projects/)
-# Assumes Projects/ is four levels up from this script (auditshield -> project -> Artifacts -> workspace -> Projects).
+# Targets:
+#   Artifacts/project/auditshield (AuditShield Live — source and live app root)
+#   Artifacts/project/auditshield/starguard-desktop
+#   Artifacts/project/auditshield/starguard-mobile
+#   Artifacts/project/sovereignshield
+#   Artifacts/project/sovereignshield-mobile
 
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
+$parent = Split-Path $root -Parent
 
-# Walk up four levels to reach Projects/ (parent of workspace)
-$p1 = Split-Path $root -Parent
-$p2 = Split-Path $p1 -Parent
-$p3 = Split-Path $p2 -Parent
-$projectsRoot = Split-Path $p3 -Parent
+# Target paths: flat repos under Artifacts/project/, StarGuard under auditshield/
+$repoPaths = @{
+    "auditshield-live"       = $root   # auditshield is source and live app root — sync in place
+    "starguard-desktop"      = Join-Path $root "starguard-desktop"
+    "starguard-mobile"       = Join-Path $root "starguard-mobile"
+    "sovereignshield"        = Join-Path $parent "sovereignshield"
+    "sovereignshield-mobile" = Join-Path $parent "sovereignshield-mobile"
+}
 
-$files = @(".cursorrules", "Phase2-to-Hardening-Sprint-Checklist.md")
-$nestedDests = @("starguard-desktop", "starguard-mobile")
-$sovereignshieldRoot = Join-Path $projectsRoot "sovereignshield"
+# App-specific CURSORRULES mapping: source file -> target repo key
+$appRules = @{
+    "CURSORRULES-AUDITSHIELD-LIVE.md"       = "auditshield-live"
+    "CURSORRULES-STARGUARD-DESKTOP.md"      = "starguard-desktop"
+    "CURSORRULES-STARGUARD-MOBILE.md"       = "starguard-mobile"
+    "CURSORRULES-SOVEREIGNSHIELD-DESKTOP.md" = "sovereignshield"
+    "CURSORRULES-SOVEREIGNSHIELD-MOBILE.md"  = "sovereignshield-mobile"
+}
 
-foreach ($file in $files) {
+# Shared files copied to ALL five repos
+$sharedFiles = @(".cursorrules", "Phase2-to-Hardening-Sprint-Checklist.md", "INSTALL-REFERENCE.md")
+
+$results = @()
+
+# 1. Copy shared files (.cursorrules, Phase2, INSTALL-REFERENCE) to all five repos
+foreach ($file in $sharedFiles) {
     $source = Join-Path $root $file
-    if (-not (Test-Path $source)) {
-        Write-Warning "Skipping $file - not found at $source"
-        continue
-    }
-
-    # Sync to nested repos (starguard-desktop, starguard-mobile under auditshield)
-    foreach ($destName in $nestedDests) {
-        $destDir = Join-Path $root $destName
-        if (-not (Test-Path $destDir)) {
-            Write-Warning "Skipping $destName - directory not found"
-            continue
-        }
+    foreach ($repoKey in $repoPaths.Keys) {
+        $destDir = $repoPaths[$repoKey]
         $dest = Join-Path $destDir $file
-        Copy-Item $source $dest -Force
-        Write-Host "Synced $file -> $destName/" -ForegroundColor Green
-    }
-
-    # Sync to sovereignshield (sibling repo under Projects/)
-    if (Test-Path $sovereignshieldRoot) {
-        $dest = Join-Path $sovereignshieldRoot $file
-        Copy-Item $source $dest -Force
-        Write-Host "Synced $file -> sovereignshield/" -ForegroundColor Green
-    } else {
-        Write-Warning "Skipping sovereignshield - directory not found at $sovereignshieldRoot"
+        $status = "Failed"
+        if (Test-Path $source) {
+            if (Test-Path $destDir) {
+                try {
+                    Copy-Item $source $dest -Force
+                    $status = "Copied"
+                } catch { $status = "Failed" }
+            } else {
+                $status = "Failed (dest missing)"
+            }
+        } else {
+            $status = "Failed (source missing)"
+        }
+        $results += [PSCustomObject]@{
+            File       = $file
+            Source     = $source
+            Destination = $dest
+            Status     = $status
+        }
     }
 }
 
+# 2. Copy each app's CURSORRULES-*.md to its correct repo only
+foreach ($kv in $appRules.GetEnumerator()) {
+    $file = $kv.Key
+    $repoKey = $kv.Value
+    $source = Join-Path $root $file
+    $destDir = $repoPaths[$repoKey]
+    $dest = Join-Path $destDir $file
+    $status = "Failed"
+    if (Test-Path $source) {
+        if (Test-Path $destDir) {
+            try {
+                Copy-Item $source $dest -Force
+                $status = "Copied"
+            } catch { $status = "Failed" }
+        } else {
+            $status = "Failed (dest missing)"
+        }
+    } else {
+        $status = "Failed (source missing)"
+    }
+    $results += [PSCustomObject]@{
+        File        = $file
+        Source      = $source
+        Destination = $dest
+        Status      = $status
+    }
+}
+
+# 3. Print confirmation table
 Write-Host ""
-Write-Host "Sync complete. All four portfolio repos now have identical .cursorrules and Phase2-to-Hardening-Sprint-Checklist.md." -ForegroundColor Cyan
+$results | Format-Table -Property File, Source, Destination, Status -AutoSize -Wrap
 Write-Host ""
-Write-Host "SovereignShield git init reminder (if needed):" -ForegroundColor Yellow
-Write-Host "  cd $sovereignshieldRoot"
-Write-Host "  git init"
-Write-Host "  git add ."
-Write-Host "  git commit -m 'Initial commit'"
+
+# 4. Timestamp
+Write-Host "Sync complete: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Cyan
 Write-Host ""

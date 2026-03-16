@@ -81,6 +81,11 @@ from mock_audit_simulator import MockAuditSimulator
 # Phase 2 Imports
 from radv_command_center import RADVCommandCenter
 
+# Sprint 1–3: Mobile CSS, hamburger nav, FAB wiring
+from ui.fab_wiring import fab_wiring_script
+from ui.mobile_badge import mobile_badge
+from ui.nav_mobile import nav_mobile_ui
+
 # Phase 3 Imports
 from realtime_validation import RealtimeValidationEngine
 from regulatory_intelligence import RegulatoryIntelligence
@@ -164,6 +169,7 @@ dashboard_mgr = DashboardManager()
 
 app_ui = ui.page_fluid(
     ui.tags.head(
+        ui.tags.link(href="mobile.css", rel="stylesheet"),
         ui.tags.style("""
             .risk-green { background-color: #d4edda; border-left: 4px solid #28a745; }
             .risk-yellow { background-color: #fff3cd; border-left: 4px solid #ffc107; }
@@ -190,6 +196,12 @@ app_ui = ui.page_fluid(
                 .navbar-toggler { display: none !important; }
             }
         """),
+        fab_wiring_script(
+            main_tabs_id="main_nav",
+            audit_tab_id="Mock Audit",
+            run_audit_btn_id="run_mock_audit",
+            fab_id="nav_mobile_fab",
+        ),
         ui.tags.script("""
             (function(){
                 'use strict';
@@ -231,6 +243,7 @@ app_ui = ui.page_fluid(
             })();
         """)
     ),
+    nav_mobile_ui(),
     ui.page_navbar(
         # ==================== EXECUTIVE / STRATEGIC ====================
         # Tab 1: Executive View (overview dashboard - start here)
@@ -624,7 +637,7 @@ app_ui = ui.page_fluid(
             )
         ),
 
-        title="AuditShield-Live - Phase 1+2+3",
+        title=ui.span("AuditShield-Live - Phase 1+2+3 ", mobile_badge(url="https://tinyurl.com/bdevpdz5", accent_color="#D4AF37")),
         id="main_nav",
         # navbar_options removed for HuggingFace Shiny compatibility (older version)
     ),
