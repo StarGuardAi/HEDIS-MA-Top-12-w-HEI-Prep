@@ -92,6 +92,8 @@ try:
 except ImportError:
     raise ImportError("shiny is required. Run: pip install shiny")
 
+from .ui.mobile_badge import mobile_badge
+
 # Synthetic RESOURCES catalogue — 5 columns for Catalogue tab
 RESOURCES: list[dict[str, Any]] = [
     {"resource_id": "s3-staging-analytics", "region": "eu-west-1", "type": "s3", "encryption_enabled": False, "is_public": True},
@@ -430,7 +432,11 @@ _CSS = """
 
 app_ui = ui.page_fluid(
     ui.tags.head(ui.tags.style(_CSS)),
-    ui.panel_title("SovereignShield — Compliance Remediation"),
+    ui.div(
+        ui.panel_title("SovereignShield — Compliance Remediation"),
+        mobile_badge(url="https://rreichert-sovereignshield-mobile.hf.space", accent_color="#10b981"),
+        class_="d-flex align-items-center gap-2 mb-2",
+    ),
     ui.navset_card_pill(
         ui.nav_panel(
             "Catalogue",
@@ -1381,7 +1387,7 @@ data_residency { input.region != "" }
                 ui.column(
                     4,
                     ui.card(
-                        ui.card_header("Sovereign Cloud Compliance Audit — Senior Consultant Rate"),
+                        ui.card_header("Sovereign Cloud Compliance Audit"),
                         ui.card_body(
                         ui.p(
                             "End-to-end OPA policy evaluation of your AWS/Azure "
@@ -1401,7 +1407,7 @@ data_residency { input.region != "" }
                 ui.column(
                     4,
                     ui.card(
-                        ui.card_header("Agentic AI System Design — Senior Consultant Rate"),
+                        ui.card_header("Agentic AI System Design"),
                         ui.card_body(
                             ui.p(
                                 "Architecture and implementation of Compound AI systems with "
@@ -1421,7 +1427,7 @@ data_residency { input.region != "" }
                 ui.column(
                     4,
                     ui.card(
-                        ui.card_header("HEDIS/RADV Analytics Consulting — Consulting Rate"),
+                        ui.card_header("HEDIS/RADV Analytics Consulting"),
                         ui.card_body(
                             ui.p(
                                 "Medicare Advantage analytics from gap closure to RADV audit "
@@ -1441,11 +1447,11 @@ data_residency { input.region != "" }
             ),
             ui.div(
                 ui.p("Available March 2026 | Contract | Remote", class_="mb-2"),
-                ui.input_action_button(
-                    "contact_btn",
-                    "Discuss Engagement: reichert.starguardai@email.com",
+                ui.a(
+                    "reichert.starguardai@gmail.com",
+                    href="mailto:reichert.starguardai@gmail.com",
                     class_="btn",
-                    style=f"background-color:{_BRAND_GOLD}; color:#000;",
+                    style=f"background-color:{_BRAND_GREEN}; color:#fff; padding: 10px 20px; display: inline-block; border-radius: 8px; text-decoration: none;",
                 ),
                 class_="text-center mt-4 p-3",
             ),
