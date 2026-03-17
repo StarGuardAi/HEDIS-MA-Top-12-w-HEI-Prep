@@ -2,6 +2,7 @@
 Platform Hub — Supabase client for platform_sessions and cross_app_findings.
 Shared by AuditShield, StarGuard, and SovereignShield integrations.
 Uses SUPABASE_URL + key from (in order): SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_KEY.
+Schema: platform_sessions (app_name, created_at), cross_app_findings (status DEFAULT 'open').
 """
 from __future__ import annotations
 
@@ -38,9 +39,10 @@ def insert_platform_session(app_name: str, session_id: str | None = None, **kwar
     if not client:
         return None
     try:
-        row: dict[str, Any] = {"app_name": app_name}
-        if session_id is not None:
-            row["session_id"] = str(session_id)
+        row: dict[str, Any] = {
+            "app_name": app_name,
+            "session_id": str(session_id) if session_id else None,
+        }
         row.update(kwargs)
         r = client.table("platform_sessions").insert(row).execute()
         if r.data and len(r.data) > 0:
@@ -70,6 +72,7 @@ def insert_cross_app_finding(
             "title": title,
             "description": description or "",
             "severity": severity,
+            "status": "open",
         }
         if session_id is not None:
             row["session_id"] = session_id
