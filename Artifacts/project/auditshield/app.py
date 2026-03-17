@@ -101,6 +101,8 @@ from starguard_core.auth import (
 )
 from starguard_core.hcc import run_compound_analysis
 
+from auditshield_platform_integration import register_session, record_finding
+
 APP_NAME = "AuditShield-Live"
 
 # Feature name for RADV gating (radv_calculator = Pro tier - Week 2)
@@ -650,6 +652,12 @@ def server(input, output, session):
 
     # Initialization flag - prevents init from re-running and overwriting user data
     _initialized = reactive.Value(False)
+
+    try:
+        register_session(app_name="auditshield",
+                        session_id=getattr(session, "session_id", None))
+    except Exception:
+        pass
 
     # Reactive values
     provider_scores_data = reactive.Value(pd.DataFrame())
@@ -1522,6 +1530,18 @@ def server(input, output, session):
         )
         selected_audit_id.set(audit_id)
         _refresh_active_audits()
+
+        try:
+            record_finding(
+                source_app="auditshield",
+                finding_type="hcc_flag",
+                title=f"RADV Audit {audit_id}",
+                description=f"Audit {input.new_audit_notice_id()} - {input.new_contract_id()}",
+                severity="high" if sample_size > 100 else "medium",
+                session_id=getattr(session, "session_id", None),
+            )
+        except Exception:
+            pass
 
     @output
     @render.ui
