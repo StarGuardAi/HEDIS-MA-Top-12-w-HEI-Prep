@@ -93,8 +93,23 @@ except ImportError:
     raise ImportError("shiny is required. Run: pip install shiny")
 
 from .ui.mobile_badge import mobile_badge
+from sovereignshield_platform_integration import register_session, record_finding
 
 # Synthetic RESOURCES catalogue — 5 columns for Catalogue tab
+
+
+def _opa_severity(violation: dict) -> str:
+    sev = str(violation.get("severity", "")).lower()
+    if sev in ("critical", "high", "medium", "low"):
+        return sev
+    rule = str(violation.get("violation_type", violation.get("rule", ""))).lower()
+    if any(k in rule for k in ("phi", "encrypt", "hipaa", "pii")):
+        return "critical"
+    if any(k in rule for k in ("auth", "access", "iam", "role")):
+        return "high"
+    return "medium"
+
+
 RESOURCES: list[dict[str, Any]] = [
     {"resource_id": "s3-staging-analytics", "region": "eu-west-1", "type": "s3", "encryption_enabled": False, "is_public": True},
     {"resource_id": "ec2-prod-api", "region": "us-east-1", "type": "ec2", "encryption_enabled": True, "is_public": False},
@@ -1166,6 +1181,27 @@ data_residency { input.region != "" }
         if run_id:
             record_run_status.set(f"Run recorded (id: {run_id[:8]}...)")
             history_refresh_trigger.set(history_refresh_trigger() + 1)
+            opa_violations = _violations()
+            tf = input.tf_upload()
+            uploaded_filename = tf[0]["name"] if tf and len(tf) > 0 else "synthetic demo data"
+            try:
+                for violation in opa_violations:
+                    record_finding(
+                        source_app="sovereignshield",
+                        finding_type="opa_violation",
+                        title=f"Policy violation: {violation.get('violation_type', violation.get('rule', 'unknown'))}",
+                        description=violation.get("detail", violation.get("message")),
+                        severity=_opa_severity(violation),
+                        session_id=getattr(session, "session_id", None),
+                        policy_id=violation.get("violation_type", violation.get("rule")),
+                        payload={
+                            "opa_result": violation,
+                            "terraform_file": uploaded_filename,
+                            "audit_run_id": run_id,
+                        },
+                    )
+            except Exception:
+                pass
         else:
             record_run_status.set("Supabase unavailable or tables missing. Check env and run audit_runs_schema.sql.")
 
