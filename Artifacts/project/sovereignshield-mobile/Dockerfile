@@ -17,4 +17,4 @@ COPY . .
 
 # HF Spaces inject secrets as env vars; load_dotenv finds .env if present
 EXPOSE 7860
-CMD ["shiny", "run", "app.py", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["shiny", "run", "Artifacts/project/sovereignshield-mobile/app.py", "--host", "0.0.0.0", "--port", "7860"]
