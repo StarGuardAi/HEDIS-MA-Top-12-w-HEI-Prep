@@ -101,16 +101,28 @@
 }
 
 /* === 12. Overlay & Nav Component === */
+/* fix(android): hamburger dedup — hide custom hamburger, rely on Bootstrap toggler styled brand gold */
 @media (max-width: 767px) {
   .sidebar-backdrop, .offcanvas-backdrop { background: rgba(0,0,0,0.5); z-index: 1049; }
   .nav-mobile-component { position: relative; }
   .mobile-hamburger-wrap { position: fixed; top: 12px; left: 12px; z-index: 1060; }
   .mobile-hamburger {
-    width: 44px; height: 44px; border: none; background: var(--brand-primary);
-    border-radius: 8px; display: flex; flex-direction: column; justify-content: center;
-    align-items: center; gap: 5px; cursor: pointer; transition: background 0.2s;
+    display: none !important; /* dedup: use Bootstrap toggler only */
   }
-  .mobile-hamburger:hover { background: var(--brand-primary-hover); }
+  /* Bootstrap toggler — brand gold, 44px touch target */
+  .navbar-toggler, .sidebar-toggle, [data-bs-toggle="offcanvas"], .bslib-sidebar-toggle {
+    min-width: var(--touch-min); min-height: var(--touch-min);
+    background: var(--brand-gold) !important;
+    border: 2px solid rgba(255,193,7,0.6) !important;
+    border-radius: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .navbar-toggler:hover, .sidebar-toggle:hover {
+    background: #e6a800 !important;
+  }
+  .navbar-toggler .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280,0,0,0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
   .mobile-hamburger .hamburger-line {
     width: 20px; height: 2px; background: #fff; border-radius: 1px;
     transition: transform 0.3s, opacity 0.3s;
@@ -129,6 +141,7 @@
     min-width: 56px; min-height: 56px; padding: 0 20px;
     background: var(--brand-accent); color: #fff !important; border-radius: 28px;
     text-decoration: none; font-weight: 600; box-shadow: 0 4px 12px var(--brand-accent-shadow);
+    -webkit-tap-highlight-color: transparent; /* Android tap flash */
   }
   .mobile-fab:hover { color: #fff; opacity: 0.95; }
   .mobile-fab.pulse { animation: fab-pulse 1.5s ease-in-out; }
@@ -149,6 +162,19 @@
   .nav-mobile-component .mobile-hamburger-wrap,
   .nav-mobile-component .mobile-overlay,
   .nav-mobile-component .mobile-fab-wrap { display: none !important; }
+}
+
+/* === 12b. Android — loading overlay GPU compositing + triple-state dismiss === */
+#loading-overlay {
+  will-change: opacity;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+}
+#loading-overlay.dismissed {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* === 13. Sprint 2 — KPI Strip === */
