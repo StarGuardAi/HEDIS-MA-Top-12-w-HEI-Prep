@@ -92,6 +92,23 @@ git push space main --force
 
 **Monitor:** https://huggingface.co/spaces/rreichert/auditshield-live
 
+### Monorepo root deploy (recommended)
+
+GitHub `main` for this project includes **binary files** outside `Artifacts/project/auditshield`. Pushing the **full monorepo** to a Space (`git push space main`) is **rejected** by Hugging Face. Deploy only the app subtree:
+
+```powershell
+# From monorepo root (e.g. HEDIS-MA-Top-12-w-HEI-Prep)
+.\deploy_hf_auditshield.ps1
+```
+
+Same pattern for other apps (run from repo root):
+
+| Script | Space (prefix) |
+|--------|----------------|
+| `.\deploy_hf_auditshield.ps1` | `Artifacts/project/auditshield` → [auditshield-live](https://huggingface.co/spaces/rreichert/auditshield-live) |
+| `.\deploy_hf_starguard_desktop.ps1` | `Artifacts/project/auditshield/starguard-desktop` → [starguard-desktop](https://huggingface.co/spaces/rreichert/starguard-desktop) |
+| `.\deploy_hf_sovereignshield.ps1` | `Artifacts/project/sovereignshield` → [sovereignshield-mobile](https://huggingface.co/spaces/rreichert/sovereignshield-mobile) |
+
 ### Timeline (0 → 11 min)
 
 | Time | Action |
