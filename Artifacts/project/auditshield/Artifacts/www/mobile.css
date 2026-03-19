@@ -46,7 +46,7 @@
 }
 
 /* === 5. Sidebar Toggle — touch target === */
-/* Native toggles hidden on mobile (see §12); nav_mobile_ui supplies the hamburger. */
+/* Mobile: bslib collapse-toggle only (see §12); duplicate nav toggles stay hidden. */
 
 /* === 6. Nav Tabs — horizontal scroll === */
 @media (max-width: 767px) {
@@ -96,50 +96,71 @@
   .main { padding-bottom: 24px; }
 }
 
-/* === 12. Overlay & Nav Component === */
-/* fix(mobile): hide bslib/bootstrap toggles; only nav_mobile_ui hamburger stays visible */
+/* === 12. Mobile sidebar toggle + FAB === */
 @media (max-width: 767px) {
   .sidebar-backdrop, .offcanvas-backdrop { background: rgba(0,0,0,0.5); z-index: 1049; }
-  .nav-mobile-component { position: relative; }
-  .mobile-hamburger-wrap { position: fixed; top: 12px; left: 12px; z-index: 1060; }
+  /* Hide duplicate controls; keep bslib collapse-toggle (native sidebar logic) */
   .sidebar-toggle,
   .navbar-toggler,
-  button.collapse-toggle,
-  .bslib-sidebar-layout > button.collapse-toggle,
   [data-bs-toggle="offcanvas"] {
     display: none !important;
   }
-  .mobile-hamburger .hamburger-line {
-    width: 20px; height: 2px; background: #fff; border-radius: 1px;
-    transition: transform 0.3s, opacity 0.3s;
+  /* Brand hamburger: bslib toggle only — purple pill, gold chevron, 44px, top-left */
+  .bslib-sidebar-layout > button.collapse-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: fixed !important;
+    top: 12px !important;
+    left: 12px !important;
+    z-index: 1060 !important;
+    min-width: var(--touch-min) !important;
+    min-height: var(--touch-min) !important;
+    width: var(--touch-min) !important;
+    height: var(--touch-min) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #4A3E8F !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #D4AF37 !important;
+    box-shadow: 0 2px 8px rgba(74, 62, 143, 0.45) !important;
+    -webkit-tap-highlight-color: transparent;
   }
-  .mobile-hamburger.open .hamburger-line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .mobile-hamburger.open .hamburger-line:nth-child(2) { opacity: 0; }
-  .mobile-hamburger.open .hamburger-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-  .mobile-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1049;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  .bslib-sidebar-layout > button.collapse-toggle:hover {
+    background: #3d346f !important;
+    color: #D4AF37 !important;
   }
-  .mobile-overlay.visible { opacity: 1; pointer-events: auto; }
+  .bslib-sidebar-layout > button.collapse-toggle .collapse-icon,
+  .bslib-sidebar-layout > button.collapse-toggle svg {
+    fill: #D4AF37 !important;
+    color: #D4AF37 !important;
+  }
   .mobile-fab-wrap { position: fixed; bottom: 24px; right: 20px; z-index: 1055; }
   .mobile-fab {
     display: flex; align-items: center; justify-content: center;
     min-width: 56px; min-height: 56px; padding: 0 20px;
-    background: var(--brand-accent); color: #fff !important; border-radius: 28px;
-    text-decoration: none; font-weight: 600; box-shadow: 0 4px 12px var(--brand-accent-shadow);
-    -webkit-tap-highlight-color: transparent; /* Android tap flash */
+    border-radius: 28px;
+    text-decoration: none; font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
   }
-  .mobile-fab:hover { color: #fff; opacity: 0.95; }
+  .mobile-fab:hover { opacity: 0.95; }
   .mobile-fab.pulse { animation: fab-pulse 1.5s ease-in-out; }
+  /* FAB: hardcoded purple/gold — wins over any variable or Bootstrap link styles */
   .mobile-fab,
   #nav_mobile_fab {
     background: #4A3E8F !important;
-    color: var(--brand-gold) !important;
+    background-color: #4A3E8F !important;
+    color: #D4AF37 !important;
     box-shadow: 0 4px 12px rgba(74, 62, 143, 0.45) !important;
   }
   .mobile-fab:hover,
-  #nav_mobile_fab:hover {
-    color: var(--brand-gold) !important;
+  #nav_mobile_fab:hover,
+  .mobile-fab:focus,
+  #nav_mobile_fab:focus {
+    color: #D4AF37 !important;
+    background: #4A3E8F !important;
+    background-color: #4A3E8F !important;
   }
 }
 @keyframes fab-pulse {
@@ -155,9 +176,7 @@
   50% { box-shadow: 0 0 16px var(--brand-gold), 0 0 24px rgba(255,193,7,0.5); }
 }
 @media (min-width: 768px) {
-  .nav-mobile-component .mobile-hamburger-wrap,
-  .nav-mobile-component .mobile-overlay,
-  .nav-mobile-component .mobile-fab-wrap { display: none !important; }
+  .mobile-fab-wrap { display: none !important; }
 }
 
 /* === 12b. Android — loading overlay GPU compositing + triple-state dismiss === */
