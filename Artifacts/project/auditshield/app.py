@@ -652,7 +652,7 @@ app_ui = ui.page_fluid(
             )
         ),
 
-        title=ui.span("AuditShield-Live - Phase 1+2+3 ", mobile_badge(url="https://tinyurl.com/bdevpdz5", accent_color="#D4AF37")),
+        title=ui.span("AuditShield-Live - Phase 1+2+3 ", mobile_badge(url="https://rreichert-auditshield-live.hf.space", accent_color="#D4AF37")),
         id="main_nav",
         # navbar_options removed for HuggingFace Shiny compatibility (older version)
     ),

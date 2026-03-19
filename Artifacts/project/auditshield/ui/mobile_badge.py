@@ -11,7 +11,7 @@ QRCODE_CDN = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.j
 
 def mobile_badge(
     *,
-    url: str = "https://tinyurl.com/bdevpdz5",
+    url: str = "https://rreichert-auditshield-live.hf.space",
     accent_color: str = "#D4AF37",
     id: str = "mobile_badge",
     label: str = "📱 Mobile",
