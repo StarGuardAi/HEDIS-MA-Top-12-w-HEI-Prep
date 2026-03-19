@@ -5,8 +5,8 @@
 :root {
   --brand-primary: #40B5AD;
   --brand-primary-hover: #35a098;
-  --brand-accent: #dc3545;
-  --brand-accent-shadow: rgba(220, 53, 69, 0.4);
+  --brand-accent: #4A3E8F;
+  --brand-accent-shadow: rgba(74, 62, 143, 0.4);
   --brand-gold: #ffc107;
   --mobile-gap: 12px;
   --touch-min: 44px;
@@ -46,11 +46,7 @@
 }
 
 /* === 5. Sidebar Toggle — touch target === */
-@media (max-width: 767px) {
-  .sidebar-toggle, .navbar-toggler, [data-bs-toggle="offcanvas"] {
-    min-width: var(--touch-min); min-height: var(--touch-min); padding: 10px;
-  }
-}
+/* Native toggles hidden on mobile (see §12); nav_mobile_ui supplies the hamburger. */
 
 /* === 6. Nav Tabs — horizontal scroll === */
 @media (max-width: 767px) {
@@ -101,27 +97,15 @@
 }
 
 /* === 12. Overlay & Nav Component === */
-/* fix(android): hamburger dedup — hide custom hamburger, rely on Bootstrap toggler styled brand gold */
+/* fix(mobile): hide bslib/bootstrap toggles; only nav_mobile_ui hamburger stays visible */
 @media (max-width: 767px) {
   .sidebar-backdrop, .offcanvas-backdrop { background: rgba(0,0,0,0.5); z-index: 1049; }
   .nav-mobile-component { position: relative; }
   .mobile-hamburger-wrap { position: fixed; top: 12px; left: 12px; z-index: 1060; }
-  .mobile-hamburger {
-    display: none !important; /* dedup: use Bootstrap toggler only */
-  }
-  /* Bootstrap toggler — brand gold, 44px touch target */
-  .navbar-toggler, .sidebar-toggle, [data-bs-toggle="offcanvas"], .bslib-sidebar-toggle {
-    min-width: var(--touch-min); min-height: var(--touch-min);
-    background: var(--brand-gold) !important;
-    border: 2px solid rgba(255,193,7,0.6) !important;
-    border-radius: 8px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .navbar-toggler:hover, .sidebar-toggle:hover {
-    background: #e6a800 !important;
-  }
-  .navbar-toggler .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280,0,0,0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  .sidebar-toggle,
+  .navbar-toggler,
+  [data-bs-toggle="offcanvas"] {
+    display: none !important;
   }
   .mobile-hamburger .hamburger-line {
     width: 20px; height: 2px; background: #fff; border-radius: 1px;
@@ -145,6 +129,16 @@
   }
   .mobile-fab:hover { color: #fff; opacity: 0.95; }
   .mobile-fab.pulse { animation: fab-pulse 1.5s ease-in-out; }
+  .mobile-fab,
+  #nav_mobile_fab {
+    background: #4A3E8F !important;
+    color: var(--brand-gold) !important;
+    box-shadow: 0 4px 12px rgba(74, 62, 143, 0.45) !important;
+  }
+  .mobile-fab:hover,
+  #nav_mobile_fab:hover {
+    color: var(--brand-gold) !important;
+  }
 }
 @keyframes fab-pulse {
   0%, 100% { box-shadow: 0 4px 12px var(--brand-accent-shadow); }
