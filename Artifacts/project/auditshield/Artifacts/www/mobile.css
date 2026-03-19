@@ -104,6 +104,8 @@
   .mobile-hamburger-wrap { position: fixed; top: 12px; left: 12px; z-index: 1060; }
   .sidebar-toggle,
   .navbar-toggler,
+  button.collapse-toggle,
+  .bslib-sidebar-layout > button.collapse-toggle,
   [data-bs-toggle="offcanvas"] {
     display: none !important;
   }
