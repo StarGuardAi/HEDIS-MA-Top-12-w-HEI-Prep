@@ -276,8 +276,6 @@ app_ui = ui.page_fluid(
         class_="mobile-fab-wrap",
     ),
     ui.page_navbar(
-        # Default tab must include a sidebar so mobile #rsi-drawer can be assigned on load (bslib hides sidebars at narrow widths).
-        selected="Provider Scorecard",
         # ==================== EXECUTIVE / STRATEGIC ====================
         # Tab 1: Executive View (overview dashboard - start here)
         ui.nav_panel(
@@ -672,6 +670,8 @@ app_ui = ui.page_fluid(
 
         title=ui.span("AuditShield-Live - Phase 1+2+3 ", mobile_badge(url="https://rreichert-auditshield-live.hf.space", accent_color="#D4AF37")),
         id="main_nav",
+        # Default tab with sidebar so mobile #rsi-drawer can be assigned on load (bslib hides sidebars at narrow widths).
+        selected="Provider Scorecard",
         # navbar_options removed for HuggingFace Shiny compatibility (older version)
     ),
     create_footer()
