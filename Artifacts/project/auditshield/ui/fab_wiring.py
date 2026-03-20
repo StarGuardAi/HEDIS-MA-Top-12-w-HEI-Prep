@@ -1,7 +1,8 @@
 """
 Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, sidebar close, scroll, gold pulse.
 FAB uses DOM-only tab activation (no Shiny.setInputValue) to avoid server reactives crashing the UI.
-Mobile: injects #rsi-hamburger when viewport ≤768px — toggles .bslib-sidebar-layout.sidebar-collapsed, else collapse-toggle click, else Offcanvas.
+Mobile: injects #rsi-hamburger — opens sidebar via window.bslib.Sidebar.getInstance(layout).toggle()
+when available (bslib’s real path: class sidebar-collapsed + events); else collapse-toggle click; else Offcanvas.
 """
 from shiny import ui
 
@@ -43,12 +44,19 @@ function injectHamburgerStyles() {{
 }}
 
 function toggleNativeSidebar() {{
-  var sl = document.querySelector('.bslib-sidebar-layout');
-  if (sl) {{
-    sl.classList.toggle('sidebar-collapsed');
-    return;
-  }}
-  var ct = document.querySelector('button.collapse-toggle');
+  try {{
+    var sl = document.querySelector('.bslib-sidebar-layout[data-bslib-sidebar-init]')
+      || document.querySelector('.bslib-sidebar-layout');
+    if (sl && window.bslib && window.bslib.Sidebar && window.bslib.Sidebar.getInstance) {{
+      var inst = window.bslib.Sidebar.getInstance(sl);
+      if (inst && typeof inst.toggle === 'function') {{
+        inst.toggle();
+        return;
+      }}
+    }}
+  }} catch (e) {{}}
+  var ct = document.querySelector('.bslib-sidebar-layout > .collapse-toggle')
+    || document.querySelector('button.collapse-toggle');
   if (ct) {{
     ct.click();
     return;
