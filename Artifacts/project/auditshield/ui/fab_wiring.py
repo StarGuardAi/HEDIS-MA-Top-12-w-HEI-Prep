@@ -1,8 +1,8 @@
 """
 Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, sidebar close, scroll, gold pulse.
 FAB uses DOM-only tab activation (no Shiny.setInputValue) to avoid server reactives crashing the UI.
-Mobile: injects #rsi-hamburger — opens sidebar via window.bslib.Sidebar.getInstance(layout).toggle()
-when available (bslib’s real path: class sidebar-collapsed + events); else collapse-toggle click; else Offcanvas.
+Mobile: #rsi-hamburger — bslib Sidebar.getInstance(layout).toggle() with up to 10 retries @ 200ms;
+then collapse-toggle click, Offcanvas, or manual sidebar-collapsed toggle.
 """
 from shiny import ui
 
@@ -43,18 +43,7 @@ function injectHamburgerStyles() {{
   document.head.appendChild(s);
 }}
 
-function toggleNativeSidebar() {{
-  try {{
-    var sl = document.querySelector('.bslib-sidebar-layout[data-bslib-sidebar-init]')
-      || document.querySelector('.bslib-sidebar-layout');
-    if (sl && window.bslib && window.bslib.Sidebar && window.bslib.Sidebar.getInstance) {{
-      var inst = window.bslib.Sidebar.getInstance(sl);
-      if (inst && typeof inst.toggle === 'function') {{
-        inst.toggle();
-        return;
-      }}
-    }}
-  }} catch (e) {{}}
+function toggleNativeSidebarFallback() {{
   var ct = document.querySelector('.bslib-sidebar-layout > .collapse-toggle')
     || document.querySelector('button.collapse-toggle');
   if (ct) {{
@@ -66,7 +55,34 @@ function toggleNativeSidebar() {{
     try {{
       bootstrap.Offcanvas.getOrCreateInstance(off).toggle();
     }} catch (e) {{}}
+    return;
   }}
+  var sl = document.querySelector('.bslib-sidebar-layout');
+  if (sl) sl.classList.toggle('sidebar-collapsed');
+}}
+
+function toggleNativeSidebar() {{
+  var maxAttempts = 10;
+  var delayMs = 200;
+  function attempt(i) {{
+    try {{
+      var sl = document.querySelector('.bslib-sidebar-layout[data-bslib-sidebar-init]')
+        || document.querySelector('.bslib-sidebar-layout');
+      if (sl && window.bslib && window.bslib.Sidebar && window.bslib.Sidebar.getInstance) {{
+        var inst = window.bslib.Sidebar.getInstance(sl);
+        if (inst && typeof inst.toggle === 'function') {{
+          inst.toggle();
+          return;
+        }}
+      }}
+    }} catch (e) {{}}
+    if (i + 1 < maxAttempts) {{
+      setTimeout(function() {{ attempt(i + 1); }}, delayMs);
+    }} else {{
+      toggleNativeSidebarFallback();
+    }}
+  }}
+  attempt(0);
 }}
 
 function ensureMobileHamburger() {{
