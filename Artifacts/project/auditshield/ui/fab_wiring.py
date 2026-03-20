@@ -1,7 +1,7 @@
 """
-Sprint 3: FAB wiring — real Shiny tab switch, sidebar close, scroll-to-top, gold pulse on Run Audit.
-Uses Shiny.setInputValue() for server, bootstrap.Tab.show() for DOM.
-Default IDs: main_tabs, audit, run_audit. Confirm via browser console if your app uses different values.
+Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, sidebar close, scroll, gold pulse.
+FAB uses DOM-only tab activation (no Shiny.setInputValue) to avoid server reactives crashing the UI.
+Mobile: injects #rsi-hamburger when viewport ≤768px — clicks native collapse-toggle or Offcanvas API.
 """
 from shiny import ui
 
@@ -14,23 +14,71 @@ def fab_wiring_script(
     fab_id: str = "nav_mobile_fab",
 ) -> ui.Tag:
     """
-    One-time setup: wires the FAB to switch to audit tab, close sidebar, scroll top, pulse Run Audit.
-    Include once in app head or with nav_mobile component.
+    Wire the Run Audit FAB; inject mobile hamburger (#rsi-hamburger).
+
+    main_tabs_id is kept for call-site compatibility; it is not passed to the client (no setInputValue).
     """
+    _ = main_tabs_id  # unused — server nav input sync removed for mobile FAB path
     return ui.tags.script(
         f"""
 (function(){{
 'use strict';
-var MT = '{main_tabs_id}';
 var AT = '{audit_tab_id}';
 var RB = '{run_audit_btn_id}';
 var FID = '{fab_id}';
+
+function injectHamburgerStyles() {{
+  if (document.getElementById('rsi-hamburger-styles')) return;
+  var s = document.createElement('style');
+  s.id = 'rsi-hamburger-styles';
+  s.textContent = '#rsi-hamburger{{position:fixed!important;top:10px!important;left:12px!important;'
+    + 'z-index:1062!important;width:44px!important;height:44px!important;padding:0!important;margin:0!important;'
+    + 'border:none!important;border-radius:8px!important;background:#4A3E8F!important;'
+    + 'box-shadow:0 2px 8px rgba(74,62,143,0.45)!important;display:flex!important;flex-direction:column!important;'
+    + 'align-items:center!important;justify-content:center!important;gap:5px!important;'
+    + 'cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;}}'
+    + '#rsi-hamburger .rsi-bar{{display:block;width:20px;height:2px;background:#D4AF37!important;'
+    + 'border-radius:1px;}}';
+  document.head.appendChild(s);
+}}
+
+function toggleNativeSidebar() {{
+  var t = document.querySelector('button.collapse-toggle');
+  if (t) {{ t.click(); return; }}
+  var off = document.querySelector('.offcanvas');
+  if (off && typeof bootstrap !== 'undefined') {{
+    try {{
+      bootstrap.Offcanvas.getOrCreateInstance(off).toggle();
+    }} catch (e) {{}}
+  }}
+}}
+
+function ensureMobileHamburger() {{
+  var mq = window.matchMedia('(max-width: 768px)');
+  if (!mq.matches) {{
+    var rm = document.getElementById('rsi-hamburger');
+    if (rm) rm.remove();
+    return;
+  }}
+  if (document.getElementById('rsi-hamburger')) return;
+  injectHamburgerStyles();
+  var btn = document.createElement('button');
+  btn.id = 'rsi-hamburger';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Toggle sidebar');
+  btn.innerHTML = '<span class="rsi-bar"></span><span class="rsi-bar"></span><span class="rsi-bar"></span>';
+  btn.addEventListener('click', function(e) {{
+    e.preventDefault();
+    e.stopPropagation();
+    toggleNativeSidebar();
+  }});
+  document.body.appendChild(btn);
+}}
 
 function doFabAction() {{
   var fab = document.getElementById(FID);
   if (!fab) return;
 
-  // 1. Close sidebar
   var open = document.querySelectorAll('.offcanvas.show');
   open.forEach(function(el){{
     if (typeof bootstrap !== 'undefined') {{
@@ -39,12 +87,6 @@ function doFabAction() {{
     }}
   }});
 
-  // 2. Shiny tab switch (server)
-  if (typeof Shiny !== 'undefined' && Shiny.setInputValue) {{
-    Shiny.setInputValue(MT, AT, {{ priority: 'event' }});
-  }}
-
-  // 3. Bootstrap tab show (DOM)
   var tabEl = document.querySelector('[data-bs-target="#' + AT + '"], [data-value="' + AT + '"], [href="#' + AT + '"]');
   if (tabEl) {{
     if (typeof bootstrap !== 'undefined') {{
@@ -55,10 +97,8 @@ function doFabAction() {{
     }}
   }}
 
-  // 4. Scroll to top
   window.scrollTo({{ top: 0, behavior: 'smooth' }});
 
-  // 5. Gold pulse on Run Audit button (after tab visible)
   setTimeout(function(){{
     var runBtn = document.getElementById(RB) || document.querySelector('[id$="' + RB + '"]');
     if (runBtn) {{
@@ -70,7 +110,7 @@ function doFabAction() {{
   }}, 400);
 }}
 
-function setup() {{
+function setupFab() {{
   var fab = document.getElementById(FID);
   if (fab && !fab.dataset.fabWired) {{
     fab.dataset.fabWired = '1';
@@ -81,11 +121,17 @@ function setup() {{
   }}
 }}
 
+function tick() {{
+  ensureMobileHamburger();
+  setupFab();
+}}
+
 if (document.readyState === 'loading') {{
-  document.addEventListener('DOMContentLoaded', setup);
-}} else {{ setup(); }}
-setTimeout(setup, 500);
-setTimeout(setup, 2000);
+  document.addEventListener('DOMContentLoaded', tick);
+}} else {{ tick(); }}
+setTimeout(tick, 500);
+setTimeout(tick, 2000);
+window.addEventListener('resize', function() {{ ensureMobileHamburger(); }});
 }})();
 """
     )

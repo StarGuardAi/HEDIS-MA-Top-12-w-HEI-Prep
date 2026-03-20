@@ -199,6 +199,7 @@ app_ui = ui.page_fluid(
                 .navbar-toggler { display: none !important; }
             }
         """),
+        # Mobile: Run Audit FAB + client-only tab switch + injected #rsi-hamburger (see ui/fab_wiring.py)
         fab_wiring_script(
             main_tabs_id="main_nav",
             audit_tab_id="Mock Audit",
