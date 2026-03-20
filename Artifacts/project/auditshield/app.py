@@ -1229,8 +1229,23 @@ def server(input, output, session):
     @reactive.Effect
     @reactive.event(input.run_mock_audit)
     async def run_audit_simulation():
-        radv_result = await handle_radv_request(_get_api_key())
-        if radv_result.get("status") == "upgrade_required":
+        try:
+            radv_result = await handle_radv_request(_get_api_key())
+            if radv_result.get("status") == "upgrade_required":
+                return
+        except Exception as e:
+            print(f"[Mock Audit] ERROR (RADV gate): {e}")
+            mock_audit_results_data.set({
+                "audit_summary": {
+                    "sample_size": 100,
+                    "predicted_failures": 14,
+                    "error_rate": 14.0,
+                    "estimated_penalty": 42000,
+                    "recommendations": ["Demo fallback (access check failed)"],
+                    "top_failure_categories": {"Active Cancers": 5, "CHF": 3, "CKD": 2},
+                },
+                "financial_impact": {"severity": "MODERATE", "error_rate": 14.0, "penalty_multiplier": 1.0},
+            })
             return
         try:
             import random
@@ -1286,7 +1301,14 @@ def server(input, output, session):
     @output
     @render.ui
     async def mock_audit_results():
-        radv_result = await handle_radv_request(_get_api_key())
+        try:
+            radv_result = await handle_radv_request(_get_api_key())
+        except Exception as e:
+            return ui.div(
+                ui.p("Unable to verify access for Mock Audit.", class_="text-warning"),
+                ui.p(str(e), class_="small text-muted"),
+                class_="p-4",
+            )
         if radv_result.get("status") == "upgrade_required":
             return _radv_upgrade_ui(radv_result.get("upgrade_url", UPGRADE_URL))
         try:

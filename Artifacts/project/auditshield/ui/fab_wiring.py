@@ -1,7 +1,7 @@
 """
 Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, sidebar close, scroll, gold pulse.
 FAB uses DOM-only tab activation (no Shiny.setInputValue) to avoid server reactives crashing the UI.
-Mobile: injects #rsi-hamburger when viewport ≤768px — clicks native collapse-toggle or Offcanvas API.
+Mobile: injects #rsi-hamburger when viewport ≤768px — toggles .bslib-sidebar-layout.sidebar-collapsed, else collapse-toggle click, else Offcanvas.
 """
 from shiny import ui
 
@@ -43,8 +43,16 @@ function injectHamburgerStyles() {{
 }}
 
 function toggleNativeSidebar() {{
-  var t = document.querySelector('button.collapse-toggle');
-  if (t) {{ t.click(); return; }}
+  var sl = document.querySelector('.bslib-sidebar-layout');
+  if (sl) {{
+    sl.classList.toggle('sidebar-collapsed');
+    return;
+  }}
+  var ct = document.querySelector('button.collapse-toggle');
+  if (ct) {{
+    ct.click();
+    return;
+  }}
   var off = document.querySelector('.offcanvas');
   if (off && typeof bootstrap !== 'undefined') {{
     try {{
