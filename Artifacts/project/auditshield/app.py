@@ -276,6 +276,8 @@ app_ui = ui.page_fluid(
         class_="mobile-fab-wrap",
     ),
     ui.page_navbar(
+        # Default tab must include a sidebar so mobile #rsi-drawer can be assigned on load (bslib hides sidebars at narrow widths).
+        selected="Provider Scorecard",
         # ==================== EXECUTIVE / STRATEGIC ====================
         # Tab 1: Executive View (overview dashboard - start here)
         ui.nav_panel(

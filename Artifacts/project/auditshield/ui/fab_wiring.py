@@ -59,7 +59,12 @@ function getActiveSidebar() {{
       console.log(DBG, 'getActiveSidebar: via pane', panePick.className, 'sidebar=', sb.tagName, sb.className, 'visible=', _visibleEl(sb));
       return sb;
     }}
-    console.log(DBG, 'getActiveSidebar: active pane has no sidebar (e.g. Executive View)', panePick.className);
+    var domFb = document.querySelector('.bslib-sidebar-layout > .sidebar');
+    if (domFb) {{
+      console.log(DBG, 'getActiveSidebar: active pane has no sidebar; DOM fallback first .sidebar', domFb.className);
+      return domFb;
+    }}
+    console.log(DBG, 'getActiveSidebar: active pane has no sidebar and no .sidebar in DOM', panePick.className);
     return null;
   }}
   console.log(DBG, 'getActiveSidebar: no active tab panel', tried.map(function(t) {{ return t.label + ':' + !!t.el; }}).join(', '));
