@@ -24,8 +24,13 @@
 }
 
 /* === 3. Pure CSS drawer (< 768px): live #rsi-drawer sidebar, no bslib JS */
+/* bslib sets aside.sidebar to display:none on narrow viewports; without display
+   override, transform never paints (0×0). Only #rsi-drawer is shown — others stay
+   none inside inactive tab-panes. */
 @media (max-width: 767px) {
-  .bslib-sidebar-layout > .sidebar {
+  .bslib-sidebar-layout > .sidebar#rsi-drawer {
+    display: block !important;
+    visibility: visible !important;
     position: fixed !important;
     top: 0;
     left: 0;

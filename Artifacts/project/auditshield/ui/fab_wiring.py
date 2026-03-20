@@ -29,22 +29,75 @@ def fab_wiring_script(
 var AT = '{audit_tab_id}';
 var RB = '{run_audit_btn_id}';
 var FID = '{fab_id}';
+var DBG = '[rsi-drawer]';
 
-function getActiveSidebar() {{
-  var pane = document.querySelector('.tab-pane.active');
-  if (pane) {{
-    var sb = pane.querySelector('.bslib-sidebar-layout > .sidebar');
-    if (sb) return sb;
-  }}
-  return document.querySelector('.bslib-sidebar-layout > .sidebar');
+function _visibleEl(el) {{
+  if (!el) return false;
+  var st = window.getComputedStyle(el);
+  if (st.display === 'none' || st.visibility === 'hidden') return false;
+  var r = el.getBoundingClientRect();
+  return r.width > 0 && r.height > 0;
 }}
 
+function _sidebarCandidates() {{
+  return document.querySelectorAll('.bslib-sidebar-layout > .sidebar');
+}}
+
+function getActiveSidebar() {{
+  var p1 = document.querySelector('.tab-pane.active.show');
+  var p2 = document.querySelector('.tab-pane.active');
+  var p3 = document.querySelector('[role="tabpanel"].active');
+  var tried = [
+    {{ label: '.tab-pane.active.show', el: p1 }},
+    {{ label: '.tab-pane.active', el: p2 }},
+    {{ label: '[role=tabpanel].active', el: p3 }}
+  ];
+  var panePick = p1 || p2 || p3;
+  if (panePick) {{
+    var sb = panePick.querySelector('.bslib-sidebar-layout > .sidebar');
+    if (sb) {{
+      console.log(DBG, 'getActiveSidebar: via pane', panePick.className, 'sidebar=', sb.tagName, sb.className, 'visible=', _visibleEl(sb));
+      return sb;
+    }}
+    console.log(DBG, 'getActiveSidebar: active pane has no sidebar (e.g. Executive View)', panePick.className);
+    return null;
+  }}
+  console.log(DBG, 'getActiveSidebar: no active tab panel', tried.map(function(t) {{ return t.label + ':' + !!t.el; }}).join(', '));
+  var all = _sidebarCandidates();
+  console.log(DBG, 'getActiveSidebar: layout count=', document.querySelectorAll('.bslib-sidebar-layout').length, 'direct-child .sidebar count=', all.length);
+  var listed = [];
+  for (var i = 0; i < all.length; i++) {{
+    var s = all[i];
+    listed.push({{
+      i: i,
+      visible: _visibleEl(s),
+      classes: s.className,
+      id: s.id || '',
+      layout: s.parentElement && s.parentElement.className
+    }});
+  }}
+  console.log(DBG, 'getActiveSidebar: candidates', listed);
+  for (var j = 0; j < all.length; j++) {{
+    if (_visibleEl(all[j])) {{
+      console.log(DBG, 'getActiveSidebar: fallback first visible in document', all[j].className);
+      return all[j];
+    }}
+  }}
+  console.log(DBG, 'getActiveSidebar: no sidebar resolved');
+  return null;
+}}
+
+/** @returns {{ assigned: Element|null, previousIdsCleared: number, pickVisible: boolean }} */
 function syncDrawerSidebarId() {{
+  var prev = document.querySelectorAll('#rsi-drawer');
+  var prevN = prev.length;
+  prev.forEach(function(el) {{ el.removeAttribute('id'); }});
   var active = getActiveSidebar();
-  document.querySelectorAll('#rsi-drawer').forEach(function(el) {{
-    el.removeAttribute('id');
-  }});
   if (active) active.id = 'rsi-drawer';
+  var assigned = document.getElementById('rsi-drawer');
+  var out = {{ assigned: assigned || null, previousIdsCleared: prevN, pickVisible: !!(active && _visibleEl(active)) }};
+  console.log(DBG, 'syncDrawerSidebarId', out, assigned ? {{ tag: assigned.tagName, classes: assigned.className, visible: _visibleEl(assigned) }} : null);
+  return out;
 }}
 
 function ensureDrawerChrome() {{
@@ -61,9 +114,17 @@ function ensureDrawerChrome() {{
 }}
 
 function toggleDrawer() {{
-  syncDrawerSidebarId();
-  if (!getActiveSidebar()) return;
+  var sync = syncDrawerSidebarId();
+  var el = sync.assigned;
+  if (!el) {{
+    console.warn(DBG, 'toggleDrawer: abort — no #rsi-drawer assigned after sync');
+    return;
+  }}
+  if (!_visibleEl(el)) {{
+    console.warn(DBG, 'toggleDrawer: assigned sidebar is not visible (check tab/bslib DOM)', el);
+  }}
   var on = document.body.classList.toggle('rsi-drawer-open');
+  console.log(DBG, 'toggleDrawer: body.rsi-drawer-open=', on, 'drawerEl=', el, 'computedTransform=', window.getComputedStyle(el).transform);
   var hb = document.getElementById('rsi-hamburger');
   if (hb) hb.setAttribute('aria-expanded', on ? 'true' : 'false');
 }}
