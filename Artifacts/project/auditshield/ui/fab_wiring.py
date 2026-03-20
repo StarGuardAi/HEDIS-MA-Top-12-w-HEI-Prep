@@ -1,9 +1,11 @@
 """
-Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, sidebar close, scroll, gold pulse.
+Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, scroll, gold pulse.
 FAB uses DOM-only tab activation (no Shiny.setInputValue) to avoid server reactives crashing the UI.
-Mobile: #rsi-hamburger — bslib Sidebar.getInstance(layout).toggle() with up to 10 retries @ 200ms;
-then collapse-toggle click, Offcanvas, or manual sidebar-collapsed toggle.
+Mobile: #rsi-hamburger toggles body.rsi-drawer-open; the active tab's live .sidebar is #rsi-drawer
+(pure CSS transform — no bslib Sidebar, Offcanvas, or collapse-toggle). Cloning sidebar markup would
+duplicate node ids and break Shiny bindings, so the drawer surface is the real sidebar element.
 """
+
 from shiny import ui
 
 
@@ -15,7 +17,7 @@ def fab_wiring_script(
     fab_id: str = "nav_mobile_fab",
 ) -> ui.Tag:
     """
-    Wire the Run Audit FAB; inject mobile hamburger (#rsi-hamburger).
+    Wire the Run Audit FAB; inject mobile hamburger (#rsi-hamburger) and drawer backdrop.
 
     main_tabs_id is kept for call-site compatibility; it is not passed to the client (no setInputValue).
     """
@@ -28,61 +30,42 @@ var AT = '{audit_tab_id}';
 var RB = '{run_audit_btn_id}';
 var FID = '{fab_id}';
 
-function injectHamburgerStyles() {{
-  if (document.getElementById('rsi-hamburger-styles')) return;
-  var s = document.createElement('style');
-  s.id = 'rsi-hamburger-styles';
-  s.textContent = '#rsi-hamburger{{position:fixed!important;top:10px!important;left:12px!important;'
-    + 'z-index:1062!important;width:44px!important;height:44px!important;padding:0!important;margin:0!important;'
-    + 'border:none!important;border-radius:8px!important;background:#4A3E8F!important;'
-    + 'box-shadow:0 2px 8px rgba(74,62,143,0.45)!important;display:flex!important;flex-direction:column!important;'
-    + 'align-items:center!important;justify-content:center!important;gap:5px!important;'
-    + 'cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;}}'
-    + '#rsi-hamburger .rsi-bar{{display:block;width:20px;height:2px;background:#D4AF37!important;'
-    + 'border-radius:1px;}}';
-  document.head.appendChild(s);
+function getActiveSidebar() {{
+  var pane = document.querySelector('.tab-pane.active');
+  if (pane) {{
+    var sb = pane.querySelector('.bslib-sidebar-layout > .sidebar');
+    if (sb) return sb;
+  }}
+  return document.querySelector('.bslib-sidebar-layout > .sidebar');
 }}
 
-function toggleNativeSidebarFallback() {{
-  var ct = document.querySelector('.bslib-sidebar-layout > .collapse-toggle')
-    || document.querySelector('button.collapse-toggle');
-  if (ct) {{
-    ct.click();
-    return;
-  }}
-  var off = document.querySelector('.offcanvas');
-  if (off && typeof bootstrap !== 'undefined') {{
-    try {{
-      bootstrap.Offcanvas.getOrCreateInstance(off).toggle();
-    }} catch (e) {{}}
-    return;
-  }}
-  var sl = document.querySelector('.bslib-sidebar-layout');
-  if (sl) sl.classList.toggle('sidebar-collapsed');
+function syncDrawerSidebarId() {{
+  var active = getActiveSidebar();
+  document.querySelectorAll('#rsi-drawer').forEach(function(el) {{
+    el.removeAttribute('id');
+  }});
+  if (active) active.id = 'rsi-drawer';
 }}
 
-function toggleNativeSidebar() {{
-  var maxAttempts = 10;
-  var delayMs = 200;
-  function attempt(i) {{
-    try {{
-      var sl = document.querySelector('.bslib-sidebar-layout[data-bslib-sidebar-init]')
-        || document.querySelector('.bslib-sidebar-layout');
-      if (sl && window.bslib && window.bslib.Sidebar && window.bslib.Sidebar.getInstance) {{
-        var inst = window.bslib.Sidebar.getInstance(sl);
-        if (inst && typeof inst.toggle === 'function') {{
-          inst.toggle();
-          return;
-        }}
-      }}
-    }} catch (e) {{}}
-    if (i + 1 < maxAttempts) {{
-      setTimeout(function() {{ attempt(i + 1); }}, delayMs);
-    }} else {{
-      toggleNativeSidebarFallback();
-    }}
-  }}
-  attempt(0);
+function ensureDrawerChrome() {{
+  if (document.getElementById('rsi-drawer-backdrop')) return;
+  var bd = document.createElement('div');
+  bd.id = 'rsi-drawer-backdrop';
+  bd.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bd);
+  bd.addEventListener('click', function() {{
+    document.body.classList.remove('rsi-drawer-open');
+    var hb = document.getElementById('rsi-hamburger');
+    if (hb) hb.setAttribute('aria-expanded', 'false');
+  }});
+}}
+
+function toggleDrawer() {{
+  syncDrawerSidebarId();
+  if (!getActiveSidebar()) return;
+  var on = document.body.classList.toggle('rsi-drawer-open');
+  var hb = document.getElementById('rsi-hamburger');
+  if (hb) hb.setAttribute('aria-expanded', on ? 'true' : 'false');
 }}
 
 function ensureMobileHamburger() {{
@@ -90,19 +73,26 @@ function ensureMobileHamburger() {{
   if (!mq.matches) {{
     var rm = document.getElementById('rsi-hamburger');
     if (rm) rm.remove();
+    var bd = document.getElementById('rsi-drawer-backdrop');
+    if (bd) bd.remove();
+    document.body.classList.remove('rsi-drawer-open');
+    document.querySelectorAll('#rsi-drawer').forEach(function(el) {{ el.removeAttribute('id'); }});
     return;
   }}
+  ensureDrawerChrome();
+  syncDrawerSidebarId();
   if (document.getElementById('rsi-hamburger')) return;
-  injectHamburgerStyles();
   var btn = document.createElement('button');
   btn.id = 'rsi-hamburger';
   btn.type = 'button';
-  btn.setAttribute('aria-label', 'Toggle sidebar');
+  btn.setAttribute('aria-label', 'Open navigation');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-controls', 'rsi-drawer');
   btn.innerHTML = '<span class="rsi-bar"></span><span class="rsi-bar"></span><span class="rsi-bar"></span>';
   btn.addEventListener('click', function(e) {{
     e.preventDefault();
     e.stopPropagation();
-    toggleNativeSidebar();
+    toggleDrawer();
   }});
   document.body.appendChild(btn);
 }}
@@ -157,6 +147,13 @@ function tick() {{
   ensureMobileHamburger();
   setupFab();
 }}
+
+document.addEventListener('shown.bs.tab', function() {{
+  document.body.classList.remove('rsi-drawer-open');
+  var hb = document.getElementById('rsi-hamburger');
+  if (hb) hb.setAttribute('aria-expanded', 'false');
+  syncDrawerSidebarId();
+}});
 
 if (document.readyState === 'loading') {{
   document.addEventListener('DOMContentLoaded', tick);

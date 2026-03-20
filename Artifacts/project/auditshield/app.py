@@ -7,6 +7,7 @@ Phase 3 (Real-Time Validation, HCC Reconciliation, Compliance Forecast, Regulato
 """
 import asyncio
 import json
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -111,7 +112,21 @@ RADV_FEATURE = "radv_calculator"
 HCC_FEATURE = "hcc_scoring"
 
 
+def _is_demo_mode() -> bool:
+    """Hugging Face Spaces: DEMO_MODE secret or auto-set SPACE_ID enables public demo bypass."""
+    flag = os.environ.get("DEMO_MODE", "").strip().lower()
+    if flag in ("1", "true", "yes", "on"):
+        return True
+    return bool(os.environ.get("SPACE_ID", "").strip())
+
+
 async def check_access(api_key: str | None, feature: str) -> dict:
+    if _is_demo_mode():
+        return {
+            "allowed": True,
+            "tier": "demo",
+            "message": "Demo mode (read-only public preview)",
+        }
     result = await asyncio.to_thread(validate_api_key, api_key)
     tier_config = get_tier_config(api_key)
     if not is_feature_enabled(feature, tier_config):
