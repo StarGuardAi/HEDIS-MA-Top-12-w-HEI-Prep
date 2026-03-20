@@ -97,7 +97,7 @@
 }
 
 /* === 12. Mobile sidebar toggle + FAB === */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .sidebar-backdrop, .offcanvas-backdrop { background: rgba(0,0,0,0.5); z-index: 1049; }
   /* Hide duplicate controls; keep bslib collapse-toggle (native sidebar logic) */
   .sidebar-toggle,
@@ -105,36 +105,30 @@
   [data-bs-toggle="offcanvas"] {
     display: none !important;
   }
-  /* Brand hamburger: bslib toggle only — purple pill, gold chevron, 44px, top-left */
-  .bslib-sidebar-layout > button.collapse-toggle {
+  /* Hamburger: any nesting — match button.collapse-toggle, fixed float */
+  button.collapse-toggle {
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
     position: fixed !important;
-    top: 12px !important;
+    top: 10px !important;
     left: 12px !important;
-    z-index: 1060 !important;
-    min-width: var(--touch-min) !important;
-    min-height: var(--touch-min) !important;
-    width: var(--touch-min) !important;
-    height: var(--touch-min) !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    width: 44px !important;
+    height: 44px !important;
     background: #4A3E8F !important;
     border: none !important;
     border-radius: 8px !important;
-    color: #D4AF37 !important;
-    box-shadow: 0 2px 8px rgba(74, 62, 143, 0.45) !important;
+    z-index: 1051 !important;
+    align-items: center !important;
+    justify-content: center !important;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 8px rgba(74, 62, 143, 0.45) !important;
   }
-  .bslib-sidebar-layout > button.collapse-toggle:hover {
+  button.collapse-toggle:hover {
     background: #3d346f !important;
-    color: #D4AF37 !important;
   }
-  .bslib-sidebar-layout > button.collapse-toggle .collapse-icon,
-  .bslib-sidebar-layout > button.collapse-toggle svg {
-    fill: #D4AF37 !important;
+  button.collapse-toggle svg,
+  button.collapse-toggle .collapse-icon {
     color: #D4AF37 !important;
+    fill: #D4AF37 !important;
   }
   .mobile-fab-wrap { position: fixed; bottom: 24px; right: 20px; z-index: 1055; }
   .mobile-fab {

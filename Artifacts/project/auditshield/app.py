@@ -390,7 +390,7 @@ app_ui = ui.page_fluid(
                         selected="medium_contract"
                     ),
                     ui.input_numeric("audit_year", "Audit Year", value=2026, min=2024, max=2030),
-                    ui.input_action_button("run_mock_audit", "Run Mock Audit", class_="btn-danger mt-3 w-100"),
+                    ui.input_action_button("run_mock_audit", "Run Mock Audit", class_="btn-primary mt-3 w-100"),
                     width=300
                 ),
                 ui.div(
