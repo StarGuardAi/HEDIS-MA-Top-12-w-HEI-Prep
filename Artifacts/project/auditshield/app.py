@@ -1211,7 +1211,12 @@ def server(input, output, session):
                     fig = go.Figure().add_annotation(text="No failures", showarrow=False)
                 else:
                     fig = px.bar(failure_data.head(10), x='occurrence_count', y='failure_category', orientation='h')
-                    fig.update_layout(height=400, showlegend=False)
+                    fig.update_layout(
+                        height=400,
+                        showlegend=False,
+                        margin=dict(l=140, r=24, t=40, b=48),
+                        yaxis=dict(automargin=True),
+                    )
         return ui.HTML(fig.to_html(include_plotlyjs=True))
 
     @output
@@ -1367,7 +1372,11 @@ def server(input, output, session):
             else:
                 df = pd.DataFrame(list(categories.items()), columns=['Category', 'RAF Weight'])
                 fig = px.bar(df, x='RAF Weight', y='Category', orientation='h', title="High-Risk HCC Categories")
-                fig.update_layout(height=400)
+                fig.update_layout(
+                    height=400,
+                    margin=dict(l=140, r=24, t=56, b=48),
+                    yaxis=dict(automargin=True),
+                )
             return ui.HTML(fig.to_html(include_plotlyjs=True))
         except Exception:
             fig = go.Figure()
