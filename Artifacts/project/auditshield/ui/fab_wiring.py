@@ -1,9 +1,9 @@
 """
 Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, scroll, gold pulse.
 FAB uses DOM-only tab activation (no Shiny.setInputValue) to avoid server reactives crashing the UI.
-Mobile: #rsi-hamburger toggles body.rsi-drawer-open; the active tab's live .sidebar is #rsi-drawer
-(pure CSS transform — no bslib Sidebar, Offcanvas, or collapse-toggle). Cloning sidebar markup would
-duplicate node ids and break Shiny bindings, so the drawer surface is the real sidebar element.
+Mobile: #rsi-hamburger opens body.rsi-drawer-open on the live aside.sidebar#rsi-drawer. If the aside
+is still empty (Shiny lazy render), MutationObserver + 3s fallback wait before opening. shiny:value
+re-runs syncDrawerSidebarId after each update. Pure CSS transform — no bslib Sidebar JS.
 """
 
 from shiny import ui
@@ -103,6 +103,51 @@ function syncDrawerSidebarId() {{
   var out = {{ assigned: assigned || null, previousIdsCleared: prevN, pickVisible: !!(active && _visibleEl(active)) }};
   console.log(DBG, 'syncDrawerSidebarId', out, assigned ? {{ tag: assigned.tagName, classes: assigned.className, visible: _visibleEl(assigned) }} : null);
   return out;
+}}
+
+function _sidebarHasContent(el) {{
+  if (!el) return false;
+  if (el.children.length > 0) return true;
+  return !!el.querySelector('input,select,textarea,button,.shiny-input-container,.shiny-bound-input');
+}}
+
+function _cancelSidebarWait(aside) {{
+  if (!aside) return;
+  if (aside._rsiDrawerMO) {{
+    aside._rsiDrawerMO.disconnect();
+    aside._rsiDrawerMO = null;
+  }}
+  if (aside._rsiDrawerFallback) {{
+    clearTimeout(aside._rsiDrawerFallback);
+    aside._rsiDrawerFallback = null;
+  }}
+}}
+
+/** Wait until Shiny populates aside or 3000ms, then call onReady once. */
+function waitForSidebarContent(aside, onReady) {{
+  if (!aside) {{ onReady(); return; }}
+  _cancelSidebarWait(aside);
+  if (_sidebarHasContent(aside)) {{ onReady(); return; }}
+  var done = false;
+  function finish() {{
+    if (done) return;
+    done = true;
+    _cancelSidebarWait(aside);
+    onReady();
+  }}
+  var mo = new MutationObserver(function() {{
+    if (_sidebarHasContent(aside)) finish();
+  }});
+  mo.observe(aside, {{ childList: true, subtree: true }});
+  aside._rsiDrawerMO = mo;
+  aside._rsiDrawerFallback = setTimeout(finish, 3000);
+}}
+
+function applyDrawerOpenState(open) {{
+  if (open) document.body.classList.add('rsi-drawer-open');
+  else document.body.classList.remove('rsi-drawer-open');
+  var hb = document.getElementById('rsi-hamburger');
+  if (hb) hb.setAttribute('aria-expanded', open ? 'true' : 'false');
 }}
 
 function ensureDrawerChrome() {{
@@ -218,6 +263,11 @@ document.addEventListener('shown.bs.tab', function() {{
   document.body.classList.remove('rsi-drawer-open');
   var hb = document.getElementById('rsi-hamburger');
   if (hb) hb.setAttribute('aria-expanded', 'false');
+  syncDrawerSidebarId();
+}});
+
+document.addEventListener('shiny:value', function() {{
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
   syncDrawerSidebarId();
 }});
 
