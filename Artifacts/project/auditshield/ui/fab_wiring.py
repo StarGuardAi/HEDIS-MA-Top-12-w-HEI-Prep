@@ -1,12 +1,13 @@
 """
 Sprint 3: FAB wiring — Bootstrap tab switch for Mock Audit tab, scroll, gold pulse.
-FAB uses DOM-only tab activation (no Shiny.setInputValue) to avoid server reactives crashing the UI.
-Mobile: #rsi-hamburger opens body.rsi-drawer-open on the live aside.sidebar#rsi-drawer. If the aside
-is still empty (Shiny lazy render), MutationObserver + 3s fallback wait before opening. shiny:value
-re-runs syncDrawerSidebarId after each update. Pure CSS transform — no bslib Sidebar JS.
+Mobile: hamburger opens #rsi-drawer, a dedicated nav panel built from navbar tab links (no Shiny
+sidebar aside). Filters stay in each tab's main content. Desktop sidebar unchanged.
 """
 
 from shiny import ui
+
+# Shown in mobile nav drawer footer (mailto only — no Shiny binding).
+_DRAWER_CONTACT_EMAIL = "contact@starguardai.com"
 
 
 def fab_wiring_script(
@@ -17,11 +18,12 @@ def fab_wiring_script(
     fab_id: str = "nav_mobile_fab",
 ) -> ui.Tag:
     """
-    Wire the Run Audit FAB; inject mobile hamburger (#rsi-hamburger) and drawer backdrop.
+    Wire the Run Audit FAB; inject mobile hamburger, backdrop, and rsi-nav-drawer from navbar tabs.
 
     main_tabs_id is kept for call-site compatibility; it is not passed to the client (no setInputValue).
     """
-    _ = main_tabs_id  # unused — server nav input sync removed for mobile FAB path
+    _ = main_tabs_id
+    contact = _DRAWER_CONTACT_EMAIL
     return ui.tags.script(
         f"""
 (function(){{
@@ -29,154 +31,94 @@ def fab_wiring_script(
 var AT = '{audit_tab_id}';
 var RB = '{run_audit_btn_id}';
 var FID = '{fab_id}';
-var DBG = '[rsi-drawer]';
+var CONTACT = '{contact}';
 
-function _visibleEl(el) {{
-  if (!el) return false;
-  var st = window.getComputedStyle(el);
-  if (st.display === 'none' || st.visibility === 'hidden') return false;
-  var r = el.getBoundingClientRect();
-  return r.width > 0 && r.height > 0;
-}}
-
-function _sidebarCandidates() {{
-  return document.querySelectorAll('.bslib-sidebar-layout > .sidebar');
-}}
-
-function getActiveSidebar() {{
-  var p1 = document.querySelector('.tab-pane.active.show');
-  var p2 = document.querySelector('.tab-pane.active');
-  var p3 = document.querySelector('[role="tabpanel"].active');
-  var tried = [
-    {{ label: '.tab-pane.active.show', el: p1 }},
-    {{ label: '.tab-pane.active', el: p2 }},
-    {{ label: '[role=tabpanel].active', el: p3 }}
-  ];
-  var panePick = p1 || p2 || p3;
-  if (panePick) {{
-    var sb = panePick.querySelector('.bslib-sidebar-layout > .sidebar');
-    if (sb) {{
-      console.log(DBG, 'getActiveSidebar: via pane', panePick.className, 'sidebar=', sb.tagName, sb.className, 'visible=', _visibleEl(sb));
-      return sb;
-    }}
-    var domFb = document.querySelector('.bslib-sidebar-layout > .sidebar');
-    if (domFb) {{
-      console.log(DBG, 'getActiveSidebar: active pane has no sidebar; DOM fallback first .sidebar', domFb.className);
-      return domFb;
-    }}
-    console.log(DBG, 'getActiveSidebar: active pane has no sidebar and no .sidebar in DOM', panePick.className);
-    return null;
-  }}
-  console.log(DBG, 'getActiveSidebar: no active tab panel', tried.map(function(t) {{ return t.label + ':' + !!t.el; }}).join(', '));
-  var all = _sidebarCandidates();
-  console.log(DBG, 'getActiveSidebar: layout count=', document.querySelectorAll('.bslib-sidebar-layout').length, 'direct-child .sidebar count=', all.length);
-  var listed = [];
-  for (var i = 0; i < all.length; i++) {{
-    var s = all[i];
-    listed.push({{
-      i: i,
-      visible: _visibleEl(s),
-      classes: s.className,
-      id: s.id || '',
-      layout: s.parentElement && s.parentElement.className
-    }});
-  }}
-  console.log(DBG, 'getActiveSidebar: candidates', listed);
-  for (var j = 0; j < all.length; j++) {{
-    if (_visibleEl(all[j])) {{
-      console.log(DBG, 'getActiveSidebar: fallback first visible in document', all[j].className);
-      return all[j];
-    }}
-  }}
-  console.log(DBG, 'getActiveSidebar: no sidebar resolved');
-  return null;
-}}
-
-/** @returns {{ assigned: Element|null, previousIdsCleared: number, pickVisible: boolean }} */
-function syncDrawerSidebarId() {{
-  var prev = document.querySelectorAll('#rsi-drawer');
-  var prevN = prev.length;
-  prev.forEach(function(el) {{ el.removeAttribute('id'); }});
-  var active = getActiveSidebar();
-  if (active) active.id = 'rsi-drawer';
-  var assigned = document.getElementById('rsi-drawer');
-  var out = {{ assigned: assigned || null, previousIdsCleared: prevN, pickVisible: !!(active && _visibleEl(active)) }};
-  console.log(DBG, 'syncDrawerSidebarId', out, assigned ? {{ tag: assigned.tagName, classes: assigned.className, visible: _visibleEl(assigned) }} : null);
-  return out;
-}}
-
-function _sidebarHasContent(el) {{
-  if (!el) return false;
-  if (el.children.length > 0) return true;
-  return !!el.querySelector('input,select,textarea,button,.shiny-input-container,.shiny-bound-input');
-}}
-
-function _cancelSidebarWait(aside) {{
-  if (!aside) return;
-  if (aside._rsiDrawerMO) {{
-    aside._rsiDrawerMO.disconnect();
-    aside._rsiDrawerMO = null;
-  }}
-  if (aside._rsiDrawerFallback) {{
-    clearTimeout(aside._rsiDrawerFallback);
-    aside._rsiDrawerFallback = null;
-  }}
-}}
-
-/** Wait until Shiny populates aside or 3000ms, then call onReady once. */
-function waitForSidebarContent(aside, onReady) {{
-  if (!aside) {{ onReady(); return; }}
-  _cancelSidebarWait(aside);
-  if (_sidebarHasContent(aside)) {{ onReady(); return; }}
-  var done = false;
-  function finish() {{
-    if (done) return;
-    done = true;
-    _cancelSidebarWait(aside);
-    onReady();
-  }}
-  var mo = new MutationObserver(function() {{
-    if (_sidebarHasContent(aside)) finish();
-  }});
-  mo.observe(aside, {{ childList: true, subtree: true }});
-  aside._rsiDrawerMO = mo;
-  aside._rsiDrawerFallback = setTimeout(finish, 3000);
-}}
-
-function applyDrawerOpenState(open) {{
+function applyDrawerOpen(open) {{
   if (open) document.body.classList.add('rsi-drawer-open');
   else document.body.classList.remove('rsi-drawer-open');
   var hb = document.getElementById('rsi-hamburger');
   if (hb) hb.setAttribute('aria-expanded', open ? 'true' : 'false');
+  var dr = document.getElementById('rsi-drawer');
+  if (dr) dr.setAttribute('aria-hidden', open ? 'false' : 'true');
 }}
 
-function ensureDrawerChrome() {{
+function ensureBackdrop() {{
   if (document.getElementById('rsi-drawer-backdrop')) return;
   var bd = document.createElement('div');
   bd.id = 'rsi-drawer-backdrop';
   bd.setAttribute('aria-hidden', 'true');
   document.body.appendChild(bd);
-  bd.addEventListener('click', function() {{
-    document.body.classList.remove('rsi-drawer-open');
-    var hb = document.getElementById('rsi-hamburger');
-    if (hb) hb.setAttribute('aria-expanded', 'false');
+  bd.addEventListener('click', function() {{ applyDrawerOpen(false); }});
+}}
+
+function ensureNavDrawerShell() {{
+  if (document.getElementById('rsi-drawer')) return;
+  var aside = document.createElement('aside');
+  aside.id = 'rsi-drawer';
+  aside.className = 'rsi-nav-drawer';
+  aside.setAttribute('aria-label', 'Main navigation');
+  aside.setAttribute('aria-hidden', 'true');
+  aside.innerHTML = ''
+    + '<div class="rsi-nav-drawer-header">AuditShield</div>'
+    + '<div class="rsi-nav-drawer-list" role="navigation"></div>'
+    + '<div class="rsi-nav-drawer-footer">'
+    + '<a class="rsi-nav-drawer-email" href="mailto:' + CONTACT + '">' + CONTACT + '</a>'
+    + '</div>';
+  document.body.appendChild(aside);
+}}
+
+function collectNavbarTabAnchors() {{
+  var nav = document.querySelector('nav.navbar');
+  if (!nav) return [];
+  var out = [];
+  nav.querySelectorAll('a.nav-link').forEach(function(a) {{
+    var toggle = a.getAttribute('data-bs-toggle') || a.getAttribute('data-toggle');
+    if (toggle !== 'tab') return;
+    if (a.closest('.dropdown-menu')) return;
+    out.push(a);
+  }});
+  return out;
+}}
+
+function populateNavDrawer() {{
+  var drawer = document.getElementById('rsi-drawer');
+  if (!drawer) return;
+  var list = drawer.querySelector('.rsi-nav-drawer-list');
+  if (!list) return;
+  list.innerHTML = '';
+  var anchors = collectNavbarTabAnchors();
+  anchors.forEach(function(a) {{
+    var label = (a.textContent || '').replace(/\\s+/g, ' ').trim();
+    if (!label) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'rsi-nav-drawer-btn';
+    if (a.classList.contains('active')) btn.classList.add('active');
+    btn.textContent = label;
+    btn.addEventListener('click', function(ev) {{
+      ev.preventDefault();
+      applyDrawerOpen(false);
+      if (typeof bootstrap !== 'undefined' && bootstrap.Tab) {{
+        try {{
+          bootstrap.Tab.getOrCreateInstance(a).show();
+        }} catch (e) {{
+          a.click();
+        }}
+      }} else {{
+        a.click();
+      }}
+    }});
+    list.appendChild(btn);
   }});
 }}
 
 function toggleDrawer() {{
-  var sync = syncDrawerSidebarId();
-  var el = sync.assigned;
-  if (!el) {{
-    console.warn(DBG, 'toggleDrawer: abort — no #rsi-drawer assigned after sync');
+  if (document.body.classList.contains('rsi-drawer-open')) {{
+    applyDrawerOpen(false);
     return;
   }}
-  if (!_visibleEl(el)) {{
-    console.warn(DBG, 'toggleDrawer: assigned sidebar is not visible (check tab/bslib DOM)', el);
-  }}
-  var on = document.body.classList.toggle('rsi-drawer-open');
-  console.log(DBG, 'toggleDrawer: body.rsi-drawer-open=', on, 'drawerEl=', el, 'computedTransform=', window.getComputedStyle(el).transform);
-  var hb = document.getElementById('rsi-hamburger');
-  if (hb) hb.setAttribute('aria-expanded', on ? 'true' : 'false');
+  populateNavDrawer();
+  applyDrawerOpen(true);
 }}
 
 function ensureMobileHamburger() {{
@@ -186,12 +128,14 @@ function ensureMobileHamburger() {{
     if (rm) rm.remove();
     var bd = document.getElementById('rsi-drawer-backdrop');
     if (bd) bd.remove();
+    var dr = document.getElementById('rsi-drawer');
+    if (dr) dr.remove();
     document.body.classList.remove('rsi-drawer-open');
-    document.querySelectorAll('#rsi-drawer').forEach(function(el) {{ el.removeAttribute('id'); }});
     return;
   }}
-  ensureDrawerChrome();
-  syncDrawerSidebarId();
+  ensureBackdrop();
+  ensureNavDrawerShell();
+  populateNavDrawer();
   if (document.getElementById('rsi-hamburger')) return;
   var btn = document.createElement('button');
   btn.id = 'rsi-hamburger';
@@ -211,34 +155,26 @@ function ensureMobileHamburger() {{
 function doFabAction() {{
   var fab = document.getElementById(FID);
   if (!fab) return;
-
-  var open = document.querySelectorAll('.offcanvas.show');
-  open.forEach(function(el){{
+  document.querySelectorAll('.offcanvas.show').forEach(function(el){{
     if (typeof bootstrap !== 'undefined') {{
       var inst = bootstrap.Offcanvas.getInstance(el);
       if (inst) inst.hide();
     }}
   }});
-
   var tabEl = document.querySelector('[data-bs-target="#' + AT + '"], [data-value="' + AT + '"], [href="#' + AT + '"]');
   if (tabEl) {{
     if (typeof bootstrap !== 'undefined') {{
-      var tab = new bootstrap.Tab(tabEl);
-      tab.show();
+      try {{ new bootstrap.Tab(tabEl).show(); }} catch (e) {{ tabEl.click(); }}
     }} else {{
       tabEl.click();
     }}
   }}
-
   window.scrollTo({{ top: 0, behavior: 'smooth' }});
-
   setTimeout(function(){{
     var runBtn = document.getElementById(RB) || document.querySelector('[id$="' + RB + '"]');
     if (runBtn) {{
       runBtn.classList.add('fab-pulse-gold');
-      setTimeout(function(){{
-        runBtn.classList.remove('fab-pulse-gold');
-      }}, 2000);
+      setTimeout(function(){{ runBtn.classList.remove('fab-pulse-gold'); }}, 2000);
     }}
   }}, 400);
 }}
@@ -247,10 +183,7 @@ function setupFab() {{
   var fab = document.getElementById(FID);
   if (fab && !fab.dataset.fabWired) {{
     fab.dataset.fabWired = '1';
-    fab.addEventListener('click', function(e){{
-      e.preventDefault();
-      doFabAction();
-    }});
+    fab.addEventListener('click', function(e){{ e.preventDefault(); doFabAction(); }});
   }}
 }}
 
@@ -260,15 +193,8 @@ function tick() {{
 }}
 
 document.addEventListener('shown.bs.tab', function() {{
-  document.body.classList.remove('rsi-drawer-open');
-  var hb = document.getElementById('rsi-hamburger');
-  if (hb) hb.setAttribute('aria-expanded', 'false');
-  syncDrawerSidebarId();
-}});
-
-document.addEventListener('shiny:value', function() {{
-  if (!window.matchMedia('(max-width: 768px)').matches) return;
-  syncDrawerSidebarId();
+  applyDrawerOpen(false);
+  populateNavDrawer();
 }});
 
 if (document.readyState === 'loading') {{

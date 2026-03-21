@@ -23,17 +23,11 @@
   :root { --mobile-gap: 12px; --touch-min: 44px; }
 }
 
-/* === 3. Pure CSS drawer (< 768px): live #rsi-drawer sidebar, no bslib JS */
-/* bslib sets aside.sidebar to display:none on narrow viewports; without display
-   override, transform never paints (0×0). Only #rsi-drawer is shown — others stay
-   none inside inactive tab-panes. */
-/* Drawer/backdrop use max-width 768px to match §12 hamburger. Large z-index gap so the panel
-   wins over #rsi-drawer-backdrop even when aside#rsi-drawer sits inside a nested stacking context
-   (bslib/tab transforms). Pin left edge — bslib can set right/margin on .sidebar. */
+/* === 3. Mobile nav drawer (#rsi-drawer.rsi-nav-drawer) — built from navbar tabs in JS */
 @media (max-width: 768px) {
-  .bslib-sidebar-layout > .sidebar#rsi-drawer {
-    display: block !important;
-    visibility: visible !important;
+  #rsi-drawer.rsi-nav-drawer {
+    display: flex !important;
+    flex-direction: column;
     position: fixed !important;
     top: 0 !important;
     bottom: 0 !important;
@@ -47,15 +41,74 @@
     transform: translate3d(-100%, 0, 0);
     transform-origin: left center;
     transition: transform 0.25s ease-out, box-shadow 0.25s;
-    box-shadow: 4px 0 16px rgba(0,0,0,0.15);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    background: #3d346f !important;
+    color: #f0edf8 !important;
+  }
+  body.rsi-drawer-open #rsi-drawer.rsi-nav-drawer {
+    transform: translate3d(0, 0, 0);
+  }
+  .rsi-nav-drawer-header {
+    flex-shrink: 0;
+    padding: 20px 18px 16px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #d4af37 !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+    background: #4a3e8f !important;
+  }
+  .rsi-nav-drawer-list {
+    flex: 1 1 auto;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    /* Light surface regardless of prefers-color-scheme (dark :root --surface is near-black) */
-    background: #ffffff !important;
-    color: #212529 !important;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
-  body.rsi-drawer-open .bslib-sidebar-layout > .sidebar#rsi-drawer {
-    transform: translate3d(0, 0, 0);
+  .rsi-nav-drawer-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    min-height: var(--touch-min);
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #f5f3ff !important;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .rsi-nav-drawer-btn:hover,
+  .rsi-nav-drawer-btn:focus {
+    background: rgba(212, 175, 55, 0.15) !important;
+    color: #ffe08a !important;
+    outline: none;
+  }
+  .rsi-nav-drawer-btn.active {
+    border-color: rgba(212, 175, 55, 0.55);
+    background: rgba(212, 175, 55, 0.2) !important;
+    color: #ffd54f !important;
+  }
+  .rsi-nav-drawer-footer {
+    flex-shrink: 0;
+    padding: 14px 16px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  .rsi-nav-drawer-email {
+    color: #7dd3c0 !important;
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .rsi-nav-drawer-email:hover {
+    text-decoration: underline;
+    color: #9ae5d4 !important;
   }
 }
 
@@ -316,12 +369,6 @@
     .hedis-table-mobile table thead th:nth-child(1), .hedis-table-mobile table thead th:nth-child(2),
     .hedis-table-mobile table tbody td:nth-child(1), .hedis-table-mobile table tbody td:nth-child(2) {
       background: var(--surface);
-    }
-  }
-  @media (max-width: 768px) {
-    .bslib-sidebar-layout > .sidebar#rsi-drawer {
-      background: #ffffff !important;
-      color: #212529 !important;
     }
   }
 }
