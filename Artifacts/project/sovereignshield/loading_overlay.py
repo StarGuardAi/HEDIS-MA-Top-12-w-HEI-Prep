@@ -1,6 +1,6 @@
 """
 Loading overlay for Shiny apps — branded cold-start / heavy-computation feedback.
-Shows a pulsing message and progress bar. Uses shiny:idle for page_fillable apps to avoid blank flash.
+Shows a pulsing message and progress bar, auto-dismisses on shiny:connected or 6s fallback.
 """
 from shiny import ui
 
@@ -69,59 +69,10 @@ def loading_overlay_ui(app_name: str, tagline: str) -> ui.Tag:
     }
     document.addEventListener('shiny:connected', dismiss);
     document.addEventListener('shiny:sessioninitialized', dismiss);
-    document.addEventListener('shiny:idle', dismiss);
     if (typeof Shiny !== 'undefined' && Shiny.addCustomMessageHandler) {
         try {
             Shiny.addCustomMessageHandler('loading_overlay_dismiss', dismiss);
         } catch(e) {}
-    }
-    setTimeout(dismiss, 6000);
-})();
-</script>
-"""),
-        id="loading-overlay",
-    )
-
-
-def loading_overlay_ui_fillable(app_name: str, tagline: str) -> ui.Tag:
-    """
-    Overlay for page_fillable — dismisses on shiny:idle (after first render).
-    Prevents blank-content flash on cold start; use instead of loading_overlay_ui for fillable layouts.
-    """
-    return ui.div(
-        ui.div(
-            ui.h2(app_name),
-            ui.p(tagline, class_="tagline"),
-            ui.div(
-                ui.div(class_="progress-fill", id_="loading-progress-fill-fillable"),
-                class_="progress-track",
-            ),
-            class_="overlay-inner",
-        ),
-        ui.HTML("""
-<script>
-(function() {
-    var overlay = document.getElementById('loading-overlay');
-    var fill = document.getElementById('loading-progress-fill-fillable');
-    if (!overlay) return;
-    function dismiss() {
-        if (fill) fill.classList.add('complete');
-        setTimeout(function() {
-            overlay.classList.add('dismissed');
-            setTimeout(function() {
-                overlay.style.visibility = 'hidden';
-                overlay.style.display = 'none';
-                overlay.remove();
-                var styles = document.getElementById('loading-overlay-styles');
-                if (styles) styles.remove();
-            }, 450);
-        }, 350);
-    }
-    document.addEventListener('shiny:idle', dismiss);
-    document.addEventListener('shiny:connected', dismiss);
-    document.addEventListener('shiny:sessioninitialized', dismiss);
-    if (typeof Shiny !== 'undefined' && Shiny.addCustomMessageHandler) {
-        try { Shiny.addCustomMessageHandler('loading_overlay_dismiss', dismiss); } catch(e) {}
     }
     setTimeout(dismiss, 6000);
 })();
