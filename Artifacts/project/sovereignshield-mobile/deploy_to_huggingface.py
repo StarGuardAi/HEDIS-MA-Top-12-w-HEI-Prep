@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(__file__).resolve().parents[3]
 PREFIX = "Artifacts/project/sovereignshield-mobile"
 REMOTE = "hf-sovereignshield-mobile"
 
@@ -43,6 +43,12 @@ def main() -> int:
     )
     if result.returncode != 0:
         print("\n[FAIL] subtree push failed")
+        print("If remote history diverged, from repo root:")
+        print(
+            f"  git subtree split --prefix={PREFIX} -b hf-split-ss-mobile main\n"
+            f"  git push {REMOTE} hf-split-ss-mobile:main --force\n"
+            "  git branch -D hf-split-ss-mobile"
+        )
         return 1
 
     print("\n" + "=" * 60)
