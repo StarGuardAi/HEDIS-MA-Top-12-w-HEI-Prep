@@ -60,13 +60,13 @@ _AVATAR_SRC: str = _load_avatar()
 # Graceful import fallback — run with simulated data if any module fails
 _USE_REAL_MODULES = True
 try:
-    from .core.opa_eval import evaluate
-    from .core.audit_db import db
-    from .core.audit_log import write_run, fetch_history
-    from .agents.planner import planner
-    from .agents.worker import worker
-    from .agents.reviewer import reviewer
-    from .rag.retriever import embed_and_store, kb_count, retrieve_similar
+    from core.opa_eval import evaluate
+    from core.audit_db import db
+    from core.audit_log import write_run, fetch_history
+    from agents.planner import planner
+    from agents.worker import worker
+    from agents.reviewer import reviewer
+    from rag.retriever import embed_and_store, kb_count, retrieve_similar
 except ImportError:
     _USE_REAL_MODULES = False
     evaluate = None  # type: ignore[assignment]
@@ -82,7 +82,7 @@ except ImportError:
 
 _CHARTS_AVAILABLE = True
 try:
-    from .core import charts
+    from core import charts
 except ImportError:
     _CHARTS_AVAILABLE = False
     charts = None  # type: ignore[assignment]
@@ -92,7 +92,8 @@ try:
 except ImportError:
     raise ImportError("shiny is required. Run: pip install shiny")
 
-from .ui.mobile_badge import mobile_badge
+from ui.mobile_badge import mobile_badge
+from loading_overlay import loading_overlay_css, loading_overlay_ui
 from sovereignshield_platform_integration import register_session, record_finding
 
 # Synthetic RESOURCES catalogue — 5 columns for Catalogue tab
@@ -446,7 +447,11 @@ _CSS = """
 """
 
 app_ui = ui.page_fluid(
-    ui.tags.head(ui.tags.style(_CSS)),
+    ui.tags.head(ui.tags.style(_CSS), loading_overlay_css()),
+    loading_overlay_ui(
+        app_name="SovereignShield Desktop",
+        tagline="Loading OPA policy evaluator...",
+    ),
     ui.div(
         ui.panel_title("SovereignShield — Compliance Remediation"),
         mobile_badge(url="https://rreichert-sovereignshield-mobile.hf.space", accent_color="#10b981"),
