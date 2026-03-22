@@ -173,7 +173,7 @@ app_ui = ui.page_fluid(
             ui.input_action_button("refresh", "Refresh KPIs"),
             width=250,
         ),
-        ui.main(
+        ui.tags.main(
             ui.card(
                 ui.card_header("Platform KPIs"),
                 ui.output_data_frame("kpis_table"),
