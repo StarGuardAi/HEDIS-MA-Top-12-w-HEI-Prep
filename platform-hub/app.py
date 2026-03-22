@@ -184,7 +184,7 @@ app_ui = ui.page_fluid(
             ),
         ),
     ),
-    ui.footer(
+    ui.tags.footer(
         ui.p("MA Compliance Intelligence Platform · AuditShield + StarGuard + SovereignShield", class_="text-muted small"),
         class_="container py-2",
     ),
