@@ -1,0 +1,7 @@
+# Dev-only; keep monorepo path strings out of the image and shrink the context.
+deploy_to_huggingface.py
+CLAUDE.md
+.cursorrules
+CURSORRULES-SOVEREIGNSHIELD-MOBILE.md
+INSTALL-REFERENCE.md
+Phase2-to-Hardening-Sprint-Checklist.md
