@@ -135,38 +135,37 @@ app_ui = ui.page_fluid(
     ui.div(
         ui.div(
             ui.div(
-            ui.div(
-            ui.div(
                 ui.div(
                     app_card(
                         "AuditShield",
-                    "HEDIS audit prep, gap analysis, and remediation tracking.",
-                    QR_AUDITSHIELD,
-                    AUDITSHIELD_URL,
+                        "HEDIS audit prep, gap analysis, and remediation tracking.",
+                        QR_AUDITSHIELD,
+                        AUDITSHIELD_URL,
+                    ),
+                    class_="card h-100 col-md-4",
                 ),
-                class_="card h-100 col-md-4",
-            ),
-            ui.div(
-                app_card(
-                    "StarGuard",
-                    "STAR measures monitoring and gap closure.",
-                    QR_STARGUARD,
-                    STARGUARD_URL,
+                ui.div(
+                    app_card(
+                        "StarGuard",
+                        "STAR measures monitoring and gap closure.",
+                        QR_STARGUARD,
+                        STARGUARD_URL,
+                    ),
+                    class_="card h-100 col-md-4",
                 ),
-                class_="card h-100 col-md-4",
-            ),
-            ui.div(
-                app_card(
-                    "SovereignShield",
-                    "Policy compliance and violation management.",
-                    QR_SOVEREIGNSHIELD,
-                    SOVEREIGNSHIELD_URL,
+                ui.div(
+                    app_card(
+                        "SovereignShield",
+                        "Policy compliance and violation management.",
+                        QR_SOVEREIGNSHIELD,
+                        SOVEREIGNSHIELD_URL,
+                    ),
+                    class_="card h-100 col-md-4",
                 ),
-                class_="card h-100 col-md-4",
+                class_="row g-3 mb-4",
             ),
-            class_="row g-3 mb-4",
+            class_="container",
         ),
-        class_="container",
     ),
     ui.layout_sidebar(
         ui.sidebar(
