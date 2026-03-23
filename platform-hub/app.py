@@ -1,26 +1,25 @@
 """
-Platform Hub — Cross-app KPI dashboard
-QR codes: portfolio + all 3 apps (AuditShield, StarGuard, SovereignShield)
-Supabase: platform_hub_kpis, cross_app_findings, platform_alerts
+MA Compliance Intelligence Platform Hub
+Reichert Science & Intelligence — Platform entry point
+HuggingFace Space: rreichert/reichert-platform-hub
 
-Deploy: optional LinkedIn_Avatar_300PX.png next to this file (embedded as data URI).
-Hugging Face Hub rejects raw PNGs in git unless Git Xet is used; the deploy script
-omits the PNG from the Space repo — set AVATAR_URL or rely on the default GitHub raw URL below.
-Update the three HuggingFace Space URLs (or env) if slugs change.
+Secrets: SUPABASE_URL + SUPABASE_ANON_KEY (or PLATFORM_SUPABASE_*).
+Avatar: optional LinkedIn_Avatar_300PX.png; else GitHub raw / AVATAR_URL.
 """
 
-from shiny import App, ui, render, reactive
-import pandas as pd
-import os
 import base64
+import os
 from io import BytesIO
+
+import pandas as pd
 from dotenv import load_dotenv
+from shiny import App, reactive, render, ui
 
 load_dotenv()
 
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# HuggingFace Space links (override with HF_AUDITSHIELD, HF_STARGUARD, HF_SOVEREIGN)
+# ── HuggingFace Space URLs (env overrides) ───────────────────────────────────
 HF_AUDITSHIELD = os.environ.get(
     "HF_AUDITSHIELD",
     "https://huggingface.co/spaces/rreichert/auditshield-live",
@@ -33,30 +32,81 @@ HF_SOVEREIGN = os.environ.get(
     "HF_SOVEREIGN",
     "https://huggingface.co/spaces/rreichert/sovereignshield",
 )
-
-# Card + QR targets (env aliases for legacy / Render overrides)
 AUDITSHIELD_URL = os.environ.get("AUDITSHIELD_URL", HF_AUDITSHIELD)
 STARGUARD_URL = os.environ.get("STARGUARD_URL", HF_STARGUARD)
 SOVEREIGNSHIELD_URL = os.environ.get("SOVEREIGNSHIELD_URL", HF_SOVEREIGN)
-
 PORTFOLIO_URL = os.environ.get("PORTFOLIO_URL", "https://tinyurl.com/bdevpdz5")
 
-# When PNG is not on disk (e.g. stripped for HF binary policy), use this URL as <img src>.
 _DEFAULT_AVATAR_RAW = (
     "https://raw.githubusercontent.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/"
     "main/platform-hub/LinkedIn_Avatar_300PX.png"
 )
 
+PURPLE = "#4A3E8F"
+GOLD = "#D4AF37"
+GREEN = "#10B981"
+DARK = "#1A1633"
+
+APPS = [
+    {
+        "id": "auditshield",
+        "name": "AuditShield Live",
+        "subtitle": "RADV Audit Defense",
+        "description": (
+            "AI-powered 3-source RAG coordinator covering NCQA HEDIS 2026, "
+            "CMS audit protocols, and proprietary expertise. Defends HCC codes "
+            "and supports RADV audit submissions."
+        ),
+        "url": AUDITSHIELD_URL,
+        "color": PURPLE,
+        "icon": "🛡️",
+        "kpi_label": "Open Audit Flags",
+        "kpi_key": "open_audit_flags",
+        "kpi_color": GOLD,
+    },
+    {
+        "id": "starguard",
+        "name": "StarGuard Desktop",
+        "subtitle": "Star Ratings Intelligence",
+        "description": (
+            "HEDIS gap analytics engine with HITL Admin Review, suppression "
+            "logic, and real-time Star trajectory forecasting for Medicare "
+            "Advantage plans."
+        ),
+        "url": STARGUARD_URL,
+        "color": GOLD,
+        "icon": "⭐",
+        "kpi_label": "Open Star Gaps",
+        "kpi_key": "open_star_gaps",
+        "kpi_color": GOLD,
+    },
+    {
+        "id": "sovereignshield",
+        "name": "SovereignShield",
+        "subtitle": "AI Governance & Compliance",
+        "description": (
+            "OPA policy-as-code governance engine with Terraform file upload, "
+            "live policy editor, batch remediation, PDF export, and full "
+            "Supabase audit logging."
+        ),
+        "url": SOVEREIGNSHIELD_URL,
+        "color": GREEN,
+        "icon": "⚖️",
+        "kpi_label": "Policy Violations",
+        "kpi_key": "open_policy_violations",
+        "kpi_color": GREEN,
+    },
+]
+
 
 def get_avatar_src() -> str:
-    """Local PNG as data URI if present; else AVATAR_URL env or default GitHub raw URL."""
     path = os.path.join(_APP_DIR, "LinkedIn_Avatar_300PX.png")
     if os.path.isfile(path):
         try:
             with open(path, "rb") as f:
                 raw = f.read()
             return f"data:image/png;base64,{base64.b64encode(raw).decode()}"
-        except Exception:
+        except OSError:
             pass
     return os.environ.get("AVATAR_URL", _DEFAULT_AVATAR_RAW)
 
@@ -64,17 +114,14 @@ def get_avatar_src() -> str:
 AVATAR_SRC = get_avatar_src()
 
 
-def make_qr_base64(url: str, size_px: int = 140, fill_color: str = None, back_color: str = "white") -> str:
-    """Generate QR code as base64 data URI (no external CDN, no disk I/O at runtime)."""
-    if fill_color is None:
-        fill_color = "#1A1633"
+def make_qr_base64(url: str, size_px: int = 100, fill_color: str = "#1A1633") -> str:
     try:
         import qrcode
 
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=8, border=2)
         qr.add_data(url)
         qr.make(fit=True)
-        img = qr.make_image(fill_color=fill_color, back_color=back_color)
+        img = qr.make_image(fill_color=fill_color, back_color="white")
         img = img.resize((size_px, size_px))
         buf = BytesIO()
         img.save(buf, format="PNG")
@@ -83,18 +130,13 @@ def make_qr_base64(url: str, size_px: int = 140, fill_color: str = None, back_co
         return ""
 
 
-QR_PORTFOLIO = make_qr_base64(PORTFOLIO_URL, size_px=80)
-QR_AUDITSHIELD = make_qr_base64(AUDITSHIELD_URL, size_px=100)
-QR_STARGUARD = make_qr_base64(STARGUARD_URL, size_px=100)
-QR_SOVEREIGNSHIELD = make_qr_base64(SOVEREIGNSHIELD_URL, size_px=100)
+QR_PORTFOLIO = make_qr_base64(PORTFOLIO_URL, size_px=72)
 
 
 def get_supabase_client():
     try:
         from supabase import create_client
 
-        # HF Space secrets: SUPABASE_URL + SUPABASE_ANON_KEY (standard names).
-        # PLATFORM_SUPABASE_* matches AuditShield; SUPABASE_KEY is optional alias.
         url = os.environ.get("SUPABASE_URL") or os.environ.get("PLATFORM_SUPABASE_URL")
         key = (
             os.environ.get("SUPABASE_ANON_KEY")
@@ -109,31 +151,35 @@ def get_supabase_client():
     return None
 
 
-def fetch_kpis(supabase):
-    """Fetch platform_hub_kpis view; return demo row if no Supabase."""
-    if supabase:
-        try:
-            r = supabase.table("platform_hub_kpis").select("*").execute()
-            if r.data and len(r.data) > 0:
-                return pd.DataFrame(r.data)
-        except Exception:
-            pass
-    return pd.DataFrame(
-        [
-            {
-                "open_findings_total": 0,
-                "open_audit_flags": 0,
-                "open_star_gaps": 0,
-                "open_policy_violations": 0,
-                "critical_open": 0,
-                "remediated_total": 0,
-            }
-        ]
-    )
+def _kpi_defaults() -> dict:
+    return {
+        "open_audit_flags": 0,
+        "open_star_gaps": 0,
+        "open_policy_violations": 0,
+        "critical_open": 0,
+        "remediated_total": 0,
+        "sessions_today": 0,
+    }
 
 
-def fetch_findings(supabase, limit=20):
-    """Fetch recent cross_app_findings."""
+def fetch_kpis_dict(supabase) -> dict:
+    d = _kpi_defaults()
+    if not supabase:
+        return d
+    try:
+        r = supabase.table("platform_hub_kpis").select("*").execute()
+        if r.data:
+            row = r.data[0]
+            d = {**d, **{k: row.get(k, d.get(k, 0)) for k in d}}
+            for k, v in row.items():
+                if k not in d:
+                    d[k] = v
+    except Exception:
+        pass
+    return d
+
+
+def fetch_findings(supabase, limit: int = 20) -> pd.DataFrame:
     if supabase:
         try:
             r = (
@@ -150,267 +196,393 @@ def fetch_findings(supabase, limit=20):
     return pd.DataFrame()
 
 
-def app_card(title: str, description: str, qr_data: str, url: str):
-    """Single clickable card (entire surface links to HuggingFace); QR is non-nested img."""
-    inner = ui.div(
-        ui.div(
-            ui.div(
-                ui.h5(title, class_="mb-2 app-card-title"),
-                ui.p(description, class_="app-card-desc small mb-0"),
-                class_="flex-grow-1",
-            ),
-            ui.div(
-                ui.tags.img(
-                    src=qr_data,
-                    alt=f"QR for {title}",
-                    class_="app-card-qr",
-                )
-                if qr_data
-                else ui.div(),
-                class_="ms-auto flex-shrink-0",
-            ),
-            class_="d-flex align-items-start gap-3",
-        ),
-        class_="card-body",
-    )
-    return ui.tags.a(
-        inner,
-        href=url,
-        target="_blank",
-        rel="noopener noreferrer",
-        class_="card h-100 app-card-link text-decoration-none text-reset",
-    )
+def log_session(supabase, app_name: str = "platform_hub") -> None:
+    if not supabase:
+        return
+    try:
+        supabase.table("platform_sessions").insert({"app_name": app_name}).execute()
+    except Exception:
+        pass
 
 
-HUB_STYLES = """
-:root {
-  --brand-purple: #8b7bc8;
-  --brand-purple-deep: #5c4d9d;
-  --brand-gold: #e8c547;
-  --brand-green: #2fb27a;
-  --brand-dark: #1a1633;
-}
-body {
-  background: linear-gradient(180deg, #f3f0fb 0%, #ffffff 45%);
-  color: var(--brand-dark);
-}
-.hub-header-strip {
-  background: linear-gradient(135deg, var(--brand-purple-deep), var(--brand-purple));
-  color: #fff;
-  border-radius: 0 0 1rem 1rem;
-  padding: 1.25rem 1rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 10px 28px rgba(26, 22, 51, 0.18);
-}
-.hub-header-strip h1 {
-  color: #fff;
-  font-weight: 700;
-}
-.hub-header-sub {
-  color: rgba(255, 255, 255, 0.9) !important;
-  max-width: 42rem;
-}
-.hub-avatar-wrap {
-  flex-shrink: 0;
-}
-.hub-avatar-wrap img {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--brand-gold);
-  box-shadow:
-    0 0 0 2px rgba(232, 197, 71, 0.4),
-    0 8px 24px rgba(26, 22, 51, 0.45);
-  display: block;
-}
-.hub-badge-live {
-  background: var(--brand-green) !important;
-  color: var(--brand-dark) !important;
-  font-weight: 600;
-  border: 1px solid rgba(26, 22, 51, 0.12);
-}
-.app-card-link {
-  border: 2px solid var(--brand-purple) !important;
-  border-radius: 0.5rem !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  background: #fff;
-}
-.app-card-link:hover {
-  border-color: var(--brand-gold) !important;
-  box-shadow: 0 10px 28px rgba(92, 77, 157, 0.22);
-  transform: translateY(-2px);
-}
-.app-card-title {
-  color: var(--brand-dark);
-}
-.app-card-desc {
-  color: #5a5470;
-}
-.app-card-qr {
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
-  border: 1px solid rgba(92, 77, 157, 0.25);
-}
-.hub-portfolio-qr {
-  border-radius: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-}
-.card > .card-header,
-.bslib-card .card-header {
-  background: linear-gradient(90deg, var(--brand-purple-deep), var(--brand-purple)) !important;
-  color: #fff !important;
-  border: none !important;
-  font-weight: 600;
-}
-table thead th {
-  background: var(--brand-purple-deep) !important;
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-.bslib-sidebar-layout > .bslib-sidebar {
-  border-right: 2px solid var(--brand-purple) !important;
-  background: linear-gradient(180deg, #faf8ff, #ffffff) !important;
-}
-.hub-footer {
-  border-top: 1px solid rgba(92, 77, 157, 0.2);
-  margin-top: 2rem;
-}
+CSS = f"""
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+body {{
+    background: {DARK};
+    color: #fff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+}}
+.hub-header {{
+    background: linear-gradient(135deg, {DARK} 0%, {PURPLE}BB 100%);
+    padding: 1.25rem 2.5rem;
+    border-bottom: 3px solid {GOLD};
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}}
+.hub-header-main {{
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1;
+    min-width: 200px;
+}}
+.hub-avatar img {{
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid {GOLD};
+    box-shadow: 0 0 0 2px rgba(212,175,55,0.35);
+}}
+.hub-title {{ font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; }}
+.hub-subtitle {{ color: {GOLD}; font-size: 0.9rem; margin-top: 0.2rem; }}
+.hub-header-right {{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}}
+.hub-badge {{
+    background: {GREEN}22;
+    border: 1px solid {GREEN};
+    border-radius: 20px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+    color: {GREEN};
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}}
+.hub-portfolio-qr img {{
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.35);
+}}
+.kpi-strip {{
+    display: flex;
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-wrap: wrap;
+}}
+.kpi-cell {{
+    flex: 1;
+    min-width: 120px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    background: {DARK};
+    transition: background 0.2s;
+}}
+.kpi-cell:hover {{ background: rgba(74,62,143,0.25); }}
+.kpi-value {{ font-size: 2rem; font-weight: 800; line-height: 1; }}
+.kpi-label {{
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.3rem;
+}}
+.apps-section {{ padding: 2rem 2.5rem; }}
+.apps-grid {{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}}
+@media (max-width: 992px) {{
+    .apps-grid {{ grid-template-columns: 1fr; }}
+}}
+.app-card {{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}}
+.app-card:hover {{
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}}
+.app-icon {{ font-size: 2.25rem; margin-bottom: 0.75rem; }}
+.app-status {{
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: {GREEN};
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 0.5rem;
+}}
+.status-dot {{
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: {GREEN};
+    animation: pulse 2s infinite;
+}}
+@keyframes pulse {{
+    0%, 100% {{ opacity: 1; }}
+    50% {{ opacity: 0.4; }}
+}}
+.app-name {{ font-size: 1.2rem; font-weight: 700; margin-bottom: 0.15rem; }}
+.app-subtitle {{ font-size: 0.8rem; opacity: 0.6; margin-bottom: 0.75rem; }}
+.app-description {{ font-size: 0.83rem; line-height: 1.55; opacity: 0.8; flex: 1; margin-bottom: 1.25rem; }}
+.app-kpi {{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    margin-bottom: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+}}
+.app-kpi-value {{ font-size: 1.2rem; font-weight: 800; }}
+.app-btn {{
+    display: block;
+    text-align: center;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: opacity 0.2s, transform 0.1s;
+}}
+.app-btn:hover {{ opacity: 0.85; transform: scale(0.98); }}
+.alert-banner {{
+    margin: 0 2.5rem 1.5rem;
+    padding: 0.85rem 1.25rem;
+    background: rgba(212,175,55,0.12);
+    border: 1px solid {GOLD}66;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}}
+.hub-footer {{
+    padding: 1.25rem 2.5rem;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    text-align: center;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.3);
+}}
+.findings-section {{
+    padding: 0 2.5rem 2rem;
+}}
+.findings-section h4 {{
+    color: {GOLD};
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}}
+.findings-section .shiny-data-grid,
+.findings-section table {{
+    background: rgba(255,255,255,0.04) !important;
+    color: #e8e8e8 !important;
+    border-radius: 8px;
+}}
 """
+
+
+def _app_card_ui(app: dict):
+    return ui.div(
+        ui.div(app["icon"], class_="app-icon"),
+        ui.div(
+            ui.span(class_="status-dot"),
+            "Live on HuggingFace",
+            class_="app-status",
+        ),
+        ui.h3(app["name"], class_="app-name", style=f"color: {app['color']};"),
+        ui.p(app["subtitle"], class_="app-subtitle"),
+        ui.p(app["description"], class_="app-description"),
+        ui.output_ui(f"kpi_inline_{app['id']}"),
+        ui.tags.a(
+            f"Open {app['name']} →",
+            href=app["url"],
+            target="_blank",
+            rel="noopener noreferrer",
+            class_="app-btn",
+            style=f"background: {app['color']};",
+        ),
+        class_="app-card",
+        style=f"border-top: 3px solid {app['color']};",
+    )
 
 
 app_ui = ui.page_fluid(
     ui.tags.head(
-        ui.tags.title("Platform Hub — MA Compliance Intelligence"),
+        ui.tags.title("MA Compliance Intelligence Platform"),
         ui.tags.meta(name="viewport", content="width=device-width, initial-scale=1"),
-        ui.tags.style(ui.HTML(HUB_STYLES)),
+        ui.tags.style(ui.HTML(CSS)),
     ),
     ui.div(
         ui.div(
             (
                 ui.div(
-                    ui.tags.img(
-                        src=AVATAR_SRC,
-                        alt="Profile",
-                    ),
-                    class_="hub-avatar-wrap me-3",
+                    ui.tags.img(src=AVATAR_SRC, alt="Profile"),
+                    class_="hub-avatar",
                 )
                 if AVATAR_SRC
                 else ui.div()
             ),
             ui.div(
-                ui.h1("Platform Hub", class_="mb-2"),
+                ui.h1("MA Compliance Intelligence Platform", class_="hub-title"),
                 ui.p(
-                    "Cross-app findings and KPIs from AuditShield, StarGuard, and SovereignShield.",
-                    class_="hub-header-sub mb-0 small",
+                    "Defend · Optimize · Govern  ·  Reichert Science & Intelligence",
+                    class_="hub-subtitle",
                 ),
-                class_="flex-grow-1",
             ),
-            ui.div(
-                ui.span("3 Apps Live", class_="badge hub-badge-live me-2"),
+            class_="hub-header-main",
+        ),
+        ui.div(
+            ui.div("● 3 Apps Live", class_="hub-badge"),
+            (
                 ui.tags.a(
-                    ui.tags.img(
-                        src=QR_PORTFOLIO,
-                        alt="Portfolio QR",
-                        class_="hub-portfolio-qr",
-                        style="width:80px;height:80px;",
-                    )
-                    if QR_PORTFOLIO
-                    else "",
+                    ui.tags.img(src=QR_PORTFOLIO, alt="Portfolio"),
                     href=PORTFOLIO_URL,
                     target="_blank",
                     rel="noopener noreferrer",
-                    title="Portfolio",
+                    class_="hub-portfolio-qr",
                 )
                 if QR_PORTFOLIO
-                else ui.div(),
-                class_="d-flex align-items-center flex-shrink-0",
+                else ui.div()
             ),
-            class_="d-flex justify-content-between align-items-center flex-wrap gap-3 container py-4 hub-header-strip",
+            class_="hub-header-right",
         ),
+        class_="hub-header",
     ),
     ui.div(
-        ui.div(
-            ui.div(
-                ui.div(app_card(
-                    "AuditShield",
-                    "HEDIS audit prep, gap analysis, and remediation tracking.",
-                    QR_AUDITSHIELD,
-                    AUDITSHIELD_URL,
-                ), class_="col-md-4"),
-                ui.div(app_card(
-                    "StarGuard",
-                    "STAR measures monitoring and gap closure.",
-                    QR_STARGUARD,
-                    STARGUARD_URL,
-                ), class_="col-md-4"),
-                ui.div(app_card(
-                    "SovereignShield",
-                    "Policy compliance and violation management.",
-                    QR_SOVEREIGNSHIELD,
-                    SOVEREIGNSHIELD_URL,
-                ), class_="col-md-4"),
-                class_="row g-3 mb-4",
-            ),
-            class_="container",
-        ),
+        ui.div(ui.output_ui("kpi_strip_audit"), class_="kpi-cell"),
+        ui.div(ui.output_ui("kpi_strip_star"), class_="kpi-cell"),
+        ui.div(ui.output_ui("kpi_strip_policy"), class_="kpi-cell"),
+        ui.div(ui.output_ui("kpi_strip_critical"), class_="kpi-cell"),
+        ui.div(ui.output_ui("kpi_strip_remediated"), class_="kpi-cell"),
+        class_="kpi-strip",
     ),
-    ui.layout_sidebar(
-        ui.sidebar(
-            ui.h5("Refresh", class_="mb-2"),
-            ui.input_action_button("refresh", "Refresh KPIs", class_="btn w-100"),
-            width=250,
-        ),
-        ui.tags.main(
-            ui.card(
-                ui.card_header("Platform KPIs"),
-                ui.output_data_frame("kpis_table"),
-            ),
-            ui.card(
-                ui.card_header("Recent Findings"),
-                ui.output_data_frame("findings_table"),
-            ),
-        ),
+    ui.output_ui("alert_banner"),
+    ui.div(
+        ui.div([_app_card_ui(a) for a in APPS], class_="apps-grid"),
+        class_="apps-section",
     ),
-    ui.tags.footer(
-        ui.p(
-            "MA Compliance Intelligence Platform · AuditShield + StarGuard + SovereignShield",
-            class_="text-muted small mb-0",
-        ),
-        class_="container py-3 hub-footer",
+    ui.div(
+        ui.input_action_button("refresh", "Refresh KPIs & findings", class_="btn btn-outline-light mb-3"),
+        ui.output_data_frame("findings_table"),
+        class_="findings-section",
+    ),
+    ui.div(
+        "© 2026 Reichert Science & Intelligence · "
+        "reichert.starguardai@email.com · +1 (480) 767-1337 · "
+        "tinyurl.com/bdevpdz5",
+        class_="hub-footer",
     ),
 )
 
 
 def server(input, output, session):
     supabase = reactive.Value(get_supabase_client())
+    log_session(supabase())
 
     @reactive.Effect
     @reactive.event(input.refresh)
     def _():
-        supabase.set(get_supabase_client())
+        sb = get_supabase_client()
+        supabase.set(sb)
+        log_session(sb)
+
+    @reactive.Calc
+    def kpis():
+        return fetch_kpis_dict(supabase())
+
+    def _kpi_div(value, label, color=GOLD):
+        return ui.div(
+            ui.div(str(value), class_="kpi-value", style=f"color:{color};"),
+            ui.div(label, class_="kpi-label"),
+        )
 
     @output
-    @render.data_frame
-    def kpis_table():
-        kpis = fetch_kpis(supabase())
-        cols = [
-            "open_findings_total",
-            "open_audit_flags",
-            "open_star_gaps",
-            "open_policy_violations",
-            "critical_open",
-            "remediated_total",
-        ]
-        return kpis[[c for c in cols if c in kpis.columns]] if not kpis.empty else pd.DataFrame()
+    @render.ui
+    def kpi_strip_audit():
+        return _kpi_div(kpis()["open_audit_flags"], "Open Audit Flags", GOLD)
+
+    @output
+    @render.ui
+    def kpi_strip_star():
+        return _kpi_div(kpis()["open_star_gaps"], "Open Star Gaps", GOLD)
+
+    @output
+    @render.ui
+    def kpi_strip_policy():
+        return _kpi_div(kpis()["open_policy_violations"], "Policy Violations", GREEN)
+
+    @output
+    @render.ui
+    def kpi_strip_critical():
+        return _kpi_div(kpis()["critical_open"], "Critical Open", "#EF4444")
+
+    @output
+    @render.ui
+    def kpi_strip_remediated():
+        return _kpi_div(kpis()["remediated_total"], "Remediated", GREEN)
+
+    def _app_kpi_ui(app: dict):
+        val = kpis().get(app["kpi_key"], "--")
+        return ui.div(
+            ui.span(str(val), class_="app-kpi-value", style=f"color:{app['kpi_color']};"),
+            ui.span(f" {app['kpi_label']}", style="opacity:0.6;"),
+            class_="app-kpi",
+        )
+
+    @output
+    @render.ui
+    def kpi_inline_auditshield():
+        return _app_kpi_ui(APPS[0])
+
+    @output
+    @render.ui
+    def kpi_inline_starguard():
+        return _app_kpi_ui(APPS[1])
+
+    @output
+    @render.ui
+    def kpi_inline_sovereignshield():
+        return _app_kpi_ui(APPS[2])
+
+    @output
+    @render.ui
+    def alert_banner():
+        critical = kpis().get("critical_open", 0)
+        if not critical or critical == "--":
+            return ui.div()
+        try:
+            if int(critical) == 0:
+                return ui.div()
+        except (TypeError, ValueError):
+            pass
+        return ui.div(
+            "⚠️",
+            ui.span(
+                f"{critical} critical finding(s) require cross-app review. "
+                "Open AuditShield or SovereignShield to triage.",
+                style="font-weight:500;",
+            ),
+            class_="alert-banner",
+        )
 
     @output
     @render.data_frame
     def findings_table():
         df = fetch_findings(supabase())
         if df.empty:
-            return pd.DataFrame({"message": ["No findings yet. Connect Supabase and run platform_hub_schema.sql."]})
+            return pd.DataFrame({"message": ["No findings yet, or connect Supabase / run platform_hub_schema.sql."]})
         cols = ["title", "source_app", "severity", "status", "created_at"]
         return df[[c for c in cols if c in df.columns]]
 
