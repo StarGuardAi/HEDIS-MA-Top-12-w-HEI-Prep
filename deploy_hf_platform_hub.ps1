@@ -57,12 +57,17 @@ try {
 
     Push-Location $wt
     try {
+        # HF rejects if *any* commit on the pushed branch contains raw binaries. A normal
+        # "git rm" commit still leaves parent commits with the PNG — use one orphan commit.
+        Write-Host "==> Orphan commit without PNG (HF pre-receive scans full history)"
+        git checkout --orphan hf-hub-hf-deploy
+        if ($LASTEXITCODE -ne 0) { throw "orphan checkout failed" }
         if (Test-Path -LiteralPath "LinkedIn_Avatar_300PX.png") {
-            Write-Host "==> Remove avatar PNG from Space branch (HF binary policy)"
-            git rm -f "LinkedIn_Avatar_300PX.png"
-            git commit -m "chore(hf): omit avatar PNG; app uses GitHub raw / AVATAR_URL"
-            if ($LASTEXITCODE -ne 0) { throw "git commit failed" }
+            Remove-Item -LiteralPath "LinkedIn_Avatar_300PX.png" -Force
         }
+        git add -A
+        git commit -m "feat(platform-hub): Space deploy (avatar via GitHub raw / AVATAR_URL)"
+        if ($LASTEXITCODE -ne 0) { throw "git commit failed" }
 
         Write-Host "==> Push to ${RemoteName}:main (force)"
         git push $RemoteName "HEAD:main" --force
