@@ -8,6 +8,7 @@ Avatar: optional LinkedIn_Avatar_300PX.png; else GitHub raw / AVATAR_URL.
 """
 
 import base64
+import concurrent.futures
 import os
 from io import BytesIO
 
@@ -18,6 +19,11 @@ from shiny import App, reactive, render, ui
 load_dotenv()
 
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Supabase: fail fast on slow / missing VIEW (HF + Shiny block on long HTTP hangs)
+_POSTGREST_TIMEOUT_SEC = 5.0
+_QUERY_DEADLINE_SEC = 6.0
+_LOG_SESSION_DEADLINE_SEC = 4.0
 
 # ── HuggingFace Space URLs (env overrides) ───────────────────────────────────
 HF_AUDITSHIELD = os.environ.get(
@@ -135,7 +141,7 @@ QR_PORTFOLIO = make_qr_base64(PORTFOLIO_URL, size_px=72)
 
 def get_supabase_client():
     try:
-        from supabase import create_client
+        from supabase import ClientOptions, create_client
 
         url = os.environ.get("SUPABASE_URL") or os.environ.get("PLATFORM_SUPABASE_URL")
         key = (
@@ -145,10 +151,27 @@ def get_supabase_client():
             or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
         )
         if url and key:
-            return create_client(url, key)
+            opts = ClientOptions(
+                postgrest_client_timeout=_POSTGREST_TIMEOUT_SEC,
+                storage_client_timeout=int(_POSTGREST_TIMEOUT_SEC),
+                function_client_timeout=int(_POSTGREST_TIMEOUT_SEC),
+            )
+            return create_client(url, key, options=opts)
     except Exception:
         pass
     return None
+
+
+def _run_with_deadline(fn, timeout_sec: float, default):
+    """Run blocking Supabase call in a worker; return default on timeout or error."""
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+        fut = ex.submit(fn)
+        try:
+            return fut.result(timeout=timeout_sec)
+        except concurrent.futures.TimeoutError:
+            return default
+        except Exception:
+            return default
 
 
 def _kpi_defaults() -> dict:
@@ -166,21 +189,31 @@ def fetch_kpis_dict(supabase) -> dict:
     d = _kpi_defaults()
     if not supabase:
         return d
-    try:
-        r = supabase.table("platform_hub_kpis").select("*").execute()
-        if r.data:
-            row = r.data[0]
-            d = {**d, **{k: row.get(k, d.get(k, 0)) for k in d}}
-            for k, v in row.items():
-                if k not in d:
-                    d[k] = v
-    except Exception:
-        pass
-    return d
+
+    def _query():
+        try:
+            r = supabase.table("platform_hub_kpis").select("*").execute()
+            if r.data:
+                row = r.data[0]
+                out = {**d, **{k: row.get(k, d.get(k, 0)) for k in d}}
+                for k, v in row.items():
+                    if k not in out:
+                        out[k] = v
+                return out
+        except Exception:
+            pass
+        return d
+
+    return _run_with_deadline(_query, _QUERY_DEADLINE_SEC, d)
 
 
 def fetch_findings(supabase, limit: int = 20) -> pd.DataFrame:
-    if supabase:
+    empty = pd.DataFrame()
+
+    if not supabase:
+        return empty
+
+    def _query():
         try:
             r = (
                 supabase.table("cross_app_findings")
@@ -193,16 +226,23 @@ def fetch_findings(supabase, limit: int = 20) -> pd.DataFrame:
                 return pd.DataFrame(r.data)
         except Exception:
             pass
-    return pd.DataFrame()
+        return empty
+
+    return _run_with_deadline(_query, _QUERY_DEADLINE_SEC, empty)
 
 
 def log_session(supabase, app_name: str = "platform_hub") -> None:
     if not supabase:
         return
-    try:
-        supabase.table("platform_sessions").insert({"app_name": app_name}).execute()
-    except Exception:
-        pass
+
+    def _insert():
+        try:
+            supabase.table("platform_sessions").insert({"app_name": app_name}).execute()
+        except Exception:
+            pass
+        return None
+
+    _run_with_deadline(_insert, _LOG_SESSION_DEADLINE_SEC, None)
 
 
 CSS = f"""
