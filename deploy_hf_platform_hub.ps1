@@ -33,6 +33,7 @@ $Prefix = 'platform-hub'
 $RemoteName = 'hf-platform-hub'
 $RemoteUrl = 'https://huggingface.co/spaces/rreichert/reichert-platform-hub'
 $SplitBranch = 'hf-platform-hub-space-only'
+$OrphanBranch = 'hf-hub-hf-deploy'
 
 $remotes = @(git remote)
 if ($remotes -notcontains $RemoteName) {
@@ -59,8 +60,13 @@ try {
     try {
         # HF rejects if *any* commit on the pushed branch contains raw binaries. A normal
         # "git rm" commit still leaves parent commits with the PNG — use one orphan commit.
+        $staleOrphan = git branch --list $OrphanBranch
+        if ($staleOrphan) {
+            Write-Host "==> Remove stale local branch $OrphanBranch"
+            git branch -D $OrphanBranch
+        }
         Write-Host "==> Orphan commit without PNG (HF pre-receive scans full history)"
-        git checkout --orphan hf-hub-hf-deploy
+        git checkout --orphan $OrphanBranch
         if ($LASTEXITCODE -ne 0) { throw "orphan checkout failed" }
         if (Test-Path -LiteralPath "LinkedIn_Avatar_300PX.png") {
             Remove-Item -LiteralPath "LinkedIn_Avatar_300PX.png" -Force
@@ -86,6 +92,10 @@ finally {
     $still = git branch --list $SplitBranch
     if ($still) {
         git branch -D $SplitBranch
+    }
+    $orphLeft = git branch --list $OrphanBranch
+    if ($orphLeft) {
+        git branch -D $OrphanBranch
     }
 }
 
