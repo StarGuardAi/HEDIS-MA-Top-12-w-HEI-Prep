@@ -25,7 +25,7 @@ class RealtimeValidationEngine:
     def __init__(self):
         self.db = get_db_manager()
         self.validator = MEATValidator()
-        self.client = get_anthropic_client()
+        self.client = get_anthropic_client(required=False)
 
         # Validation thresholds
         self.auto_alert_threshold = 70  # Confidence below this triggers alert

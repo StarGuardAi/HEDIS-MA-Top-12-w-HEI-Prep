@@ -14,7 +14,7 @@ class MEATValidator:
     """
 
     def __init__(self, api_key: str | None = None):
-        self.client = get_anthropic_client(api_key=api_key)
+        self.client = get_anthropic_client(api_key=api_key, required=False)
         self.model = "claude-sonnet-4-20250514"
 
         # Top 10 High-Impact HCC categories from your document
@@ -153,6 +153,20 @@ Analyze this documentation and provide your assessment in this exact JSON format
     "failure_reason": "specific reason or null",
     "recommendations": "specific documentation improvements needed"
 }}"""
+
+        if not self.client:
+            return {
+                "meat_elements": {
+                    "monitor": {"present": False, "evidence": None},
+                    "evaluate": {"present": False, "evidence": None},
+                    "assess": {"present": False, "evidence": None},
+                    "treat": {"present": False, "evidence": None},
+                },
+                "validation_status": "FAIL",
+                "confidence_score": 0,
+                "failure_reason": "ANTHROPIC_API_KEY not configured (add Space secret or .env)",
+                "recommendations": "Configure ANTHROPIC_API_KEY to enable M.E.A.T. validation",
+            }
 
         try:
             response = self.client.messages.create(

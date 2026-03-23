@@ -23,7 +23,7 @@ class RegulatoryIntelligence:
 
     def __init__(self):
         self.db = get_db_manager()
-        self.client = get_anthropic_client()
+        self.client = get_anthropic_client(required=False)
         self.model = "claude-sonnet-4-20250514"
 
         self.sources = {
@@ -131,6 +131,8 @@ Return ONLY valid JSON:
 }}"""
 
         try:
+            if not self.client:
+                raise RuntimeError("no anthropic client")
             response = self.client.messages.create(
                 model=self.model,
                 max_tokens=1500,

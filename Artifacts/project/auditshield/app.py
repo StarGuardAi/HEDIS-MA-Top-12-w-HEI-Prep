@@ -9,6 +9,9 @@ import asyncio
 import json
 import os
 from datetime import datetime, timedelta
+
+# Snapshot HF / .env key at module load (Space secrets + avoids repeated getenv races)
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 from pathlib import Path
 
 import pandas as pd
