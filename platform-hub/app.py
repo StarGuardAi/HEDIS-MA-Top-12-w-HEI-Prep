@@ -3,8 +3,10 @@ Platform Hub — Cross-app KPI dashboard
 QR codes: portfolio + all 3 apps (AuditShield, StarGuard, SovereignShield)
 Supabase: platform_hub_kpis, cross_app_findings, platform_alerts
 
-Deploy: place LinkedIn_Avatar_300PX.png in the same directory as this file.
-Update the three HuggingFace Space URLs below (or via env) if slugs change.
+Deploy: optional LinkedIn_Avatar_300PX.png next to this file (embedded as data URI).
+Hugging Face Hub rejects raw PNGs in git unless Git Xet is used; the deploy script
+omits the PNG from the Space repo — set AVATAR_URL or rely on the default GitHub raw URL below.
+Update the three HuggingFace Space URLs (or env) if slugs change.
 """
 
 from shiny import App, ui, render, reactive
@@ -39,21 +41,27 @@ SOVEREIGNSHIELD_URL = os.environ.get("SOVEREIGNSHIELD_URL", HF_SOVEREIGN)
 
 PORTFOLIO_URL = os.environ.get("PORTFOLIO_URL", "https://tinyurl.com/bdevpdz5")
 
+# When PNG is not on disk (e.g. stripped for HF binary policy), use this URL as <img src>.
+_DEFAULT_AVATAR_RAW = (
+    "https://raw.githubusercontent.com/StarGuardAi/HEDIS-MA-Top-12-w-HEI-Prep/"
+    "main/platform-hub/LinkedIn_Avatar_300PX.png"
+)
 
-def load_avatar_data_uri() -> str:
-    """Base64 data URI for LinkedIn_Avatar_300PX.png next to app.py."""
+
+def get_avatar_src() -> str:
+    """Local PNG as data URI if present; else AVATAR_URL env or default GitHub raw URL."""
     path = os.path.join(_APP_DIR, "LinkedIn_Avatar_300PX.png")
-    if not os.path.isfile(path):
-        return ""
-    try:
-        with open(path, "rb") as f:
-            raw = f.read()
-        return f"data:image/png;base64,{base64.b64encode(raw).decode()}"
-    except Exception:
-        return ""
+    if os.path.isfile(path):
+        try:
+            with open(path, "rb") as f:
+                raw = f.read()
+            return f"data:image/png;base64,{base64.b64encode(raw).decode()}"
+        except Exception:
+            pass
+    return os.environ.get("AVATAR_URL", _DEFAULT_AVATAR_RAW)
 
 
-AVATAR_DATA_URI = load_avatar_data_uri()
+AVATAR_SRC = get_avatar_src()
 
 
 def make_qr_base64(url: str, size_px: int = 140, fill_color: str = None, back_color: str = "white") -> str:
@@ -280,12 +288,12 @@ app_ui = ui.page_fluid(
             (
                 ui.div(
                     ui.tags.img(
-                        src=AVATAR_DATA_URI,
+                        src=AVATAR_SRC,
                         alt="Profile",
                     ),
                     class_="hub-avatar-wrap me-3",
                 )
-                if AVATAR_DATA_URI
+                if AVATAR_SRC
                 else ui.div()
             ),
             ui.div(
