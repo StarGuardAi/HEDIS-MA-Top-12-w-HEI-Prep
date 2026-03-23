@@ -10,6 +10,8 @@
   app.py loads the avatar from local PNG if present, else AVATAR_URL or the
   default GitHub raw URL.
 
+  Uses a temporary git worktree so an unclean monorepo working tree does not block checkout.
+
   Alternative: install Git-Xet (winget install HuggingFace.Git-Xet), run
   `git xet install`, then you can push the PNG with:
     git subtree push --prefix platform-hub hf-platform-hub main
@@ -38,31 +40,49 @@ if ($remotes -notcontains $RemoteName) {
     git remote add $RemoteName $RemoteUrl
 }
 
-git branch -D $SplitBranch 2>$null | Out-Null
+$existingSplit = git branch --list $SplitBranch
+if ($existingSplit) {
+    git branch -D $SplitBranch
+}
 
 Write-Host "==> Subtree split: $Prefix -> $SplitBranch"
 git subtree split --prefix=$Prefix -b $SplitBranch
 if ($LASTEXITCODE -ne 0) { throw "subtree split failed" }
 
-$goBack = git branch --show-current
-git checkout $SplitBranch
-if ($LASTEXITCODE -ne 0) { throw "checkout $SplitBranch failed" }
+$wt = Join-Path $env:TEMP ("hf-platform-hub-deploy-" + [Guid]::NewGuid().ToString("N").Substring(0, 12))
+try {
+    Write-Host "==> Worktree (avoids checkout conflicts): $wt"
+    git worktree add $wt $SplitBranch
+    if ($LASTEXITCODE -ne 0) { throw "git worktree add failed" }
 
-if (Test-Path -LiteralPath "LinkedIn_Avatar_300PX.png") {
-    Write-Host "==> Remove avatar PNG from Space branch (HF binary policy)"
-    git rm -f "LinkedIn_Avatar_300PX.png"
-    git commit -m "chore(hf): omit avatar PNG; app uses GitHub raw / AVATAR_URL"
-    if ($LASTEXITCODE -ne 0) { throw "git commit failed" }
+    Push-Location $wt
+    try {
+        if (Test-Path -LiteralPath "LinkedIn_Avatar_300PX.png") {
+            Write-Host "==> Remove avatar PNG from Space branch (HF binary policy)"
+            git rm -f "LinkedIn_Avatar_300PX.png"
+            git commit -m "chore(hf): omit avatar PNG; app uses GitHub raw / AVATAR_URL"
+            if ($LASTEXITCODE -ne 0) { throw "git commit failed" }
+        }
+
+        Write-Host "==> Push to ${RemoteName}:main (force)"
+        git push $RemoteName "HEAD:main" --force
+        if ($LASTEXITCODE -ne 0) { throw "git push failed" }
+    }
+    finally {
+        Pop-Location
+    }
 }
-
-Write-Host "==> Push $SplitBranch -> ${RemoteName}:main (force)"
-git push $RemoteName "${SplitBranch}:main" --force
-if ($LASTEXITCODE -ne 0) { throw "git push failed" }
-
-Write-Host "==> Back to $goBack and drop split branch"
-git checkout $goBack
-if ($LASTEXITCODE -ne 0) { git checkout main }
-git branch -D $SplitBranch
+finally {
+    Set-Location $Root
+    git worktree remove $wt --force 2>$null | Out-Null
+    if (Test-Path -LiteralPath $wt) {
+        Remove-Item -LiteralPath $wt -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    $still = git branch --list $SplitBranch
+    if ($still) {
+        git branch -D $SplitBranch
+    }
+}
 
 Write-Host ""
 Write-Host "Done. Monitor build: https://huggingface.co/spaces/rreichert/reichert-platform-hub"
