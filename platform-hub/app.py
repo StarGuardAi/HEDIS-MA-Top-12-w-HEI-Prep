@@ -470,7 +470,7 @@ app_ui = ui.page_fluid(
     ),
     ui.output_ui("alert_banner"),
     ui.div(
-        ui.div([_app_card_ui(a) for a in APPS], class_="apps-grid"),
+        ui.div(*[_app_card_ui(a) for a in APPS], class_="apps-grid"),
         class_="apps-section",
     ),
     ui.div(
