@@ -185,10 +185,52 @@ def _kpi_defaults() -> dict:
     }
 
 
-def fetch_kpis_dict(supabase) -> dict:
+def _kpi_error_hint(exc: BaseException) -> str:
+    """Map PostgREST / network errors to a single user-visible line."""
+    try:
+        from postgrest.exceptions import APIError as PostgrestAPIError
+
+        if isinstance(exc, PostgrestAPIError):
+            parts = " ".join(
+                filter(
+                    None,
+                    [exc.message or "", exc.details or "", exc.hint or "", exc.code or ""],
+                )
+            ).lower()
+            if any(
+                s in parts
+                for s in (
+                    "platform_hub_kpis",
+                    "does not exist",
+                    "schema cache",
+                    "could not find the table",
+                    "undefined table",
+                )
+            ):
+                return (
+                    "Database view `platform_hub_kpis` is missing — run `platform_hub_schema.sql` "
+                    "in the Supabase SQL Editor, then Refresh."
+                )
+            return "Supabase rejected the KPI query — check URL, anon key, and RLS on the view."
+    except ImportError:
+        pass
+    text = str(exc).lower()
+    if "platform_hub_kpis" in text or "does not exist" in text or "relation" in text:
+        return (
+            "Database view `platform_hub_kpis` is missing — run `platform_hub_schema.sql` "
+            "in the Supabase SQL Editor, then Refresh."
+        )
+    return "Could not load KPIs (timeout or network). Try Refresh or check Supabase logs."
+
+
+def fetch_kpis_dict_with_status(supabase) -> tuple[dict, str | None]:
+    """Return (kpi dict, optional one-line status). Second item is None when load succeeded."""
     d = _kpi_defaults()
     if not supabase:
-        return d
+        return (
+            d,
+            "Supabase not configured — add SUPABASE_URL and SUPABASE_ANON_KEY in this Space's secrets.",
+        )
 
     def _query():
         try:
@@ -199,12 +241,18 @@ def fetch_kpis_dict(supabase) -> dict:
                 for k, v in row.items():
                     if k not in out:
                         out[k] = v
-                return out
-        except Exception:
-            pass
-        return d
+                return (out, None)
+            return (d, None)
+        except Exception as e:
+            return (d, _kpi_error_hint(e))
 
-    return _run_with_deadline(_query, _QUERY_DEADLINE_SEC, d)
+    timeout_msg = "KPI query timed out — showing zeros. Check Supabase or click Refresh."
+    return _run_with_deadline(_query, _QUERY_DEADLINE_SEC, (d, timeout_msg))
+
+
+def fetch_kpis_dict(supabase) -> dict:
+    """Backward-compatible: KPI values only."""
+    return fetch_kpis_dict_with_status(supabase)[0]
 
 
 def fetch_findings(supabase, limit: int = 20) -> pd.DataFrame:
@@ -430,6 +478,16 @@ body {{
     color: #e8e8e8 !important;
     border-radius: 8px;
 }}
+.hub-kpi-hint {{
+    margin: 0 2.5rem 0.75rem;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: rgba(255,255,255,0.72);
+    border-left: 3px solid {GOLD};
+    background: rgba(212,175,55,0.1);
+    border-radius: 0 6px 6px 0;
+}}
 """
 
 
@@ -508,6 +566,7 @@ app_ui = ui.page_fluid(
         ui.div(ui.output_ui("kpi_strip_remediated"), class_="kpi-cell"),
         class_="kpi-strip",
     ),
+    ui.output_ui("kpi_status_bar"),
     ui.output_ui("alert_banner"),
     ui.div(
         ui.div(*[_app_card_ui(a) for a in APPS], class_="apps-grid"),
@@ -539,8 +598,20 @@ def server(input, output, session):
         log_session(sb)
 
     @reactive.Calc
+    def kpi_state():
+        return fetch_kpis_dict_with_status(supabase())
+
+    @reactive.Calc
     def kpis():
-        return fetch_kpis_dict(supabase())
+        return kpi_state()[0]
+
+    @output
+    @render.ui
+    def kpi_status_bar():
+        hint = kpi_state()[1]
+        if not hint:
+            return ui.div()
+        return ui.div(hint, class_="hub-kpi-hint")
 
     def _kpi_div(value, label, color=GOLD):
         return ui.div(
