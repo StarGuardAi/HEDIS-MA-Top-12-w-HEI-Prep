@@ -20,8 +20,7 @@ load_dotenv()
 
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Supabase: fail fast on slow / missing VIEW (HF + Shiny block on long HTTP hangs)
-_POSTGREST_TIMEOUT_SEC = 5.0
+# Supabase: blocking calls use ThreadPoolExecutor deadlines below (HF + Shiny safe).
 _QUERY_DEADLINE_SEC = 6.0
 _LOG_SESSION_DEADLINE_SEC = 4.0
 
@@ -141,7 +140,8 @@ QR_PORTFOLIO = make_qr_base64(PORTFOLIO_URL, size_px=72)
 
 def get_supabase_client():
     try:
-        from supabase import ClientOptions, create_client
+        # Bare create_client: ClientOptions field names vary by supabase-py and can raise at init.
+        from supabase import create_client
 
         url = os.environ.get("SUPABASE_URL") or os.environ.get("PLATFORM_SUPABASE_URL")
         key = (
@@ -151,12 +151,7 @@ def get_supabase_client():
             or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
         )
         if url and key:
-            opts = ClientOptions(
-                postgrest_client_timeout=_POSTGREST_TIMEOUT_SEC,
-                storage_client_timeout=int(_POSTGREST_TIMEOUT_SEC),
-                function_client_timeout=int(_POSTGREST_TIMEOUT_SEC),
-            )
-            return create_client(url, key, options=opts)
+            return create_client(url, key)
     except Exception:
         pass
     return None
