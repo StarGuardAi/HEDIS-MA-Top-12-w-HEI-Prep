@@ -82,11 +82,7 @@ from starguard_core.auth import (
 from starguard_core.hcc import run_compound_analysis
 
 from auditshield_platform_integration import record_finding, register_session
-from shared.supabase_findings import (
-    _get_supabase_key,
-    _get_supabase_url,
-    insert_finding,
-)
+from shared.supabase_findings import insert_finding
 from chart_selection_ai import ChartSelectionAI
 from compliance_forecasting import ComplianceForecaster
 from dashboard_manager import DashboardManager
@@ -1347,8 +1343,7 @@ def server(input, output, session):
             )
             mock_audit_results_data.set(payload)
             print(f"[Mock Audit] DATA SET! Sample: {sample_size}, Failures: {failures}, Error: {error_rate:.1%}")
-            print(f"[findings-debug] url={_get_supabase_url()[:30]!r} key_len={len(_get_supabase_key())}", flush=True)
-            # [findings] action insert — non-blocking (to_thread: sync httpx inside async handler)
+            # [findings] action insert — non-blocking (to_thread: sync psycopg2 inside async handler)
             import asyncio as _asyncio
 
             await _asyncio.to_thread(
