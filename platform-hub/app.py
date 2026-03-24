@@ -488,11 +488,55 @@ body {{
     margin-bottom: 0.75rem;
     font-size: 1rem;
 }}
-.findings-section .shiny-data-grid,
-.findings-section table {{
-    background: rgba(255,255,255,0.04) !important;
-    color: #e8e8e8 !important;
+.findings-hint {{
+    margin: 0 0 1rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    border-radius: 0 8px 8px 0;
+}}
+.findings-hint--refresh {{
+    color: rgba(255,255,255,0.76);
+    border-left: 3px solid {GOLD};
+    background: rgba(212,175,55,0.1);
+}}
+.findings-hint--empty {{
+    color: rgba(255,255,255,0.85);
+    background: rgba(239,68,68,0.1);
+    border: 1px dashed rgba(239,68,68,0.42);
+    border-left: 3px solid #EF4444;
     border-radius: 8px;
+}}
+.findings-tbl-wrap {{
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+}}
+.findings-tbl {{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.04);
+}}
+.findings-tbl thead th {{
+    text-align: left;
+    padding: 0.65rem 0.85rem;
+    background: rgba(212,175,55,0.2);
+    color: {GOLD};
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.68rem;
+    border-bottom: 1px solid rgba(212,175,55,0.4);
+}}
+.findings-tbl tbody td {{
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: #e8e8e8;
+    vertical-align: top;
+}}
+.findings-tbl tbody tr:hover {{
+    background: rgba(74,62,143,0.22);
 }}
 .hub-kpi-hint {{
     margin: 0 2.5rem 0.75rem;
@@ -604,7 +648,7 @@ app_ui = ui.page_fluid(
     ),
     ui.div(
         ui.input_action_button("refresh", "Refresh KPIs & findings", class_="btn btn-outline-light mb-3"),
-        ui.output_data_frame("findings_table"),
+        ui.output_ui("findings_table"),
         class_="findings-section",
     ),
     ui.div(
@@ -724,18 +768,52 @@ def server(input, output, session):
             class_="alert-banner",
         )
 
+    def _findings_cell(v):
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return ""
+        return str(v)
+
+    def _findings_col_label(name: str) -> str:
+        return name.replace("_", " ").title()
+
     @output
-    @render.data_frame
+    @render.ui
     def findings_table():
         if _trigger() == 0:
-            return pd.DataFrame(
-                {"message": ["Click Refresh KPIs & findings to load from Supabase."]}
+            return ui.div(
+                "Click Refresh KPIs & findings to load from Supabase.",
+                class_="findings-hint findings-hint--refresh",
             )
         df = fetch_findings(supabase())
         if df.empty:
-            return pd.DataFrame({"message": ["No findings yet, or connect Supabase / run platform_hub_schema.sql."]})
+            return ui.div(
+                "No findings yet — connect Supabase or run platform_hub_schema.sql.",
+                class_="findings-hint findings-hint--empty",
+            )
         cols = ["title", "source_app", "severity", "status", "created_at"]
-        return df[[c for c in cols if c in df.columns]]
+        use_cols = [c for c in cols if c in df.columns]
+        if not use_cols:
+            return ui.div(
+                "No findings yet — connect Supabase or run platform_hub_schema.sql.",
+                class_="findings-hint findings-hint--empty",
+            )
+        sub = df[use_cols]
+        header = ui.tags.tr(*[ui.tags.th(_findings_col_label(c)) for c in use_cols])
+        rows = []
+        for _, row in sub.iterrows():
+            rows.append(
+                ui.tags.tr(
+                    *[ui.tags.td(_findings_cell(row[c])) for c in use_cols],
+                )
+            )
+        return ui.div(
+            ui.tags.table(
+                ui.tags.thead(header),
+                ui.tags.tbody(*rows),
+                class_="findings-tbl",
+            ),
+            class_="findings-tbl-wrap",
+        )
 
 
 app = App(app_ui, server=server)
