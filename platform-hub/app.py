@@ -618,17 +618,23 @@ app_ui = ui.page_fluid(
 
 def server(input, output, session):
     supabase = reactive.Value(get_supabase_client())
-    log_session(supabase())
+    _trigger = reactive.Value(0)
 
     @reactive.Effect
     @reactive.event(input.refresh)
     def _():
         sb = get_supabase_client()
         supabase.set(sb)
+        _trigger.set(_trigger() + 1)
         log_session(sb)
 
     @reactive.Calc
     def kpi_state():
+        if _trigger() == 0:
+            return (
+                _kpi_defaults(),
+                "Click Refresh KPIs & findings to load from Supabase.",
+            )
         return fetch_kpis_dict_with_status(supabase())
 
     @reactive.Calc
@@ -721,6 +727,10 @@ def server(input, output, session):
     @output
     @render.data_frame
     def findings_table():
+        if _trigger() == 0:
+            return pd.DataFrame(
+                {"message": ["Click Refresh KPIs & findings to load from Supabase."]}
+            )
         df = fetch_findings(supabase())
         if df.empty:
             return pd.DataFrame({"message": ["No findings yet, or connect Supabase / run platform_hub_schema.sql."]})
