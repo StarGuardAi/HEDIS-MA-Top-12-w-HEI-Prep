@@ -22,9 +22,12 @@ platform_hub_kpis VIEW filters:
 Silent-fail design: all errors logged to stderr only.
 Never raises — Supabase insert failures must never crash the UI.
 
-Credential resolution order:
+Credential resolution order (read from os.environ on each insert, not at import):
     1. PLATFORM_SUPABASE_URL  / PLATFORM_SUPABASE_ANON_KEY  (Platform Hub project)
     2. SUPABASE_URL           / SUPABASE_ANON_KEY            (Sovereign primary project)
+
+Rationale: Hugging Face and other hosts may expose secrets after the worker imports
+this module; import-time caching would leave _URL/_KEY permanently empty.
 """
 from __future__ import annotations
 
@@ -36,19 +39,26 @@ from typing import Any
 
 import httpx
 
-_URL = (
-    os.environ.get("PLATFORM_SUPABASE_URL")
-    or os.environ.get("SUPABASE_URL", "")
-)
-_KEY = (
-    os.environ.get("PLATFORM_SUPABASE_ANON_KEY")
-    or os.environ.get("SUPABASE_ANON_KEY")
-    or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-    or os.environ.get("SUPABASE_KEY")
-    or ""
-)
 _TABLE = "cross_app_findings"
 _TIMEOUT = 6.0
+
+
+def _get_supabase_url() -> str:
+    return (
+        os.environ.get("PLATFORM_SUPABASE_URL")
+        or os.environ.get("SUPABASE_URL")
+        or ""
+    ).strip()
+
+
+def _get_supabase_key() -> str:
+    return (
+        os.environ.get("PLATFORM_SUPABASE_ANON_KEY")
+        or os.environ.get("SUPABASE_ANON_KEY")
+        or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+        or os.environ.get("SUPABASE_KEY")
+        or ""
+    ).strip()
 
 
 def insert_finding(
@@ -80,9 +90,11 @@ def insert_finding(
         measure_id:     optional top-level column when present in table
         policy_id:      optional top-level column when present in table
     """
-    if not _URL or not _KEY:
+    url = _get_supabase_url()
+    key = _get_supabase_key()
+    if not url or not key:
         print(
-            "[findings] PLATFORM_SUPABASE_URL / SUPABASE_URL not set — skipping insert",
+            "[findings] PLATFORM_SUPABASE_* / SUPABASE_* URL or key missing — skipping insert",
             file=sys.stderr,
         )
         return False
@@ -111,10 +123,10 @@ def insert_finding(
 
     try:
         resp = httpx.post(
-            f"{_URL.rstrip('/')}/rest/v1/{_TABLE}",
+            f"{url.rstrip('/')}/rest/v1/{_TABLE}",
             headers={
-                "apikey": _KEY,
-                "Authorization": f"Bearer {_KEY}",
+                "apikey": key,
+                "Authorization": f"Bearer {key}",
                 "Content-Type": "application/json",
                 "Prefer": "return=minimal",
             },
