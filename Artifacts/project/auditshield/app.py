@@ -8,6 +8,8 @@ Phase 3 (Real-Time Validation, HCC Reconciliation, Compliance Forecast, Regulato
 import asyncio
 import json
 import os
+import time
+import uuid as _uuid
 from datetime import datetime, timedelta
 
 # Snapshot HF / .env key at module load (Space secrets + avoids repeated getenv races)
@@ -80,6 +82,7 @@ from starguard_core.auth import (
 from starguard_core.hcc import run_compound_analysis
 
 from auditshield_platform_integration import record_finding, register_session
+from shared.supabase_findings import insert_finding
 from chart_selection_ai import ChartSelectionAI
 from compliance_forecasting import ComplianceForecaster
 from dashboard_manager import DashboardManager
@@ -106,6 +109,11 @@ from realtime_validation import RealtimeValidationEngine
 from regulatory_intelligence import RegulatoryIntelligence
 from ui.fab_wiring import fab_wiring_script
 from ui.mobile_badge import mobile_badge
+
+try:
+    _SESSION_ID = str(_uuid.uuid4())
+except Exception:
+    _SESSION_ID = "unknown"
 
 APP_NAME = "AuditShield-Live"
 
@@ -692,6 +700,25 @@ def server(input, output, session):
                         session_id=getattr(session, "session_id", None))
     except Exception:
         pass
+
+    import atexit as _atexit
+
+    def _auditshield_session_end() -> None:
+        # [findings] session-end insert — non-blocking
+        insert_finding(
+            source_app="auditshield",
+            finding_type="session_end",
+            severity="info",
+            status="remediated",
+            title="Session ended",
+            trigger_type="session_end",
+            session_id=_SESSION_ID,
+        )
+
+    try:
+        session.on_ended(_auditshield_session_end)
+    except Exception:
+        _atexit.register(_auditshield_session_end)
 
     # Reactive values
     provider_scores_data = reactive.Value(pd.DataFrame())
@@ -1316,6 +1343,17 @@ def server(input, output, session):
             )
             mock_audit_results_data.set(payload)
             print(f"[Mock Audit] DATA SET! Sample: {sample_size}, Failures: {failures}, Error: {error_rate:.1%}")
+            # [findings] action insert — non-blocking
+            insert_finding(
+                source_app="auditshield",
+                finding_type="audit_flag",
+                severity="info",
+                status="open",
+                title="Mock audit run",
+                trigger_type="action",
+                session_id=_SESSION_ID,
+                extra_metadata={"action": "run_mock_audit", "contract_size": size, "year": year},
+            )
         except Exception as e:
             print(f"[Mock Audit] ERROR: {e}")
             mock_audit_results_data.set({
