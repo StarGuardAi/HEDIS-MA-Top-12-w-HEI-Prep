@@ -27,20 +27,21 @@ Credential resolution order (read from os.environ on each insert, not at import)
     2. SUPABASE_URL           / SUPABASE_ANON_KEY            (Sovereign primary project)
 
 Rationale: Hugging Face and other hosts may expose secrets after the worker imports
-this module; import-time caching would leave _URL/_KEY permanently empty.
+this module; import-time caching would leave URL/key permanently empty.
+
+Transport: official ``supabase`` Python client instead of raw httpx REST calls.
+Some runtimes fail to resolve ``*.supabase.co`` via httpx even when the client works.
 """
 from __future__ import annotations
 
-import json
 import os
 import sys
 from datetime import datetime, timezone
 from typing import Any
 
-import httpx
+from supabase import create_client
 
 _TABLE = "cross_app_findings"
-_TIMEOUT = 6.0
 
 
 def _get_supabase_url() -> str:
@@ -93,10 +94,7 @@ def insert_finding(
     url = _get_supabase_url()
     key = _get_supabase_key()
     if not url or not key:
-        print(
-            "[findings] PLATFORM_SUPABASE_* / SUPABASE_* URL or key missing — skipping insert",
-            file=sys.stderr,
-        )
+        print("[findings] URL or key missing — skipping insert", file=sys.stderr)
         return False
 
     now = datetime.now(timezone.utc).isoformat()
@@ -122,18 +120,8 @@ def insert_finding(
         payload["policy_id"] = str(policy_id)
 
     try:
-        resp = httpx.post(
-            f"{url.rstrip('/')}/rest/v1/{_TABLE}",
-            headers={
-                "apikey": key,
-                "Authorization": f"Bearer {key}",
-                "Content-Type": "application/json",
-                "Prefer": "return=minimal",
-            },
-            content=json.dumps(payload),
-            timeout=_TIMEOUT,
-        )
-        resp.raise_for_status()
+        client = create_client(url, key)
+        client.table(_TABLE).insert(payload).execute()
         return True
     except Exception as exc:
         print(
