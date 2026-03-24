@@ -1343,8 +1343,9 @@ def server(input, output, session):
             )
             mock_audit_results_data.set(payload)
             print(f"[Mock Audit] DATA SET! Sample: {sample_size}, Failures: {failures}, Error: {error_rate:.1%}")
-            # [findings] action insert — non-blocking
-            insert_finding(
+            # [findings] action insert — non-blocking (asyncio.to_thread: sync httpx in async effect)
+            await asyncio.to_thread(
+                insert_finding,
                 source_app="auditshield",
                 finding_type="audit_flag",
                 severity="info",
