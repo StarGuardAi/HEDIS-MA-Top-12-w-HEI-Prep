@@ -137,6 +137,9 @@ def make_qr_base64(url: str, size_px: int = 100, fill_color: str = "#1A1633") ->
 
 QR_PORTFOLIO = make_qr_base64(PORTFOLIO_URL, size_px=72)
 
+for _app in APPS:
+    _app["qr_src"] = make_qr_base64(_app["url"], size_px=64, fill_color=DARK)
+
 
 def get_supabase_client():
     try:
@@ -384,11 +387,29 @@ body {{
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 14px;
     padding: 1.75rem;
+    padding-right: 5.75rem;
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
     overflow: hidden;
+}}
+.app-card-qr {{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    line-height: 0;
+}}
+.app-card-qr img {{
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.28);
+    display: block;
+}}
+.app-card-qr:hover img {{
+    border-color: rgba(255,255,255,0.45);
 }}
 .app-card:hover {{
     transform: translateY(-5px);
@@ -487,7 +508,21 @@ body {{
 
 
 def _app_card_ui(app: dict):
+    qr_src = app.get("qr_src") or ""
+    qr_block = (
+        ui.tags.a(
+            ui.tags.img(src=qr_src, alt=f"QR code — {app['name']}"),
+            href=app["url"],
+            target="_blank",
+            rel="noopener noreferrer",
+            class_="app-card-qr",
+            title=f"Open {app['name']}",
+        )
+        if qr_src
+        else ui.div()
+    )
     return ui.div(
+        qr_block,
         ui.div(app["icon"], class_="app-icon"),
         ui.div(
             ui.span(class_="status-dot"),
@@ -537,7 +572,7 @@ app_ui = ui.page_fluid(
             class_="hub-header-main",
         ),
         ui.div(
-            ui.div("● 3 Apps Live", class_="hub-badge"),
+            ui.div("3 APPS LIVE", class_="hub-badge"),
             (
                 ui.tags.a(
                     ui.tags.img(src=QR_PORTFOLIO, alt="Portfolio"),
