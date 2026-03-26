@@ -92,6 +92,7 @@ def insert_finding(
         policy_id:      folded into metadata if table has no top-level column
     """
     dsn = _get_postgres_dsn()
+    print(f"[findings-dsn] first40={dsn[:40]!r}", flush=True, file=sys.stderr)
     if not dsn:
         print(
             "[findings] No postgres DSN (PLATFORM_DATABASE_URL / DATABASE_URL / SUPABASE_DB_URL) "
