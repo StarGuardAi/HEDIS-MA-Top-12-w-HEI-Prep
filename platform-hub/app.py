@@ -135,10 +135,10 @@ def make_qr_base64(url: str, size_px: int = 100, fill_color: str = "#1A1633") ->
         return ""
 
 
-QR_PORTFOLIO = make_qr_base64(PORTFOLIO_URL, size_px=72)
+QR_PORTFOLIO = make_qr_base64(PORTFOLIO_URL, size_px=144)
 
 for _app in APPS:
-    _app["qr_src"] = make_qr_base64(_app["url"], size_px=64, fill_color=DARK)
+    _app["qr_src"] = make_qr_base64(_app["url"], size_px=128, fill_color=DARK)
 
 
 def get_supabase_client():
@@ -344,8 +344,8 @@ body {{
     letter-spacing: 1px;
 }}
 .hub-portfolio-qr img {{
-    width: 72px;
-    height: 72px;
+    width: 144px;
+    height: 144px;
     border-radius: 8px;
     border: 2px solid rgba(255,255,255,0.35);
 }}
@@ -402,8 +402,8 @@ body {{
     line-height: 0;
 }}
 .app-card-qr img {{
-    width: 56px;
-    height: 56px;
+    width: 112px;
+    height: 112px;
     border-radius: 6px;
     border: 2px solid rgba(255,255,255,0.28);
     display: block;
