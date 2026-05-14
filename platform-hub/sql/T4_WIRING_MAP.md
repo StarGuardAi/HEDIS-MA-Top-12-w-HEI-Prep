@@ -104,7 +104,7 @@ Summarized from `os.environ.get` / `getenv` on `SUPABASE*` under `Artifacts\proj
 
 ---
 
-## 5. T4 apply plan (concrete diffs -- v3)
+## 5. T4 apply plan (concrete diffs -- v4)
 
 *T3 SQL (`t3_primary_create.sql` / `t3_primary_alter.sql`) adds nullable `sub_surface` with CHECK (`desktop` \| `mobile` \| NULL). This section replaces strategic Section 5 prose with **patchable** before/after snippets. T4-code-stage Phase 1 gate: count `Artifacts/.../*.py` path mentions and `` ```python `` fences in this section only.*
 
@@ -744,6 +744,70 @@ Run on this section substring only (between `## 5.` and `## 6.`).
 
 - **Total files referenced:** 29 (Section 5 substring: `Artifacts/.../*.py` regex count)
 - **Total fenced blocks:** 29 (markdown fenced code blocks opened with the python tag in Section 5 only)
+
+### 5.5 Deferred paths (gitlink-resident) - T4.6 follow-up
+
+T4 round 1 applies to non-gitlink paths only. The following Section 5 paths
+live inside nested git repositories (mode 160000 in parent index)
+and require per-nested-repo commits + parent pointer bumps. They are
+DEFERRED to T4.6:
+
+Gitlink root: ``Artifacts/project/auditshield/starguard-desktop``
+- ``Artifacts/project/auditshield/starguard-desktop/app.py``
+- ``Artifacts/project/auditshield/starguard-desktop/shared/supabase_findings.py``
+
+Gitlink root: ``Artifacts/project/auditshield/starguard-mobile``
+- ``Artifacts/project/auditshield/starguard-mobile/Artifacts/app/app.py``
+- ``Artifacts/project/auditshield/starguard-mobile/Artifacts/app/pages/hedis_analyzer.py``
+- ``Artifacts/project/auditshield/starguard-mobile/Artifacts/app/shared/supabase_findings.py``
+
+#### T4.6 mechanics (per gitlink root)
+
+For each gitlink root, T4.6 will:
+
+1. ``cd`` into the nested repo working tree
+2. Apply the Section 5.1 / 5.2 / 5.3 edits to the in-scope files
+3. Commit inside the nested repo (focused branch
+   ``feat/t4-sub-surface-rotation``)
+4. Push the nested commit to its own remote (each nested repo has
+   its own remote, not the parent monorepo's remote)
+5. Return to parent repo
+6. ``git add <gitlink-path>`` to stage the new pointer
+7. Commit parent on a follow-up branch ``feat/t4-gitlink-pointer-bumps``
+
+The two passes can be done together (one Cursor block per gitlink
+root, then a final parent-bump commit). Each nested commit is
+subagent-reviewed independently.
+
+#### Audit reference
+
+T4-submodule-audit (05/14/2026) identified 4 gitlinks (mode 160000)
+in parent index but only 2 intersect Section 5: ``starguard-desktop`` and
+``starguard-mobile``. The other gitlinks (``auditshield-live``,
+``starguard-shiny``) have no Section 5 paths in T4 round 1 scope.
+
+Note: parent repo lacks ``.gitmodules`` so ``git submodule status``
+is non-functional; ``git ls-files -s`` mode 160000 was the source of
+truth for the audit. A separate cleanup ticket should repair or
+remove the broken gitlink mappings - out of T4 scope.
+
+#### T4 round 1 in-scope paths (regular, non-gitlink)
+
+After this deferral, T4 round 1 applies Section 5.1 / 5.2 / 5.3 edits to:
+
+- ``Artifacts/project/auditshield/app.py``
+- ``Artifacts/project/auditshield/shared/supabase_findings.py``
+- ``Artifacts/project/auditshield/supabase_platform.py`` (per Section 5.3 PLATFORM_* split if Section 5 references it; otherwise out of scope)
+- ``Artifacts/project/sovereignshield/app.py``
+- ``Artifacts/project/sovereignshield/shared/supabase_findings.py``
+- ``Artifacts/project/sovereignshield-mobile/shared/supabase_findings.py``
+- ``Artifacts/shared/supabase_findings.py`` (canonical)
+
+Plus skip: ``Artifacts/scripts/smoke_test_findings.py`` (untracked,
+separate ``smoke-test-bank`` block).
+
+T4 round 1 ready-to-apply path count: 7.
+
 
 ## 6. Risk notes
 
