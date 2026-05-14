@@ -1,14 +1,14 @@
-"""Shared helper — insert rows into cross_app_findings.
+"""Shared helper - insert rows into cross_app_findings.
 
 Schema (live as of sprint verification):
     id              uuid        PK, gen_random_uuid()
-    source_app      text        NOT NULL  — "auditshield" | "starguard" | "sovereignshield"
-    finding_type    text        NOT NULL  — "audit_flag" | "star_gap" | "policy_violation" | "session_end"
+    source_app      text        NOT NULL  - "auditshield" | "starguard" | "sovereignshield"
+    finding_type    text        NOT NULL  - "audit_flag" | "star_gap" | "policy_violation" | "session_end"
     severity        text        NOT NULL  default 'info'
     status          text        NOT NULL  default 'open'
     title           text        nullable
     description     text        nullable
-    metadata        jsonb       nullable  — trigger_type, client_session_id, app detail
+    metadata        jsonb       nullable  - trigger_type, client_session_id, app detail
     created_at      timestamptz NOT NULL  default now()
     updated_at      timestamptz NOT NULL  default now()
 
@@ -20,7 +20,7 @@ platform_hub_kpis VIEW filters:
     remediated_total       status       = 'remediated'
 
 Silent-fail design: all errors logged to stderr only.
-Never raises — insert failures must never crash the UI.
+Never raises - insert failures must never crash the UI.
 
 Connection (read from os.environ on each insert, not at import):
     Uses psycopg2 with a Postgres connection string (``postgresql://`` or ``postgres://``).
@@ -50,7 +50,13 @@ _TABLE = "cross_app_findings"
 
 
 def _get_postgres_dsn() -> str:
-    for name in ("PLATFORM_DATABASE_URL", "DATABASE_URL", "SUPABASE_DB_URL"):
+    # D2.2 - cross_app_findings psycopg2 path: platform-scoped TCP DSNs before generic app secrets.
+    for name in (
+        "PLATFORM_DATABASE_URL",
+        "PLATFORM_DB_URL",
+        "DATABASE_URL",
+        "SUPABASE_DB_URL",
+    ):
         v = (os.environ.get(name) or "").strip()
         if not v:
             continue
@@ -75,6 +81,7 @@ def insert_finding(
     extra_metadata: dict[str, Any] | None = None,
     measure_id: str | None = None,
     policy_id: str | None = None,
+    sub_surface: str | None = None,
 ) -> bool:
     """Insert one row into cross_app_findings. Returns True on success.
 
@@ -92,11 +99,10 @@ def insert_finding(
         policy_id:      folded into metadata if table has no top-level column
     """
     dsn = _get_postgres_dsn()
-    print(f"[findings-dsn] first40={dsn[:40]!r}", flush=True, file=sys.stderr)
     if not dsn:
         print(
             "[findings] No postgres DSN (PLATFORM_DATABASE_URL / DATABASE_URL / SUPABASE_DB_URL) "
-            "— skipping insert (http(s):// URLs are ignored)",
+            "- skipping insert (http(s):// URLs are ignored)",
             file=sys.stderr,
         )
         return False
@@ -114,8 +120,8 @@ def insert_finding(
 
     sql = (
         f"INSERT INTO {_TABLE} "
-        "(source_app, finding_type, severity, status, title, description, metadata, created_at, updated_at) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        "(source_app, finding_type, severity, status, title, description, metadata, sub_surface, created_at, updated_at) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     )
     args = (
         source_app,
@@ -125,6 +131,7 @@ def insert_finding(
         title,
         description,
         Json(meta),
+        sub_surface,
         now,
         now,
     )
@@ -140,7 +147,7 @@ def insert_finding(
         return True
     except Exception as exc:
         print(
-            f"[findings] insert failed ({exc}) — source_app={source_app} "
+            f"[findings] insert failed ({exc}) - source_app={source_app} "
             f"finding_type={finding_type} trigger_type={trigger_type}",
             file=sys.stderr,
         )
