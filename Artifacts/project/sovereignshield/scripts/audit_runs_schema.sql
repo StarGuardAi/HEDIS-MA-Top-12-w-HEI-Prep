@@ -1,5 +1,5 @@
 -- Sprint 6: Audit runs and results for batch remediation history
--- Run in Supabase SQL Editor: jdvtlonneybqivcjtsj.supabase.co
+-- Run in Supabase SQL Editor: jdvtlonnejybqivcjtsj.supabase.co
 
 -- One row per batch run
 CREATE TABLE IF NOT EXISTS audit_runs (
