@@ -104,7 +104,7 @@ Summarized from `os.environ.get` / `getenv` on `SUPABASE*` under `Artifacts\proj
 
 ---
 
-## 5. T4 apply plan (concrete diffs -- v2)
+## 5. T4 apply plan (concrete diffs -- v3)
 
 *T3 SQL (`t3_primary_create.sql` / `t3_primary_alter.sql`) adds nullable `sub_surface` with CHECK (`desktop` \| `mobile` \| NULL). This section replaces strategic Section 5 prose with **patchable** before/after snippets. T4-code-stage Phase 1 gate: count `Artifacts/.../*.py` path mentions and `` ```python `` fences in this section only.*
 
@@ -114,20 +114,12 @@ Summarized from `os.environ.get` / `getenv` on `SUPABASE*` under `Artifacts\proj
 - **D2.2 -- `PLATFORM_*` env split (findings psycopg2 path only):** apply **only** in the **six** `supabase_findings.py` files listed in Section 1 (`Artifacts/shared` + five vendored copies). **`supabase_platform.py`** (three copies) stays on the existing **`PLATFORM_SUPABASE_URL` / `SUPABASE_URL`** REST chain for **native** project tables (`audit_runs`, `platform_sessions`, etc.) -- **no** D2.2 change there.
 - **Branch base for SovereignShield Desktop `insert_finding` rows:** `Artifacts/project/sovereignshield/app.py` gains `insert_finding` call sites on branch **`wip/sovereign-session-end-wiring`** (not on `docs/t3-t4-staging` alone). **T4-code-stage** shall branch from **`wip/sovereign-session-end-wiring`** so line anchors below match `git show wip/sovereign-session-end-wiring:Artifacts/project/sovereignshield/app.py`.
 
-### 5.1 Helper — `insert_finding` signature + INSERT SQL (`sub_surface`)
+### 5.1 Helper - `insert_finding` signature + INSERT SQL (verbatim BEFORE / AFTER)
 
-**Apply the same edit to all six paths:**
+D2.2 lock: PLATFORM_* fallback applies only to the six `supabase_findings.py`
+copies. `supabase_platform.py` files are NOT modified (native project access).
 
-| # | Path |
-|---|------|
-| 1 | `Artifacts/shared/supabase_findings.py` |
-| 2 | `Artifacts/project/auditshield/shared/supabase_findings.py` |
-| 3 | `Artifacts/project/auditshield/starguard-desktop/shared/supabase_findings.py` |
-| 4 | `Artifacts/project/auditshield/starguard-mobile/Artifacts/app/shared/supabase_findings.py` |
-| 5 | `Artifacts/project/sovereignshield/shared/supabase_findings.py` |
-| 6 | `Artifacts/project/sovereignshield-mobile/shared/supabase_findings.py` |
-
-**File:** `Artifacts/shared/supabase_findings.py` (representative; lines ~65-129 today)
+**File:** `Artifacts/shared/supabase_findings.py` (canonical; full function below - no ellipses)
 
 ```python
 # BEFORE
@@ -145,7 +137,41 @@ def insert_finding(
     measure_id: str | None = None,
     policy_id: str | None = None,
 ) -> bool:
-    ...
+    """Insert one row into cross_app_findings. Returns True on success.
+
+    Args:
+        source_app:     "auditshield" | "starguard" | "sovereignshield"
+        finding_type:   "audit_flag" | "star_gap" | "policy_violation" | "session_end"
+        severity:       "info" | "low" | "medium" | "high" | "critical"
+        status:         "open" (action triggers) | "remediated" (session-end rows)
+        title:          short human-readable label shown in Hub
+        description:    optional longer detail
+        trigger_type:   "action" | "session_end"
+        session_id:     client session uuid
+        extra_metadata: any additional key/value pairs stored in metadata jsonb
+        measure_id:     folded into metadata if table has no top-level column
+        policy_id:      folded into metadata if table has no top-level column
+    """
+    dsn = _get_postgres_dsn()
+    if not dsn:
+        print(
+            "[findings] No postgres DSN (PLATFORM_DATABASE_URL / DATABASE_URL / SUPABASE_DB_URL) "
+            "— skipping insert (http(s):// URLs are ignored)",
+            file=sys.stderr,
+        )
+        return False
+
+    now = datetime.now(timezone.utc)
+    meta: dict[str, Any] = {
+        "trigger_type": trigger_type,
+        "client_session_id": session_id,
+        **(extra_metadata or {}),
+    }
+    if measure_id is not None:
+        meta["measure_id"] = str(measure_id)
+    if policy_id is not None:
+        meta["policy_id"] = str(policy_id)
+
     sql = (
         f"INSERT INTO {_TABLE} "
         "(source_app, finding_type, severity, status, title, description, metadata, created_at, updated_at) "
@@ -162,6 +188,23 @@ def insert_finding(
         now,
         now,
     )
+
+    try:
+        conn = psycopg2.connect(dsn, connect_timeout=10)
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql, args)
+            conn.commit()
+        finally:
+            conn.close()
+        return True
+    except Exception as exc:
+        print(
+            f"[findings] insert failed ({exc}) — source_app={source_app} "
+            f"finding_type={finding_type} trigger_type={trigger_type}",
+            file=sys.stderr,
+        )
+        return False
 ```
 
 ```python
@@ -181,7 +224,41 @@ def insert_finding(
     policy_id: str | None = None,
     sub_surface: str | None = None,
 ) -> bool:
-    ...
+    """Insert one row into cross_app_findings. Returns True on success.
+
+    Args:
+        source_app:     "auditshield" | "starguard" | "sovereignshield"
+        finding_type:   "audit_flag" | "star_gap" | "policy_violation" | "session_end"
+        severity:       "info" | "low" | "medium" | "high" | "critical"
+        status:         "open" (action triggers) | "remediated" (session-end rows)
+        title:          short human-readable label shown in Hub
+        description:    optional longer detail
+        trigger_type:   "action" | "session_end"
+        session_id:     client session uuid
+        extra_metadata: any additional key/value pairs stored in metadata jsonb
+        measure_id:     folded into metadata if table has no top-level column
+        policy_id:      folded into metadata if table has no top-level column
+    """
+    dsn = _get_postgres_dsn()
+    if not dsn:
+        print(
+            "[findings] No postgres DSN (PLATFORM_DATABASE_URL / DATABASE_URL / SUPABASE_DB_URL) "
+            "— skipping insert (http(s):// URLs are ignored)",
+            file=sys.stderr,
+        )
+        return False
+
+    now = datetime.now(timezone.utc)
+    meta: dict[str, Any] = {
+        "trigger_type": trigger_type,
+        "client_session_id": session_id,
+        **(extra_metadata or {}),
+    }
+    if measure_id is not None:
+        meta["measure_id"] = str(measure_id)
+    if policy_id is not None:
+        meta["policy_id"] = str(policy_id)
+
     sql = (
         f"INSERT INTO {_TABLE} "
         "(source_app, finding_type, severity, status, title, description, metadata, sub_surface, created_at, updated_at) "
@@ -199,8 +276,35 @@ def insert_finding(
         now,
         now,
     )
+
+    try:
+        conn = psycopg2.connect(dsn, connect_timeout=10)
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql, args)
+            conn.commit()
+        finally:
+            conn.close()
+        return True
+    except Exception as exc:
+        print(
+            f"[findings] insert failed ({exc}) — source_app={source_app} "
+            f"finding_type={finding_type} trigger_type={trigger_type}",
+            file=sys.stderr,
+        )
+        return False
 ```
 
+Apply the SAME pattern to the five vendored copies (path inventory in Section 1):
+
+- `Artifacts/project/auditshield/shared/supabase_findings.py`
+- `Artifacts/project/auditshield/starguard-desktop/shared/supabase_findings.py`
+- `Artifacts/project/auditshield/starguard-mobile/Artifacts/app/shared/supabase_findings.py`
+- `Artifacts/project/sovereignshield/shared/supabase_findings.py`
+- `Artifacts/project/sovereignshield-mobile/shared/supabase_findings.py`
+
+Each copy gets the same signature add (`sub_surface: str | None = None`) and the same
+INSERT column list / VALUES tuple extension (`sub_surface` after `metadata`, matching T3 DDL).
 ### 5.2 Call sites — `insert_finding(...)` (add `sub_surface=` literal)
 
 Literal rule used below (extends D2.1):
@@ -211,7 +315,6 @@ Literal rule used below (extends D2.1):
 | `Artifacts/project/auditshield/starguard-desktop/...` | `"desktop"` |
 | `Artifacts/project/auditshield/starguard-mobile/...` | `"mobile"` |
 | `Artifacts/project/sovereignshield/...` (desktop Shiny) | `"desktop"` |
-| `Artifacts/project/sovereignshield-mobile/...` | `"mobile"` |
 | `Artifacts/scripts/smoke_test_findings.py` | `None` for `auditshield` rows; `"desktop"` for `starguard` and `sovereignshield` rows in `TEST_CASES` (script runs as a dev harness, not a mobile Space) |
 
 #### 5.2a `Artifacts/project/auditshield/app.py` — line ~708 — `sub_surface=None`
@@ -363,66 +466,6 @@ Literal rule used below (extends D2.1):
             trigger_type="action",
             session_id=findings_session_id,
             extra_metadata={"action": "analyze_btn"},
-            sub_surface="mobile",
-        )
-```
-
-#### 5.2f `Artifacts/project/sovereignshield-mobile/app.py` — line ~168 — `sub_surface="mobile"`
-
-```python
-# BEFORE
-    insert_finding(
-        source_app="sovereignshield",
-        finding_type="session_end",
-        severity="info",
-        status="remediated",
-        title="Session ended",
-        trigger_type="session_end",
-        session_id=_SESSION_ID,
-    )
-```
-
-```python
-# AFTER
-    insert_finding(
-        source_app="sovereignshield",
-        finding_type="session_end",
-        severity="info",
-        status="remediated",
-        title="Session ended",
-        trigger_type="session_end",
-        session_id=_SESSION_ID,
-        sub_surface="mobile",
-    )
-```
-
-#### 5.2g `Artifacts/project/sovereignshield-mobile/app.py` — line ~353 — `sub_surface="mobile"`
-
-```python
-# BEFORE
-        insert_finding(
-            source_app="sovereignshield",
-            finding_type="policy_violation",
-            severity="info",
-            status="open",
-            title="OPA query run",
-            trigger_type="action",
-            session_id=_SESSION_ID,
-            extra_metadata={"action": "opa_query"},
-        )
-```
-
-```python
-# AFTER
-        insert_finding(
-            source_app="sovereignshield",
-            finding_type="policy_violation",
-            severity="info",
-            status="open",
-            title="OPA query run",
-            trigger_type="action",
-            session_id=_SESSION_ID,
-            extra_metadata={"action": "opa_query"},
             sub_surface="mobile",
         )
 ```
@@ -641,6 +684,17 @@ ok = insert_finding(
                         sub_surface="desktop",
                     )
 ```
+#### 5.2-DEFERRED - SovereignShield Mobile (psycopg2 findings path)
+
+Original #### 5.2f / #### 5.2g are removed in Section 5 v3: they assumed psycopg2 findings inserts on branch ``wip/sovereign-session-end-wiring @ eb9c888`` under ``Artifacts/project/sovereignshield-mobile/``. On that base, ``grep`` for the shared helper used by other apps shows **no** call sites in that tree (only ``sys.path.insert`` / ``audit_runs`` patterns). SovereignShield Mobile is not a ``cross_app_findings`` emitter today.
+
+Adding emissions is a **new feature**, not T4 prep. Tracked as **T4.5** follow-up sprint:
+
+- Design call sites mirroring SovereignShield Desktop session_end + policy_violation emissions
+- Bank on focused branch ``feat/sovereignshield-mobile-findings-wiring``
+- Then a thin T4.5 code-stage adds ``sub_surface="mobile"`` to those new calls
+
+Out of scope for T4 round 1.
 
 ### 5.3 D2.2 — `_get_postgres_dsn` env fallback (six `supabase_findings.py` copies only)
 
@@ -686,7 +740,10 @@ Replicate verbatim across: `Artifacts/shared/supabase_findings.py`, `Artifacts/p
 
 ### 5.4 Gate self-check (T4-code-stage Phase 1)
 
-Run on this section substring only (between `## 5.` and `
+Run on this section substring only (between `## 5.` and `## 6.`).
+
+- **Total files referenced:** 29 (Section 5 substring: `Artifacts/.../*.py` regex count)
+- **Total fenced blocks:** 29 (markdown fenced code blocks opened with the python tag in Section 5 only)
 
 ## 6. Risk notes
 
@@ -708,5 +765,5 @@ Run on this section substring only (between `## 5.` and `
 - [ ] Run T2.c SQL on Primary; pick **T3 branch A vs B** per `T3_README.md`.  
 - [ ] Reconcile T3 DDL with **actual** `cross_app_findings` shape if table pre-exists on Sovereign dump.  
 - [ ] Rotate HF Hub `SUPABASE_URL` + `SUPABASE_ANON_KEY` to **Primary**.  
-- [ ] Implement §5; re-run `smoke_test_findings.py` against Primary.  
+- [ ] Implement Section 5; re-run `smoke_test_findings.py` against Primary.  
 - [ ] Option A (Primary MCP) recommended for T4/T5 durable access.
