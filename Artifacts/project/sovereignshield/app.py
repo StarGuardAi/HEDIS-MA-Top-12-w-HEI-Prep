@@ -4,10 +4,12 @@ Real agent loop: OPA evaluate → Planner → Worker → Reviewer → RAG/Supaba
 """
 from __future__ import annotations
 
+import atexit
 import base64
 import io
 import json
 import re
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, cast
@@ -94,6 +96,7 @@ except ImportError:
 
 from ui.mobile_badge import mobile_badge
 from loading_overlay import loading_overlay_css, loading_overlay_ui
+from shared.supabase_findings import insert_finding
 from sovereignshield_platform_integration import register_session, record_finding
 
 # Synthetic RESOURCES catalogue — 5 columns for Catalogue tab
@@ -585,6 +588,31 @@ app_ui = ui.page_fluid(
 
 
 def server(input: Any, output: Any, session: Any) -> None:
+    try:
+        import uuid as _uuid_fc
+
+        _fc_sid = str(_uuid_fc.uuid4())
+    except Exception:
+        _fc_sid = None
+    _fc_t0 = time.monotonic()
+
+    def _fc_session_end() -> None:
+        insert_finding(
+            source_app="sovereignshield",
+            finding_type="session_end",
+            severity="info",
+            status="remediated",
+            title="Session ended",
+            trigger_type="session_end",
+            session_id=_fc_sid,
+            extra_metadata={"session_duration_s": int(time.monotonic() - _fc_t0)},
+        )
+
+    try:
+        session.on_ended(_fc_session_end)
+    except Exception:
+        atexit.register(_fc_session_end)
+
     @reactive.calc
     def active_resources() -> list[dict[str, Any]]:
         f = input.tf_upload()
@@ -649,6 +677,17 @@ def server(input: Any, output: Any, session: Any) -> None:
         vtype = parts[1] if len(parts) > 1 else ""
         out = _run_agents(rid, vtype, active_resources())
         agent_result.set(out)
+        # [findings] action insert — non-blocking
+        insert_finding(
+            source_app="sovereignshield",
+            finding_type="policy_violation",
+            severity="info",
+            status="open",
+            title="OPA policy evaluation run",
+            trigger_type="action",
+            session_id=_fc_sid,
+            extra_metadata={"action": "opa_eval"},
+        )
 
     @render.ui
     def catalogue_table() -> Any:
