@@ -99,7 +99,7 @@ violation[v] { not data_residency; v := "data_residency|data residency constrain
     _client = None
     try:
         from supabase import create_client
-        url = os.environ.get("SUPABASE_URL", "https://jdvtlonneybqivcjtsj.supabase.co")
+        url = os.environ.get("SUPABASE_URL", "https://jdvtlonnejybqivcjtsj.supabase.co")
         key = os.environ.get("SUPABASE_ANON_KEY") or os.environ.get("SUPABASE_SERVICE_KEY")
         if url and key:
             _client = create_client(url, key)
