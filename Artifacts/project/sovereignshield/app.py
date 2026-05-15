@@ -1,5 +1,5 @@
 """
-SovereignShield — Shiny for Python sovereign cloud compliance app.
+SovereignShield - Shiny for Python sovereign cloud compliance app.
 Real agent loop: OPA evaluate → Planner → Worker → Reviewer → RAG/Supabase.
 """
 from __future__ import annotations
@@ -59,7 +59,7 @@ def _load_avatar() -> str:
 
 _AVATAR_SRC: str = _load_avatar()
 
-# Graceful import fallback — run with simulated data if any module fails
+# Graceful import fallback - run with simulated data if any module fails
 _USE_REAL_MODULES = True
 try:
     from core.opa_eval import evaluate
@@ -99,7 +99,7 @@ from loading_overlay import loading_overlay_css, loading_overlay_ui
 from shared.supabase_findings import insert_finding
 from sovereignshield_platform_integration import register_session, record_finding
 
-# Synthetic RESOURCES catalogue — 5 columns for Catalogue tab
+# Synthetic RESOURCES catalogue - 5 columns for Catalogue tab
 
 
 def _opa_severity(violation: dict) -> str:
@@ -241,7 +241,7 @@ def _hcl_synthetic_before(resource_id: str) -> str:
 
 
 def _hcl_synthetic_after(resource_id: str) -> str:
-    """Synthetic after (compliant) HCL per resource_id — used when no work output."""
+    """Synthetic after (compliant) HCL per resource_id - used when no work output."""
     blocks: dict[str, str] = {
         "s3-staging-analytics": '''resource "aws_s3_bucket_server_side_encryption_configuration" "fix_staging" {
   bucket = aws_s3_bucket.staging_analytics.id
@@ -270,7 +270,7 @@ def _build_waterfall_trace(
     checks_failed: list[str],
     violation_severity: str,
 ) -> str:
-    """Build 5-line waterfall trace: ✓/✗ [policy_id] — [message] ([severity])."""
+    """Build 5-line waterfall trace: ✓/✗ [policy_id] - [message] ([severity])."""
     keywords: list[str] = ["region", "encryption", "phi", "public", "residency"]
     lines: list[str] = []
     for ((pid, msg), kw) in zip(_OPA_CHECKS, keywords, strict=True):
@@ -281,7 +281,7 @@ def _build_waterfall_trace(
         else:
             sym = "✓"
             sev = "INFO"
-        lines.append(f"  {sym} [{pid}] — {msg} ({sev})")
+        lines.append(f"  {sym} [{pid}] - {msg} ({sev})")
     return "\n".join(lines) + "\n"
 
 
@@ -382,7 +382,7 @@ def _run_agents(resource_id: str, violation_type: str, resources: list[dict[str,
     work = worker.run(plan)
     result = reviewer.run(plan, work, started_at=t0)
 
-    # Waterfall trace: all 5 OPA checks with ✓/✗ [policy_id] — [message] ([severity])
+    # Waterfall trace: all 5 OPA checks with ✓/✗ [policy_id] - [message] ([severity])
     resource_violations_pre = [v for v in violations if str(v.get("resource_id", "")) == resource_id]
     sev = _highest_severity(cast(list[dict[str, Any]], resource_violations_pre))
     trace = _build_waterfall_trace(result.checks_passed, result.checks_failed, sev)
@@ -456,7 +456,7 @@ app_ui = ui.page_fluid(
         tagline="Loading OPA policy evaluator...",
     ),
     ui.div(
-        ui.panel_title("SovereignShield — Compliance Remediation"),
+        ui.panel_title("SovereignShield - Compliance Remediation"),
         mobile_badge(url="https://rreichert-sovereignshield-mobile.hf.space", accent_color="#10b981"),
         class_="d-flex align-items-center gap-2 mb-2",
     ),
@@ -471,7 +471,7 @@ app_ui = ui.page_fluid(
             ),
             ui.output_text("upload_status"),
             ui.card(
-                ui.card_header("Resources — click a row to see violation details"),
+                ui.card_header("Resources - click a row to see violation details"),
                 ui.div(ui.input_text("catalogue_selected_resource", "", value=""), class_="d-none"),
                 ui.output_ui("catalogue_table"),
                 ui.output_ui("catalogue_violation_detail"),
@@ -570,7 +570,7 @@ app_ui = ui.page_fluid(
                 ),
                 ui.output_ui("history_record_status"),
                 ui.card(
-                    ui.card_header("Past runs — compliance trending"),
+                    ui.card_header("Past runs - compliance trending"),
                     ui.output_table("history_table"),
                 ),
             ),
@@ -606,6 +606,7 @@ def server(input: Any, output: Any, session: Any) -> None:
             trigger_type="session_end",
             session_id=_fc_sid,
             extra_metadata={"session_duration_s": int(time.monotonic() - _fc_t0)},
+            sub_surface="desktop",
         )
 
     try:
@@ -677,7 +678,7 @@ def server(input: Any, output: Any, session: Any) -> None:
         vtype = parts[1] if len(parts) > 1 else ""
         out = _run_agents(rid, vtype, active_resources())
         agent_result.set(out)
-        # [findings] action insert — non-blocking
+        # [findings] action insert - non-blocking
         insert_finding(
             source_app="sovereignshield",
             finding_type="policy_violation",
@@ -687,6 +688,7 @@ def server(input: Any, output: Any, session: Any) -> None:
             trigger_type="action",
             session_id=_fc_sid,
             extra_metadata={"action": "opa_eval"},
+            sub_surface="desktop",
         )
 
     @render.ui
@@ -734,7 +736,7 @@ def server(input: Any, output: Any, session: Any) -> None:
             pid = str(v.get("violation_type", ""))  # policy_id from violation_type
             sev = str(v.get("severity", ""))
             msg = str(v.get("detail", ""))
-            items.append(ui.tags.li(f"policy: {pid} — {msg} (severity: {sev})"))
+            items.append(ui.tags.li(f"policy: {pid} - {msg} (severity: {sev})"))
         return ui.div(
             ui.h6("Violation details"),
             ui.tags.ul(*items, class_="list-unstyled"),
@@ -793,7 +795,7 @@ def server(input: Any, output: Any, session: Any) -> None:
             class_="mt-3",
         )
 
-    # KPI tiles — depend on refresh_trigger so they update when Refresh clicked
+    # KPI tiles - depend on refresh_trigger so they update when Refresh clicked
     refresh_trigger: reactive.Value[int] = reactive.Value(0)
 
     @reactive.effect
@@ -1243,6 +1245,7 @@ data_residency { input.region != "" }
                             "terraform_file": uploaded_filename,
                             "audit_run_id": run_id,
                         },
+                        sub_surface="desktop",
                     )
             except Exception:
                 pass
@@ -1399,7 +1402,7 @@ data_residency { input.region != "" }
                     ui.card(
                         ui.card_header("AuditShield Live"),
                         ui.card_body(
-                            ui.p("HEDIS/RADV Chart Audit — Agentic RAG + Claude"),
+                            ui.p("HEDIS/RADV Chart Audit - Agentic RAG + Claude"),
                             ui.a("https://rreichert-auditshield-live.hf.space", href="https://rreichert-auditshield-live.hf.space", target="_blank"),
                             ui.div(_qr_img("QR_AuditShield_Live.b64.txt", "AuditShield QR"), class_="mt-2"),
                         ),
@@ -1411,7 +1414,7 @@ data_residency { input.region != "" }
                     ui.card(
                         ui.card_header("StarGuard Desktop"),
                         ui.card_body(
-                            ui.p("Star Ratings Forecasting — Compound AI"),
+                            ui.p("Star Ratings Forecasting - Compound AI"),
                             ui.a("https://rreichert-starguard-desktop.hf.space", href="https://rreichert-starguard-desktop.hf.space", target="_blank"),
                             ui.div(_qr_img("QR_StarGuard_Desktop.b64.txt", "StarGuard Desktop QR"), class_="mt-2"),
                         ),
@@ -1423,7 +1426,7 @@ data_residency { input.region != "" }
                     ui.card(
                         ui.card_header("StarGuard Mobile"),
                         ui.card_body(
-                            ui.p("Mobile Analytics — Field Operations"),
+                            ui.p("Mobile Analytics - Field Operations"),
                             ui.a("https://rreichert-starguardai.hf.space", href="https://rreichert-starguardai.hf.space", target="_blank"),
                             ui.div(_qr_img("QR_Mobile_Tiny_Sized.b64.txt", "StarGuard Mobile QR"), class_="mt-2"),
                         ),
@@ -1435,7 +1438,7 @@ data_residency { input.region != "" }
                     ui.card(
                         ui.card_header("SovereignShield Desktop"),
                         ui.card_body(
-                            ui.p("OPA policy enforcement — Agentic compliance"),
+                            ui.p("OPA policy enforcement - Agentic compliance"),
                             ui.a("https://rreichert-sovereignshield.hf.space", href="https://rreichert-sovereignshield.hf.space", target="_blank"),
                             ui.div(_qr_img("QR_SovereignShield_Desktop.b64.txt", "SovereignShield Desktop QR"), class_="mt-2"),
                         ),
@@ -1447,7 +1450,7 @@ data_residency { input.region != "" }
                     ui.card(
                         ui.card_header("SovereignShield Mobile"),
                         ui.card_body(
-                            ui.p("Compliance Remediation — Mobile"),
+                            ui.p("Compliance Remediation - Mobile"),
                             ui.a("https://rreichert-sovereignshield-mobile.hf.space", href="https://rreichert-sovereignshield-mobile.hf.space", target="_blank"),
                             ui.div(_qr_img("QR_SovereignShield_Mobile.b64.txt", "SovereignShield Mobile QR"), class_="mt-2"),
                         ),
@@ -1479,7 +1482,7 @@ data_residency { input.region != "" }
                                 ui.tags.li("Prioritized remediation plan (HIGH/MEDIUM/LOW)"),
                                 ui.tags.li("HIPAA §164.312 compliance scorecard"),
                             ),
-                            ui.p("Engagement: 2–4 weeks", class_="text-muted mt-2 mb-0"),
+                            ui.p("Engagement: 2-4 weeks", class_="text-muted mt-2 mb-0"),
                         ),
                         class_="services-card mb-3",
                     ),
@@ -1499,7 +1502,7 @@ data_residency { input.region != "" }
                                 ui.tags.li("Working prototype with Claude API integration"),
                                 ui.tags.li("ChromaDB knowledge base seeded with your domain content"),
                             ),
-                            ui.p("Engagement: 4–8 weeks", class_="text-muted mt-2 mb-0"),
+                            ui.p("Engagement: 4-8 weeks", class_="text-muted mt-2 mb-0"),
                         ),
                         class_="services-card mb-3",
                     ),

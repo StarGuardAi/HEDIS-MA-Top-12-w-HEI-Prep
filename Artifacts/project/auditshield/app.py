@@ -70,7 +70,7 @@ def create_footer():
 
 
 # Phase 1 Imports
-# Stage 4: starguard-core auth + HCC (Week 3) — Phase 17: async in production
+# Stage 4: starguard-core auth + HCC (Week 3) - Phase 17: async in production
 from starguard_core.auth import (
     UPGRADE_URL,
     capture_lead,
@@ -96,7 +96,7 @@ from emr_rule_builder import EMRRuleBuilder
 from financial_calculator import FinancialImpactCalculator
 from hcc_reconciliation import HCCReconciliation
 
-# Sprint 1–3: Mobile CSS, hamburger nav, FAB wiring
+# Sprint 1-3: Mobile CSS, hamburger nav, FAB wiring
 from loading_overlay import loading_overlay_css, loading_overlay_ui
 from meat_validator import MEATValidator
 from mock_audit_simulator import MockAuditSimulator
@@ -704,7 +704,7 @@ def server(input, output, session):
     import atexit as _atexit
 
     def _auditshield_session_end() -> None:
-        # [findings] session-end insert — non-blocking
+        # [findings] session-end insert - non-blocking
         insert_finding(
             source_app="auditshield",
             finding_type="session_end",
@@ -713,6 +713,7 @@ def server(input, output, session):
             title="Session ended",
             trigger_type="session_end",
             session_id=_SESSION_ID,
+            sub_surface=None,
         )
 
     try:
@@ -1343,7 +1344,7 @@ def server(input, output, session):
             )
             mock_audit_results_data.set(payload)
             print(f"[Mock Audit] DATA SET! Sample: {sample_size}, Failures: {failures}, Error: {error_rate:.1%}")
-            # [findings] action insert — non-blocking (to_thread: sync psycopg2 inside async handler)
+            # [findings] action insert - non-blocking (to_thread: sync psycopg2 inside async handler)
             import asyncio as _asyncio
 
             await _asyncio.to_thread(
@@ -1652,6 +1653,7 @@ def server(input, output, session):
                     description=f"Audit {input.new_audit_notice_id()} - {input.new_contract_id()}",
                     severity="high" if sample_size > 100 else "medium",
                     session_id=getattr(session, "session_id", None),
+                    sub_surface=None,
                 )
             except Exception:
                 pass
@@ -2424,7 +2426,7 @@ def server(input, output, session):
     @output
     @render.ui
     async def exec_compound_view():
-        """HCC Compound View — RADV exposure × RAF gap rate → $2.3M prospect story (Pro tier)."""
+        """HCC Compound View - RADV exposure × RAF gap rate → $2.3M prospect story (Pro tier)."""
         hcc_result = await handle_hcc_request(_get_api_key())
         if hcc_result.get("status") == "upgrade_required":
             return ui.div(
